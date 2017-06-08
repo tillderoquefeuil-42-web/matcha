@@ -1,7 +1,14 @@
-<html>
-    
+{% extends "templates/base.twig" %}
+
+{% block content %}
+
+    <i id="test"></i>
     <h1>
         {{ message }}
     </h1>
 
-</html>
+    <script>
+//        $('test').addClass('fa fa-home');
+    </script>
+
+{% endblock %}
