@@ -1,0 +1,19 @@
+{
+  "name": "matcha",
+  "version": "1.0.0",
+  "description": "42 - Matcha project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "vogsphere@vogsphere.42.fr:intra/2017/activities/matcha/tde-roqu"
+  },
+  "author": "tde-roqu",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "twig": "^1.10.5"
+  }
+}
