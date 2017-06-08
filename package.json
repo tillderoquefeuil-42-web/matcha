@@ -1,0 +1,18 @@
+{
+  "name": "matcha",
+  "version": "1.0.0",
+  "description": "Parce que l’amour aussi, ca s’industrialise",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "vogsphere@vogsphere.42.fr:intra/2017/activities/matcha/tde-roqu"
+  },
+  "author": "tde-roqu",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
