@@ -1,15 +1,17 @@
+var http = require('http');
 
-const http = require('http');
-
-const hostname = '127.0.0.1';
-const port = 3000;
-
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World\n');
+var server = http.createServer(function(req, res) {
+    res.writeHead(200, {"Content-Type": "text/html"});
+    res.write('<!DOCTYPE html>'+
+      '<html>'+
+      '    <head>'+
+      '        <meta charset="utf-8" />'+
+      '        <title>Ma page Node.js !</title>'+
+      '    </head>'+ 
+      '    <body>'+
+      '     	<p>Voici un paragraphe <strong>sflgkdnrkg</strong> !</p>'+
+      '    </body>'+
+      '</html>');
+    res.end();
 });
-
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+server.listen(8080);

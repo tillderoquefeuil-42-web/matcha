@@ -1,0 +1,9 @@
+{
+    "name": "matcha",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "dependencies": {
+        "nodemon": "^1.18.6"
+    }
+}
