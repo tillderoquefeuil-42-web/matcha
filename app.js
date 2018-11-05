@@ -27,7 +27,7 @@ app.get('/', function(req, res) {
 //404 NOT FOUND
 app.use(function(req, res, next){
   res.status(404)
-    .render('pages/not_found');
+    .render('pages/error');
 });
 
 app.listen(8080);

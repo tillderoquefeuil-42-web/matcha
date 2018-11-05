@@ -1,4 +1,4 @@
-<!-- views/pages/index.ejs -->
+<!-- views/pages/error.ejs -->
 
 <!DOCTYPE html>
 
@@ -9,20 +9,14 @@
 
     <body class="container">
 
-        <header>
-            <% include ../partials/header %>
-        </header>
-
-        <main>
+        <main class="error-middle">
             <div class="jumbotron">
+                <img id="error-img" src="/img/error.png">
+
                 <h1>Oops</h1>
-                <p>404 Not found</p>
+                <p>Something went wrong</p>
             </div>
         </main>
-
-        <footer>
-            <% include ../partials/footer %>
-        </footer>
 
     </body>
 </html>
