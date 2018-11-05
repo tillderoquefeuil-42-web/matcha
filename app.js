@@ -1,17 +1,33 @@
-var http = require('http');
+var express = require('express');
 
-var server = http.createServer(function(req, res) {
-    res.writeHead(200, {"Content-Type": "text/html"});
-    res.write('<!DOCTYPE html>'+
-      '<html>'+
-      '    <head>'+
-      '        <meta charset="utf-8" />'+
-      '        <title>Ma page Node.js !</title>'+
-      '    </head>'+ 
-      '    <body>'+
-      '     	<p>Voici un paragraphe <strong>sflgkdnrkg</strong> !</p>'+
-      '    </body>'+
-      '</html>');
-    res.end();
+var app = express();
+
+app.set('view engine', 'ejs');
+
+app.use(express.static('public'));
+
+//INDEX
+app.get('/', function(req, res) {
+
+  var drinks = [
+      { name: 'Bloody Mary', drunkness: 3 },
+      { name: 'Martini', drunkness: 5 },
+      { name: 'Scotch', drunkness: 10 }
+  ];
+
+  var tagline = "Any code of your own that you haven't looked at for six or more months might as well have been written by someone else.";
+
+  res.render('pages/index', {
+    drinks: drinks,
+    tagline: tagline
+  });
+
 });
-server.listen(8080);
+
+//404 NOT FOUND
+app.use(function(req, res, next){
+  res.status(404)
+    .render('pages/not_found');
+});
+
+app.listen(8080);
