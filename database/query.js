@@ -14,6 +14,9 @@ query.exec = function(query, params, multi){
                 nodes   : false
             };
 
+            console.log(result.records[0]);
+            console.log(result.records[1]);
+
             if (!multi){
                 data.node = null;
                 if (data.length === 1){

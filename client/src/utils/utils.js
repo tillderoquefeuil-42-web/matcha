@@ -1,6 +1,8 @@
 import trans from "../translations/translate";
 import API from '../utils/API.js';
 
+const slugify = require('slugify');
+
 export default {
     
     isDefine            : function(variable){
@@ -13,12 +15,7 @@ export default {
     slugify             : function(txt, separator){
 
         separator = this.isDefine(separator)? separator : '.';
-
-        return txt
-            .toLowerCase()
-            .replace(/[^\w ]+/g,'')
-            .replace(/ +/g, separator)
-        ;
+        return slugify(txt, separator).toLowerCase();
     },
 
     pswdStrength        : function(pswd){

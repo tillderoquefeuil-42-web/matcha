@@ -5,6 +5,8 @@ const moment = require('moment');
 const User = require('../../database/models/user.js');
 const UserRepo = require('../../database/repositories/user.js');
 
+const TagRepo = require('../../database/repositories/tag.js');
+
 const Com = require('./communication.js');
 const config = require('../../config/config');
 
@@ -590,7 +592,7 @@ exports.saveUser = function(req, res) {
 
             // TO UPDATE
             const fields = ['bio', 'firstname', 'lastname', 'username', 'gender', 'birthday', 'orientation', 'language'];
-            const unwanted = ['profile_pic', 'profile_picture'];
+            const unwanted = ['profile_pic', 'profile_picture', 'tags'];
             for (var i in fields) {
                 user[fields[i]] = _user[fields[i]];
             }
@@ -598,18 +600,22 @@ exports.saveUser = function(req, res) {
                 delete user[unwanted[i]];
             }
 
-            UserRepo.updateOne(user)
-            .then(_u => {
-                res.status(200).json({
-                    text    : "SUCCESS",
-                    user    : _u
-                });
-            }).catch(err => {
-                res.status(500).json({
-                    text: "INTERNAL_ERROR"
+            _user.tags = _user.tags || [];
+
+            TagRepo.updateUserTags(user, _user.tags)
+            .then(r => {
+                UserRepo.updateOne(user)
+                .then(_u => {
+                    res.status(200).json({
+                        text    : "SUCCESS",
+                        user    : _u
+                    });
+                }).catch(err => {
+                    res.status(500).json({
+                        text: "INTERNAL_ERROR"
+                    });
                 });
             });
-
             return;
         });
     });

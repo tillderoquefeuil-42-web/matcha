@@ -50,6 +50,10 @@ class User {
             this.profile_pic = file;
         }
 
+        if (params.tags){
+            this.tags = params.tags;
+        }
+
     }
 
     authenticate(password) {

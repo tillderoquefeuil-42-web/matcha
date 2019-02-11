@@ -1,9 +1,10 @@
 import React from 'react';
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
 import { DatePickerInput } from '../datepicker/Datepicker';
 import { Username } from '../sign/Username';
 import { Language } from '../language/Language';
+import { TagsInput } from '../tagsInput/TagsInput';
 
 import API from '../../utils/API';
 import alert from '../../utils/alert';
@@ -17,11 +18,15 @@ export class Profile extends React.Component {
 
         this.state = {
             user        : utils.getLocalUser(),
+            tags        : []
         };
 
         this.handleChange.bind(this);
         this.saveUserData.bind(this);
     }
+
+
+    // USEFULL
 
     handleChange = event => {
 
@@ -30,6 +35,23 @@ export class Profile extends React.Component {
         
         this.setState({user:user});
     }
+
+
+    // TAGS INPUT
+
+    handleTagDelete(i) {
+        let tags = this.state.tags.slice(0)
+        tags.splice(i, 1);
+        this.setState({tags})
+    }
+
+    handleTagAddition(tag) {
+        let tags = [].concat(this.state.tags, tag);
+        this.setState({tags})
+    }
+
+
+    // SETTERS
 
     setUsername(username) {
         let user = this.state.user;
@@ -51,6 +73,16 @@ export class Profile extends React.Component {
 
         this.setState({user:user});
     }
+
+    setTags(tags) {
+        let user = this.state.user;
+        user.tags = tags;
+
+        this.setState({user:user});
+    }
+
+
+    // SAVER
 
     saveUserData = event => {
         let user = this.state.user;
@@ -83,6 +115,7 @@ export class Profile extends React.Component {
         });
     }
 
+
     render() {
 
         return(
@@ -93,6 +126,14 @@ export class Profile extends React.Component {
                 <FormGroup controlId="bio">
                     <ControlLabel>{ trans.get('USER.FIELDS.BIO') }</ControlLabel>
                     <FormControl maxLength="250" componentClass="textarea" placeholder={ trans.get('USER.BIO_PLACEHOLDER') } autoFocus value={this.state.user.bio} onChange={this.handleChange} />
+                </FormGroup>
+
+                <FormGroup controlId="interests">
+                    <ControlLabel>{ trans.get('USER.FIELDS.INTERESTS') }</ControlLabel>
+                    <TagsInput
+                        tags={ this.state.user.tags }
+                        onChange={(value) => this.setTags(value)}
+                    />
                 </FormGroup>
 
                 < Username 

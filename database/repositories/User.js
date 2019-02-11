@@ -53,15 +53,27 @@ function parseOneRecord(record){
 
     let entity;
     let params = {
-        profile_pic : null
+        profile_pic : null,
+        tags        : []
     };
 
 
     let node = record.get('u');
     let profilePic = record.get('f');
+    let tags = record.get('t');
 
     if (profilePic){
         params.profile_pic = profilePic;
+    }
+
+    if (tags){
+        if (tags.length){
+            for (let i in tags){
+                params.tags.push(tags[i].properties.label);
+            }
+        } else if (tags.properties){
+            params.tags.push(tags.properties.label);
+        }
     }
 
     entity = new User(node.properties, params);
@@ -151,6 +163,8 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 RETURN u, f
             `;
+                // OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
+                // RETURN u, f, t
 
             let params = {
                 user    : data
@@ -177,6 +191,8 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 RETURN u, f
             `;
+                // OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
+                // RETURN u, f, t
 
             let query = queryEx.buildRequest(request, {
                 object:'u',
