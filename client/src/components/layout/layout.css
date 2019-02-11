@@ -1,0 +1,58 @@
+
+/* HEADER */
+
+#header {
+    height: 50px;
+}
+
+#header > .navbar > .container {
+    width: auto;
+}
+
+#header > .navbar > .container .fa-power-off {
+    color: red;
+}
+
+
+/* MAIN */
+
+#main {
+    padding-top: 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+.nav-chat > a {
+    padding: 10px !important;
+}
+
+.nav-chat > a > i {
+    font-size: 27px;
+}
+
+.nav-user-account > a {
+    padding: 5px !important;
+}
+
+.nav-user-account > a > i.fa-user {
+    padding: 13px !important;
+}
+
+.user-profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+}
+
+.user-profile-picture > img {
+    display: block;
+    margin: auto;
+    max-height: none;
+    max-width: 100%;
+}

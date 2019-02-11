@@ -1,0 +1,311 @@
+
+#chat-container {
+    height: 100%;
+    padding: 0px;
+}
+
+#chat-container > div {
+    height: 100%;
+    overflow: auto;
+}
+
+#contacts-container {
+    border-right: 1px solid #cecece;
+    padding: 15px 0px;
+}
+
+#messages-container {
+    padding: 0px;
+}
+
+.searchbar-container {
+    padding: 0px 15px;
+}
+
+.one-contact {
+    height: 70px;
+    display: flex;
+    padding: 10px 15px;
+    padding-right: 0px;
+    cursor: pointer;
+}
+
+.one-contact:hover {
+    background: #efefef;
+}
+
+.one-contact.selected {
+    background: #eee;
+}
+
+
+.one-contact > .contact-picture {
+    width: 50px;
+}
+
+.one-contact > .contact-picture > div {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background: #cecece;
+    display: flex;
+}
+
+.one-contact > .contact-picture > div > i.fas.fa-user {
+    margin: auto;
+    font-size: 25px;
+    color: #fff;
+}
+
+.one-contact > .contact-picture > div > .user-profile-picture {
+    width: 100%;
+    height: 100%;
+}
+
+.one-contact > .contact-infos {
+    flex: 1;
+    padding: 5px;
+    width: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.one-contact > .contact-infos > .contact-name {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+}
+
+.one-contact > .contact-infos > .contact-name > .last-date {
+    font-size: 13px;
+    min-width: fit-content;
+}
+
+.one-contact > .contact-infos > .conversation-info {
+    display: flex;
+}
+
+.one-contact > .contact-infos > .conversation-info > .last-autor-msg {
+    padding-right: 2px;
+    font-size: 13px;
+    color: #999999;
+}
+
+.one-contact.updated > .contact-infos {
+    font-weight: bold;
+}
+
+.one-contact.updated > .contact-infos > .conversation-info > .last-autor-msg {
+    color: #333;
+}
+
+
+.open-conversation {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.open-conversation > .contact {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.open-conversation > .contact > strong {
+    margin-left: 10px;
+}
+
+.open-conversation > .messages-content {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.more-msg-loader {
+    height: 50px;
+    font-size: 4px;
+}
+
+.open-conversation > .messages-content > .messages {
+    flex: 1;
+    overflow: auto;
+}
+
+.one-message {
+    padding: 1.5px 10px;
+    display: flex;
+    align-items: center;
+}
+
+.one-message.from-user + .one-message.from-partner, .one-message.from-partner + .one-message.from-user {
+    padding-top: 5px;
+}
+
+.one-message.from-partner {
+    justify-content: flex-start;
+}
+
+.one-message.from-user {
+    justify-content: flex-end;
+}
+
+
+.one-message > .one-message-container {
+    padding: 5px 10px;
+    border-radius: 1.3em;
+    max-width: 60%;
+}
+
+.one-message.from-partner > .one-message-container {
+    background: #eee;
+}
+
+.one-message.from-user > .one-message-container {
+    background-color: #00c0ef;
+    color: #fff;
+    text-align: end;
+}
+
+.one-message-container a.link {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.message-files {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.contact {
+    width: 100%;
+    height: 50px;
+    border-bottom: 1px solid #cecece;
+    padding: 5px 15px;
+}
+
+.contact > * {
+    text-align: center;
+}
+
+.message-input-container {
+    width: 100%;
+    min-height: 50px;
+    border-top: 1px solid #cecece;
+    padding: 8px 15px;
+    padding-top: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.message-input-container > .files-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+}
+
+.message-input-container > .files-container > div {
+    border-radius: 10px;
+    overflow: hidden;
+    max-height: 100px;
+    width: 75px;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.message-input-container > .files-container > div .file-preview > i {
+    font-size: 65px;
+    padding: 5px;
+}
+
+.message-input-container > .files-container > div .file-preview > img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.message-input-container > .message-input {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 2px;
+}
+
+.message-input > input#message {
+    flex: 1;
+    height: 30px;
+    border: none;
+}
+
+.message-input > input#message:focus {
+    outline-offset: unset;
+    outline: none;
+}
+
+.message-input > i {
+    font-size: 25px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.message-input > i.fa-paper-plane {
+    color: #00c0ef;
+}
+
+.message-input > i.fa-paperclip {
+    color: #bfbfbf;
+    position: relative;
+    font-size: 22px;
+}
+
+.message-input > i.fa-paperclip > .attach-files {
+    display: none;
+}
+
+
+.message-input > i.fa-smile {
+    color: #bfbfbf;
+    position: relative;
+}
+
+span.emoji-picker {
+    position: absolute;
+    right: 0px;
+    bottom: 40px;
+}
+
+i.notifs {
+    position: relative;
+}
+
+i.notifs > .sup {
+    background: #db4c3f;
+    position: absolute;
+    color: white;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    border-radius: 50%;
+    padding: 4px 0px;
+    top: -9px;
+    right: -9px;
+    font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.file-processing {
+    padding: 50px;
+    font-size: 5px;
+    border: 1px solid #fff;
+    margin: 0px 2px;
+}

@@ -1,0 +1,22 @@
+.searchbar {
+    position: relative;
+}
+
+.searchbar-list {
+    display: none;
+    position: absolute;
+    background: #efefef;
+    width: 100%;
+    min-height: 50px;
+    z-index: 100;
+    padding: 15px;
+    border: solid 1px #cecece;
+    border-radius: 5px;
+    max-height: 50vh;
+    overflow: auto;
+}
+
+.searchbar-list.active {
+    display: block !important;
+}
+
