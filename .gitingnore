@@ -1,0 +1,8 @@
+#modules
+/node_modules
+
+#db data
+/data
+
+#users files
+/client/private/uploads
