@@ -215,7 +215,7 @@ let UserRepository = {
 
             queryEx.exec(query, params)
             .then(results => {
-                return resolve(parser.records(results, type));
+                return resolve(parser.records(results, type, true));
             }).catch(err => {
                 return reject(err);
             });
