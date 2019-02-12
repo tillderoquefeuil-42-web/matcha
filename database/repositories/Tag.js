@@ -1,29 +1,16 @@
 const queryEx = require('../query');
+const parser = require('../parser');
 const Tag = require('../models/Tag');
 
-function parseRecords(data){
-    if (data.record){
-        let entity = parseOneRecord(data.record);
-        return Promise.resolve(entity);
+const type = 'tag';
 
-    } else if (data.records) {
-        let entities = [];
-
-        for (var i in data.records){
-            let entity = parseOneRecord(data.records[i]);
-            entities.push(entity);
-        }
-
-        return Promise.resolve(entities);
-    }
-
-    return Promise.resolve(null);
-}
+parser.setSingle(type, function(record){
+    return parseOneRecord(record);
+});
 
 function parseOneRecord(record){
 
     let entity;
-
     let node = record.get('t');
 
     entity = new Tag(node.properties);
@@ -35,32 +22,14 @@ function parseOneRecord(record){
 
 let TagRepository = {
 
-    deleteAll   : function(){
-
-        return new Promise((resolve, reject) => {
-
-            let query = `
-                MATCH (t:Tag)
-                DETACH DELETE t
-            `;
-
-            queryEx.exec(query)
-            .then(parseRecords)
-            .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
-                return reject(err);
-            });
-        });
-    },
-
     checkTags       : function(tags){
-
         return new Promise((resolve, reject) => {
+            if (!tags.length){
+                return resolve();
+            }
 
             let query = '';
-            
+
             for (let i in tags){
                 query += `
                     MERGE (t${i}:Tag { label:'${tags[i]}' })
@@ -68,14 +37,11 @@ let TagRepository = {
             }
 
             queryEx.exec(query)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
     },
 
@@ -89,16 +55,12 @@ let TagRepository = {
             `;
 
             queryEx.exec(query)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
-
     },
 
     linkToUser      : function(user, tags){
@@ -112,20 +74,16 @@ let TagRepository = {
                 RETURN t
             `;
 
-            queryEx.exec(query, {object:'t'}, true)
-            .then(parseRecords)
+            queryEx.exec(query)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
-
     },
 
-    updateUserTags      : function(user, tags) {
+    updateUserTags  : function(user, tags) {
         let _this = this;
 
         return new Promise((resolve, reject) => {
@@ -133,10 +91,14 @@ let TagRepository = {
             .then(r => {
                 _this.resetLinks(user)
                 .then(r => {
-                    _this.linkToUser(user, tags)
-                    .then(r => {
+                    if (tags.length > 0){
+                        _this.linkToUser(user, tags)
+                        .then(r => {
+                            return resolve(r);
+                        });
+                    } else {
                         return resolve(r);
-                    });
+                    }
                 });
             }).catch(err => {
                 return reject(err);

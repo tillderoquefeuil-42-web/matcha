@@ -165,18 +165,18 @@ exports.getUserFromToken = function(token) {
         if (!token) {
             return resolve(null);
         }
-        
+
         let decoded = decodeToken(token);
         if (decoded.error) {
             return resolve(null);
         }
-        
+
         UserRepo.findOne({
             email   : decoded.email
         }).then(function(user){
             return resolve(user);
         }, function(err){
-            console.warn(err)
+            console.log(err)
             return reject(err);
         });
     });
@@ -398,6 +398,7 @@ exports.signIn = function(req, res) {
         }
     })
     .catch(err => {
+        console.log(err);
         res.status(500).json({
             text    : "INTERNAL_ERROR",
             error   : err
@@ -611,6 +612,7 @@ exports.saveUser = function(req, res) {
                         user    : _u
                     });
                 }).catch(err => {
+                    console.log(err);
                     res.status(500).json({
                         text: "INTERNAL_ERROR"
                     });

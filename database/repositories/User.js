@@ -1,82 +1,42 @@
+const parser = require('../parser');
 const queryEx = require('../query');
 const User = require('../models/user.js');
 
-function parseData(data){
-    if (data.node !== false){
-        let entity;
-        if (data.node){
-            entity = new User(data.node.properties);
-            entity._id = data.node.identity.low;
-        }
-        return Promise.resolve(entity);
+const type = 'user';
 
-    } else if (data.nodes !== false) {
-        let entities = [];
+parser.setSingle(type, function(record){
+    return parseOneRecord(record);
+})
 
-        for (var i in data.nodes){
-            let node = data.nodes[i];
-            if (node){
-                let entity;
-                entity = new User(node.properties);
-                entity._id = node.identity.low;
-                entities.push(entity);
-            }
-        }
-
-        return Promise.resolve(entities);
-    }
-
-    return Promise.resolve(null);
-}
-
-
-function parseRecords(data){
-    if (data.record){
-        let entity = parseOneRecord(data.record);
-        return Promise.resolve(entity);
-
-    } else if (data.records) {
-        let entities = [];
-
-        for (var i in data.records){
-            let entity = parseOneRecord(data.records[i]);
-            entities.push(entity);
-        }
-
-        return Promise.resolve(entities);
-    }
-
-    return Promise.resolve(null);
-}
+parser.setMerges(type, ['tags']);
 
 function parseOneRecord(record){
 
-    let entity;
     let params = {
         profile_pic : null,
         tags        : []
     };
 
-
     let node = record.get('u');
-    let profilePic = record.get('f');
-    let tags = record.get('t');
 
-    if (profilePic){
-        params.profile_pic = profilePic;
+    if (record.has('f')){
+        params.profile_pic = record.get('f');
     }
 
-    if (tags){
-        if (tags.length){
-            for (let i in tags){
-                params.tags.push(tags[i].properties.label);
-            }
-        } else if (tags.properties){
-            params.tags.push(tags.properties.label);
+    if (record.has('t')){
+        let tags = record.get('t');
+        tags = tags || [];
+
+        if (tags && tags.properties){
+            tags = [tags];
+        }
+
+        for (let i in tags){
+            params.tags.push(tags[i].properties.label);
         }
     }
 
-    entity = new User(node.properties, params);
+    let entity = new User(node.properties, params);
     entity._id = node.identity.low;
 
     return entity;
@@ -95,32 +55,8 @@ let UserRepository = {
             };
 
             queryEx.exec(query, params)
-            .then(parseData)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
-                return reject(err);
-            });
-
-        });
-    },
-
-    deleteAll   : function(){
-
-        return new Promise((resolve, reject) => {
-
-            let query = `
-                MATCH (u:User)
-                DETACH DELETE u
-            `;
-
-            let params = {};
-
-            queryEx.exec(query, params)
-            .then(parseData)
-            .then(results => {
-                return resolve(results);
+                return resolve(parser.records(results, type, true));
             }).catch(err => {
                 return reject(err);
             });
@@ -137,11 +73,9 @@ let UserRepository = {
                 DETACH DELETE _f, m, c, u
             `;
 
-            let params = {};
-
-            queryEx.exec(query, params)
+            queryEx.exec(query)
             .then(results => {
-                return resolve(results);
+                return resolve(parser.records(results, type));
             }).catch(err => {
                 return reject(err);
             });
@@ -161,21 +95,19 @@ let UserRepository = {
                 SET u = $user
                 WITH u
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
-                RETURN u, f
+                OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
+                RETURN u, f, t
             `;
-                // OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
-                // RETURN u, f, t
+                // RETURN u, f
 
             let params = {
                 user    : data
             };
 
             queryEx.exec(query, params)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
 
@@ -189,10 +121,10 @@ let UserRepository = {
                 MATCH (u:User)
                 WHERE $AND
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
-                RETURN u, f
+                OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
+                RETURN u, f, t
             `;
-                // OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
-                // RETURN u, f, t
+                // RETURN u, f
 
             let query = queryEx.buildRequest(request, {
                 object:'u',
@@ -200,14 +132,11 @@ let UserRepository = {
             });
 
             queryEx.exec(query, params)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
     },
 
@@ -220,14 +149,10 @@ let UserRepository = {
                 $AND : params
             });
 
-            params.object = 'u';
-
-            queryEx.exec(query, params, true)
-            .then(parseData)
+            queryEx.exec(query, params)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
                 console.log(err);
                 return reject(err);
             });
@@ -246,11 +171,9 @@ let UserRepository = {
             });
 
             queryEx.exec(query, params, true)
-            .then(parseData)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
                 return reject(err);
             });
 
@@ -270,11 +193,9 @@ let UserRepository = {
             `;
 
             queryEx.exec(query)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
 
@@ -293,11 +214,9 @@ let UserRepository = {
             });
 
             queryEx.exec(query, params)
-            .then(parseData)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
                 return reject(err);
             });
 
@@ -319,14 +238,10 @@ let UserRepository = {
                 RETURN DISTINCT u, f
             `
 
-            let params = {object : 'u'};
-
-            queryEx.exec(query, params, true)
-            .then(parseRecords)
+            queryEx.exec(query)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
                 return reject(err);
             });
 

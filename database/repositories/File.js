@@ -1,58 +1,55 @@
+const parser = require('../parser');
 const queryEx = require('../query');
 const File = require('../models/File');
 
-function parseData(data){
+const type = 'file';
 
-    if (data.node !== false){
-        let entity;
-        if (data.node){
-            entity = new File(data.node.properties);
-            entity._id = data.node.identity.low;
-        }
-        return Promise.resolve(entity);
-        
-    } else if (data.nodes !== false) {
-        let entities = [];
-        
-        for (var i in data.nodes){
-            let node = data.nodes[i];
-            if (node){
-                let entity;
-                entity = new File(node.properties);
-                entity._id = node.identity.low;
-                entities.push(entity);
-            }
-        }
+parser.setSingle(type, function(record){
+    return parseOneRecord(record);
+})
 
-        return Promise.resolve(entities);
-    }
+function parseOneRecord(record){
 
-    return Promise.resolve(null);
+    let entity;
+
+    let node = record.get('f');
+
+    entity = new File(node.properties);
+    entity._id = node.identity.low;
+
+    return entity;
 }
 
+// function parseData(data){
+
+//     if (data.node !== false){
+//         let entity;
+//         if (data.node){
+//             entity = new File(data.node.properties);
+//             entity._id = data.node.identity.low;
+//         }
+//         return Promise.resolve(entity);
+        
+//     } else if (data.nodes !== false) {
+//         let entities = [];
+        
+//         for (var i in data.nodes){
+//             let node = data.nodes[i];
+//             if (node){
+//                 let entity;
+//                 entity = new File(node.properties);
+//                 entity._id = node.identity.low;
+//                 entities.push(entity);
+//             }
+//         }
+
+//         return Promise.resolve(entities);
+//     }
+
+//     return Promise.resolve(null);
+// }
+
 let FileRepository = {
-
-    deleteAll   : function(){
-
-        return new Promise((resolve, reject) => {
-
-            let query = `
-                MATCH (f:File)
-                DETACH DELETE f
-            `;
-
-            let params = {};
-
-            queryEx.exec(query, params)
-            .then(parseData)
-            .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
-                return reject(err);
-            });
-        });
-    },
 
     createOne   : function(file){
 
@@ -68,14 +65,11 @@ let FileRepository = {
             };
 
             queryEx.exec(query, params)
-            .then(parseData)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
     },
 
@@ -96,19 +90,13 @@ let FileRepository = {
                 RETURN f
             `;
 
-            let params = {};
-
-            queryEx.exec(query, params)
-            .then(parseData)
+            queryEx.exec(query)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
-
     }
 
 };

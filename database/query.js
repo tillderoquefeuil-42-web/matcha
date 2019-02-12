@@ -1,8 +1,8 @@
-var database = require('./db.js');
+const database = require('./db.js');
 
-var query = {};
+let query = {};
 
-query.exec = function(query, params, multi){
+query.exec = function(query, params){
     return new Promise((resolve, reject) => {
         database.session.run(query, params)
         .then(result => {
@@ -10,30 +10,10 @@ query.exec = function(query, params, multi){
 
             let data = {
                 length  : result.records.length,
-                node    : false,
-                nodes   : false
+                records : result.records
             };
 
-            console.log(result.records[0]);
-            console.log(result.records[1]);
-
-            if (!multi){
-                data.node = null;
-                if (data.length === 1){
-                    let singleRecord = result.records[0];
-                    data.record = result.records[0];
-                    data.node = singleRecord.get(0);
-                }
-            } else if (data.length > 1 || multi){
-                data.nodes = [];
-                data.records = result.records;
-                for (var i in result.records){
-                    let record = result.records[i];
-                    data.nodes.push(record.get(params.object));
-                }
-            }
-
-            resolve(data);
+            return resolve(data);
         }, function (err) {
             console.log(err);
             return reject(err);

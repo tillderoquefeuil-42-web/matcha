@@ -1,24 +1,12 @@
 const queryEx = require('../query');
+const parser = require('../parser');
 const Friendship = require('../models/Friendship');
 
-function parseRecords(data){
-    if (data.record){
-        let entity = parseOneRecord(data.record);
-        return Promise.resolve(entity);
+const type = 'friendship';
 
-    } else if (data.records) {
-        let entities = [];
-
-        for (var i in data.records){
-            let entity = parseOneRecord(data.records[i]);
-            entities.push(entity);
-        }
-
-        return Promise.resolve(entities);
-    }
-
-    return Promise.resolve(null);
-}
+parser.setSingle(type, function(record){
+    return parseOneRecord(record);
+})
 
 function parseOneRecord(record){
 
@@ -27,7 +15,6 @@ function parseOneRecord(record){
         partners    : [],
         links       : []
     };
-
 
     let node = record.get('f');
 
@@ -63,7 +50,6 @@ function parseOneRecord(record){
 let FriendshipRepository = {
 
     createOne       : function(user1Id, user2Id){
-
         return new Promise((resolve, reject) => {
 
             let query = `
@@ -74,19 +60,15 @@ let FriendshipRepository = {
             `;
 
             queryEx.exec(query)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
     },
 
     findOneByUsers      : function(user1Id, user2Id){
-
         return new Promise((resolve, reject) => {
 
             let query = `
@@ -96,14 +78,11 @@ let FriendshipRepository = {
             `;
 
             queryEx.exec(query)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
     },
 
@@ -119,34 +98,31 @@ let FriendshipRepository = {
             `;
 
             queryEx.exec(query)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
     },
 
     findOrCreate    : function(user1Id, user2Id){
-
         return new Promise((resolve, reject) => {
+
             this.findOneByUsers(user1Id, user2Id)
             .then(friendship => {
                 if (!friendship){
                     this.createOne(user1Id, user2Id)
                     .then(_friendship => {
-                        resolve(_friendship);
+                        return resolve(_friendship);
                     }, function(err){
-                        reject(err);
+                        return reject(err);
                     });
                 } else {
-                    resolve(friendship);
+                    return resolve(friendship);
                 }
             }, function(err){
-                reject(err);
+                return reject(err);
             });
         });
     },
@@ -162,14 +138,11 @@ let FriendshipRepository = {
             `;
 
             queryEx.exec(query)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
     },
 
@@ -184,14 +157,11 @@ let FriendshipRepository = {
             `;
 
             queryEx.exec(query)
-            .then(parseRecords)
             .then(results => {
-                return resolve(results);
-            })
-            .catch(err => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
                 return reject(err);
             });
-
         });
     }
 
