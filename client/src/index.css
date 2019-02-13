@@ -97,3 +97,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
 }
+
+.form-control:focus {
+    box-shadow: unset;
+}

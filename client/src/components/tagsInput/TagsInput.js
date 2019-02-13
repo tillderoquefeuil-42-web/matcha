@@ -1,6 +1,10 @@
 import React from 'react';
-import { FormControl, Badge } from "react-bootstrap";
+import { Badge } from "react-bootstrap";
 
+import { SearchBar } from '../searchBar/SearchBar';
+import { Loader } from '../loader/Loader';
+
+import API from '../../utils/API';
 import utils from '../../utils/utils';
 import trans from '../../translations/translate';
 
@@ -12,9 +16,21 @@ export class TagsInput extends React.Component {
         super(props);
 
         this.state = {
-            current : ''
+            current     : '',
+            collection  : null
         };
 
+    }
+
+    componentDidMount() {
+        let _this = this;
+
+        API.getTags()
+        .then(function(response){
+            _this.setState({collection : response.data.tags});
+        }, function(error){
+            console.log(error);
+        });
     }
 
     handleChange = event => {
@@ -23,15 +39,13 @@ export class TagsInput extends React.Component {
         });
     }
 
-    handleKeyPress = event => {
-        if (event.key === 'Enter'){
-            this.addOneTag();
-        }
+    handleSelect = (event, item) => {
+        this.addOneTag(item.label);
     }
 
-    addOneTag(){
+    addOneTag(tag){
 
-        let tag = utils.slugify(this.state.current, ' ');
+        tag = utils.slugify(tag, ' ');
         let tags = this.props.tags || [];
 
         if (tag && tags.indexOf(tag) === -1){
@@ -78,18 +92,33 @@ export class TagsInput extends React.Component {
         );
     }
 
+    buildSearchBar() {
+
+        if (this.state.collection){
+            return (
+                <SearchBar
+                    collection={ this.state.collection }
+                    placeholder={ trans.get('ADD.A.TAG') }
+                    onSelect={ (event, item) => this.handleSelect(event, item) }
+                    onCreate={ (value) => this.addOneTag(value) }
+                    resetValue
+                />
+            );
+        }
+
+        return (
+            <div className="center">
+                <Loader />
+            </div>
+        );
+    }
+
     render() {
 
         return (
             <div className="tags-input">
                 <div className="input">
-                    <FormControl
-                        type="text"
-                        placeholder={ trans.get('ADD.A.TAG') }
-                        value={ this.state.current }
-                        onChange={ this.handleChange }
-                        onKeyPress={ this.handleKeyPress }
-                    />
+                    { this.buildSearchBar() }
                 </div>
                 <div className="tags">
                     { this.getValue() }

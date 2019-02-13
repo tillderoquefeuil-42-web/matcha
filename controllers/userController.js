@@ -28,6 +28,8 @@ module.exports = function (app) {
     app.post('/get/friends', account.getFriendsByUser);
     app.post('/deleteAccount', account.deleteAccount);
 
+    app.post('/tags', account.getTags);
+
 
     // GET
 

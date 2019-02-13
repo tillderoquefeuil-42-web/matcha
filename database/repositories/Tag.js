@@ -22,6 +22,22 @@ function parseOneRecord(record){
 
 let TagRepository = {
 
+    getAll          : function(){
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (t:Tag) RETURN t
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
+                return reject(err);
+            });
+        });
+    },
+
     checkTags       : function(tags){
         return new Promise((resolve, reject) => {
             if (!tags.length){

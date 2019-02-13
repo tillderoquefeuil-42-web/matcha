@@ -20,7 +20,8 @@ export class SearchBar extends React.Component {
             slugs       : this.createSlugs(props.collection),
             showlist    : false,
             matches     : [],
-            count       : this.itemsCount()
+            count       : this.itemsCount(),
+            placeholder : props.placeholder || trans.get('COMMON.SEARCH')
         };
 
         this.collapse.bind(this);
@@ -67,11 +68,25 @@ export class SearchBar extends React.Component {
 
     handleSelect = (event, item) => {
         this.setState({
-            value   : this.getLabel(item)
+            value   : this.props.resetValue? '' : this.getLabel(item)
         });
 
         this.collapse();
         this.props.onSelect(event, item);
+    }
+
+    handleKeyPress = event => {
+        if (!this.props.onCreate){
+            return;
+        }
+
+        if (event.key === 'Enter'){
+            this.props.onCreate(event.target.value);
+            if (this.props.resetValue){
+                this.setState({value : ''});
+                this.collapse();
+            }
+        }
     }
 
     handleChange = event => {
@@ -118,7 +133,23 @@ export class SearchBar extends React.Component {
         return this.getLabel(item);
     }
 
+    updateCollection(){
+
+        if (this.state.length !== this.props.collection.length){
+            this.setState({
+                collection  : utils.indexCollection(this.props.collection),
+                length      : this.props.collection.length,
+                slugs       : this.createSlugs(this.props.collection),
+            });
+            return true;
+        }
+
+        return null;
+    }
+
     filterCollection(value) {
+
+        this.updateCollection();
 
         let matches = [];
         let c = this.state.slugs;
@@ -231,10 +262,11 @@ export class SearchBar extends React.Component {
                     </InputGroup.Addon>
                     <FormControl 
                         autoComplete="off"
-                        placeholder={ trans.get('COMMON.SEARCH') }
+                        placeholder={ this.state.placeholder }
                         value={ this.state.value } 
                         onChange={ this.handleChange }
                         onKeyUp={ this.handleKeyUp }
+                        onKeyPress={ this.handleKeyPress }
                         onFocus={ this.handleFocus }
                     />
                 </InputGroup>

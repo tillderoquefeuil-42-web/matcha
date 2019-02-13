@@ -42,6 +42,12 @@ export default {
         return this.post('/translations', {language : language});
     },
 
+    // TAGS
+
+    getTags             : function(){
+        return this.post('/user/tags');
+    },
+
 
     // USER MANAGEMENT
 
@@ -112,13 +118,6 @@ export default {
 
     deleteAccount       : function(){
         return this.post('/user/deleteAccount');
-    },
-
-    saveUserPicture     : function(file){
-        var formData = new FormData();
-        formData.append("profile_picture", file);
-
-        return this.post('/user/savePicture', formData, {'Content-Type': 'multipart/form-data'});
     }
 
 }

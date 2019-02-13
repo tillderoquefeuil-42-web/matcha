@@ -153,7 +153,7 @@ let ConversationRepository = {
             let query = `
                 MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User)
                 WHERE ID(c)=${ convId } AND ID(u)=${ userId }
-                SET ma.unread = TRUE
+                SET mb.unread = TRUE
                 RETURN c, p, u, ma, mb
             `;
 

@@ -790,6 +790,20 @@ exports.deleteAccount = function(req, res){
     });
 };
 
+exports.getTags = function(req, res){
+    TagRepo.getAll()
+    .then(results => {
+        res.status(200).json({
+            text    : "SUCCESS",
+            tags    : results
+        });
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json({
+            text    : "INTERNAL_ERROR"
+        });
+    });
+};
 
 exports.updateProfilePicture = function(user, upload) {
 

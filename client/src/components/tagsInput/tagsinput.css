@@ -1,19 +1,14 @@
-.tags-input {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.tags-input > .tags {
-    flex: 1;
-}
-
 .tags-input > .tags > span {
     margin: 2px;
 }
 
 .tags-input > .input {
     min-width: 100px;
+    height: 35px;
+}
+
+.tags-input > .input > .center {
+    font-size: 2px;
 }
 
 .badge {
