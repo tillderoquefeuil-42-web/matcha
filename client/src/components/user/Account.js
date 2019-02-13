@@ -5,6 +5,7 @@ import { Profile } from './Profile.js';
 import { Connection } from './Connection.js';
 import { Delete } from './Delete.js';
 import { Picture } from './Picture.js';
+import { Location } from './Location.js';
 
 import API from '../../utils/API';
 import utils from '../../utils/utils.js';
@@ -54,6 +55,10 @@ export class Account extends React.Component {
 
                 <div className="col-md-6">
                     <Profile />
+                </div>
+
+                <div className="col-md-6">
+                    <Location />
                 </div>
 
                 <div className="col-md-6">

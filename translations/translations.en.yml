@@ -9,6 +9,7 @@ COMMON:
     REDIRECTION: You'll be redirect in a few seconds!
     INFO: Informations
     HELLO: Hello
+    LOADING: Loading
     SEARCH: Search
     YOU: You
 BUTTON:
@@ -108,6 +109,7 @@ USER:
     SUGGESTIONS: Suggestions
     BIO_PLACEHOLDER: Describe yourself in a few words (max. 250 characters)
     CONNECTION: Connection
+    LOCATION: Location
     DELETE_ACCOUNT: Delete account
     FIELDS:
         DELETE_ACCOUNT: By clicking here, you will remove your account, and all data linked to it.

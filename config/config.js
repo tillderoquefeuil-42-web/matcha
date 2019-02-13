@@ -36,6 +36,7 @@ module.exports = {
     GOOGLE      : {
         CLIENT_ID       : "945967528346-7t5a7i5ainhv0v7gudd9oc6bl48safsi.apps.googleusercontent.com",
         CLIENT_SECRET   : "UQkvHxkdENvkJOVbbptXYCw1",
+        API_KEY         : "AIzaSyD6IzbyQKeIcbJTgMffqFOiYqyUY1WWduA",
         CALLBACK        : "auth/google/callback"
     }
 

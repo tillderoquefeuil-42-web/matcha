@@ -5,6 +5,10 @@
     width: 80vw;
 }
 
+#location {
+    padding: 20px;
+}
+
 #informations textarea {
     resize: vertical;
 }
