@@ -33,3 +33,16 @@
 #user-profile-language > .dropdown.btn-group > #btn-language {
     width: 50%;
 }
+
+#user-profile-orientation > .orientation-checkboxes {
+    display: flex;
+    flex-direction: column;
+}
+
+#user-profile-orientation > .orientation-checkboxes > label {
+    font-weight: inherit;
+}
+
+#user-profile-orientation > .orientation-checkboxes > label > input {
+    margin-right: 5px;
+}

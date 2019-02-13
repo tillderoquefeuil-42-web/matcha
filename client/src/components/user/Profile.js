@@ -31,8 +31,12 @@ export class Profile extends React.Component {
     handleChange = event => {
 
         let user = this.state.user;
-        user[event.target.id] = event.target.value;
-        
+        let target = event.target;
+
+        let value = (target.type === 'checkbox')? target.checked : target.value;
+        let name = target.id;
+
+        user[name] = value;
         this.setState({user:user});
     }
 
@@ -165,19 +169,43 @@ export class Profile extends React.Component {
                         <option value=""></option>
                         <option value="female">{ trans.get('USER.FIELDS.FEMALE') }</option>
                         <option value="male">{ trans.get('USER.FIELDS.MALE') }</option>
-                        <option value="other">{ trans.get('USER.FIELDS.OTHER') }</option>
+                        <option value="nb">{ trans.get('USER.FIELDS.NB') }</option>
                     </FormControl>
                 </FormGroup>
 
-                <FormGroup controlId="orientation">
+                <FormGroup controlId="orientation" id="user-profile-orientation">
                     <ControlLabel>{ trans.get('USER.FIELDS.ORIENTATION') }</ControlLabel>
-                    <FormControl componentClass="select" value={this.state.user.orientation} onChange={this.handleChange}>
-                        <option value=""></option>
-                        <option value="female">{ trans.get('USER.FIELDS.FEMALE') }</option>
-                        <option value="male">{ trans.get('USER.FIELDS.MALE') }</option>
-                        <option value="other">{ trans.get('USER.FIELDS.OTHER') }</option>
-                        <option value="both">{ trans.get('USER.FIELDS.BOTH') }</option>
-                    </FormControl>
+                    <div className="orientation-checkboxes">
+                        <label>
+                            <input
+                                id="see_f"
+                                type="checkbox"
+                                onChange={ this.handleChange }
+                                defaultChecked={ this.state.user.see_f }
+                            />
+                            { trans.get('USER.FIELDS.FEMALE') }
+                        </label>
+
+                        <label>
+                            <input
+                                id="see_m"
+                                type="checkbox"
+                                onChange={ this.handleChange }
+                                defaultChecked={ this.state.user.see_m }
+                            />
+                            { trans.get('USER.FIELDS.MALE') }
+                        </label>
+
+                        <label>
+                            <input
+                                id="see_nb"
+                                type="checkbox"
+                                onChange={ this.handleChange }
+                                defaultChecked={ this.state.user.see_nb }
+                            />
+                            { trans.get('USER.FIELDS.NB') }
+                        </label>
+                    </div>
                 </FormGroup>
 
                 <FormGroup controlId="birthday" bsSize="large">

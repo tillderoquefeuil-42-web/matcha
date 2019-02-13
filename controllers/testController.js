@@ -27,8 +27,7 @@ const lastNames = [
     'Dupont', 'Martin', 'Laval', 'Pale', 'Duchemin'
 ];
 
-const genders = ['male', 'female', 'other'];
-const orientations = ['male', 'female', 'other'];
+const genders = ['male', 'female', 'nb'];
 
 function reindexArray(array){
     let a = [];
@@ -94,6 +93,10 @@ module.exports = function (app) {
 
             let age = config.params.MIN_AGED_USERS + random % 10;
 
+            let orientations = [1];
+            orientation.push(Math.round((Math.random())));
+            orientation.push(Math.round((Math.random())));
+
             let user = {
                 firstname   : firstname,
                 lastname    : lastname,
@@ -103,7 +106,9 @@ module.exports = function (app) {
                 language    : 'en',
                 gender      : genders[j],
                 birthday    : parseInt(moment().subtract(age, 'years').format('x')),
-                orientation : orientations[random % 3]
+                see_f       : orientations[random % 3],
+                see_m       : orientations[(random+1) % 3],
+                see_nb      : orientations[(random+2) % 3],
             };
 
             account.createTestAccount(user)

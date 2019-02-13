@@ -8,7 +8,7 @@ exports.createTestAccount = function(data) {
 
     const required = [
         'firstname', 'lastname', 'username', 'email', 'password', 
-        'gender', 'birthday', 'orientation', 'language'
+        'gender', 'birthday', 'see_f', 'see_m', 'see_nb', 'language'
     ];
 
     for (var i in required) {
@@ -25,7 +25,9 @@ exports.createTestAccount = function(data) {
         language    : data.language,
         gender      : data.gender,
         birthday    : data.birthday,
-        orientation : data.orientation,
+        see_f       : data.see_f,
+        see_m       : data.see_m,
+        see_nb      : data.see_nb,
         password    : passwordHash.generate(data.password),
         valide      : true,
         providers   : ['local', 'test']

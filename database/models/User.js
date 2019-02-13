@@ -7,10 +7,10 @@ const config = require('../../config/config');
 const Files = require('../../controllers/utils/files.js');
 
 const fields = [
-    'email', 'username', 'firstname', 'lastname', 
-    'valid', 'locked', 'connection_try', 
-    'providers', 'googleId', 
-    'birthday', 'gender', 'orientation', 
+    'email', 'username', 'firstname', 'lastname',
+    'valid', 'locked', 'connection_try',
+    'providers', 'googleId', 'birthday',
+    'gender', 'see_m', 'see_f', 'see_nb',
     'bio', 'profile_picture', 'language'
 ];
 

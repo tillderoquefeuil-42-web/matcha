@@ -123,15 +123,16 @@ USER:
         EMAIL: Email
         USERNAME: Username
         PROFILE_PIC: Profile picture
+        INTERESTS: Interest
+        ADD_TAG: Add a tag
         BIO: Bio
         BIRTHDAY: Birthday
         LANGUAGE: Language
-        GENDER: Gender
-        ORIENTATION: Orientation
+        GENDER: You describe yourself as
+        ORIENTATION: You want to see
         MALE: Male
         FEMALE: Female
-        BOTH: Both
-        OTHER: Other
+        NB: Non-binary
 CHAT:
     WRITE: Write a message,
     FILE:

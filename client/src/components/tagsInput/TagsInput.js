@@ -98,7 +98,7 @@ export class TagsInput extends React.Component {
             return (
                 <SearchBar
                     collection={ this.state.collection }
-                    placeholder={ trans.get('ADD.A.TAG') }
+                    placeholder={ trans.get('USER.FIELDS.ADD_TAG') }
                     onSelect={ (event, item) => this.handleSelect(event, item) }
                     onCreate={ (value) => this.addOneTag(value) }
                     resetValue

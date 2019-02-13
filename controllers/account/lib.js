@@ -523,7 +523,7 @@ exports.saveUser = function(req, res) {
     let error = false
 
     // CHECK EMPTY PARAMETERS
-    const notNullable = ['firstname', 'lastname', 'username', 'gender', 'birthday', 'orientation', 'language'];
+    const notNullable = ['firstname', 'lastname', 'username', 'gender', 'birthday', 'language'];
     for (var i in notNullable) {
         if (!_user[notNullable[i]]) {
             error = true
@@ -533,19 +533,18 @@ exports.saveUser = function(req, res) {
 
     // CHECK LANGUAGE
     const languages = ['en', 'fr'];
-    if (languages.indexOf(_user.language) === -1) {
+    if (languages.indexOf(_user.language) === -1){
         error = true
     }
 
     // CHECK GENDER
-    const genders = ['male', 'female', 'other'];
-    if (genders.indexOf(_user.gender) === -1) {
+    const genders = ['male', 'female', 'nb'];
+    if (genders.indexOf(_user.gender) === -1){
         error = true
     }
 
     // CHECK ORIENTATION
-    const orientations = ['male', 'female', 'both', 'other'];
-    if (orientations.indexOf(_user.orientation) === -1) {
+    if (!_user.see_f && !_user.see_m && !_user.see_nb){
         error = true
     }
 
@@ -592,7 +591,7 @@ exports.saveUser = function(req, res) {
             }
 
             // TO UPDATE
-            const fields = ['bio', 'firstname', 'lastname', 'username', 'gender', 'birthday', 'orientation', 'language'];
+            const fields = ['bio', 'firstname', 'lastname', 'username', 'gender', 'birthday', 'language', 'see_f', 'see_m', 'see_nb'];
             const unwanted = ['profile_pic', 'profile_picture', 'tags'];
             for (var i in fields) {
                 user[fields[i]] = _user[fields[i]];
