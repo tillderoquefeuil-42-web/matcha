@@ -43,14 +43,16 @@ class Message {
         }
 
         if (params.files){
-            this.files = {};
+            let files = {};
 
             for (let i in params.files){
                 let file = params.files[i].properties;
                 transform(file);
                 file.url = Files.getFilePath() + file.filename;
-                this.files[file.id] = file;
+                files[file.id] = file;
             }
+
+            this.files = Object.values(files);
         }
 
     }
