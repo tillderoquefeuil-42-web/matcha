@@ -27,10 +27,15 @@ export class TagsInput extends React.Component {
 
         API.getTags()
         .then(function(response){
-            _this.setState({collection : response.data.tags});
+            let tags = response.data.tags;
+            _this.setState({collection : tags});
         }, function(error){
             console.log(error);
         });
+    }
+
+    sortTags(a, b){
+        return (a.label <= b.label? -1 : 1);
     }
 
     handleChange = event => {
@@ -71,8 +76,8 @@ export class TagsInput extends React.Component {
     }
 
     getValue() {
-
         let tags = this.props.tags || [];
+        tags.sort();
 
         let value = [];
         for (let i in tags){
@@ -101,6 +106,7 @@ export class TagsInput extends React.Component {
                     placeholder={ trans.get('USER.FIELDS.ADD_TAG') }
                     onSelect={ (event, item) => this.handleSelect(event, item) }
                     onCreate={ (value) => this.addOneTag(value) }
+                    sort={ (a, b) => this.sortTags(a, b) }
                     resetValue
                 />
             );

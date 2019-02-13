@@ -213,6 +213,13 @@ export class SearchBar extends React.Component {
         let value = this.state.value;
         let matches = this.filterCollection(value);
 
+        if (this.props.sort){
+            let _this = this;
+            matches.sort(function(a, b){
+                return _this.props.sort(a, b);
+            });
+        }
+
         this.setState({
             matches : matches
         });
