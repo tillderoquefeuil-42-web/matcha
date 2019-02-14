@@ -5,7 +5,7 @@ import { Profile } from './Profile.js';
 import { Connection } from './Connection.js';
 import { Delete } from './Delete.js';
 import { Picture } from './Picture.js';
-import { Location } from './Location.js';
+import { UserLocation } from './UserLocation.js';
 
 import API from '../../utils/API';
 import utils from '../../utils/utils.js';
@@ -58,20 +58,23 @@ export class Account extends React.Component {
                 </div>
 
                 <div className="col-md-6">
-                    <Location />
-                </div>
-
-                <div className="col-md-6">
-                    <Connection />
+                    <UserLocation />
                 </div>
 
                 <div className="col-md-6">
                     <Picture _g={ this.props._g } />
                 </div>
 
+                <div className="clearfix" />
+
+                <div className="col-md-6">
+                    <Connection />
+                </div>
+
                 <div className="col-md-6">
                     <Delete />
                 </div>
+
             </div>
         );
     }

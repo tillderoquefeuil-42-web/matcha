@@ -9,6 +9,10 @@
     padding: 20px;
 }
 
+#location .save-user-location{
+    margin-top: 20px;
+}
+
 #informations textarea {
     resize: vertical;
 }

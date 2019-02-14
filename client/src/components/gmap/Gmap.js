@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {Gmaps, Marker} from 'react-gmaps';
+import { Map } from './Map';
 
-import Location from '../../utils/location';
-import trans from '../../translations/translate';
+// import Location from '../../utils/location';
+// import trans from '../../translations/translate';
 
 import './gmap.css';
 
@@ -20,54 +20,127 @@ export class Gmap extends React.Component {
         this.state = {
             width   : props.width || 500,
             height  : props.height || 500,
-            zoom    : props.zoom || 10
+            zoom    : props.zoom || 10,
+            map     : null,
+            markers : {}
         }
 
-        this.onDragEnd.bind(this);
-
-        window.gLocation = Location;
+        // this.onDragEnd.bind(this);
     }
 
+    onMapLoaded(map) {
+        this.setState({map : map});
 
-    onMapCreated(map) {
-        map.setOptions({
-            disableDefaultUI: true
+        if (this.props.onLoaded){
+            this.props.onLoaded();
+        }
+    }
+
+    initOptions() {
+        return ({
+            zoom                : this.state.zoom,
+            center              : coords,
+            panControl          : false,
+            mapTypeControl      : false,
+            streetViewControl   : false,
         });
     }
 
-    onDragEnd = (e) => {
-        // console.log('onDragEnd', e);
-        let geocodes = e.latLng;
-        let _this = this;
+    addMarker(params){
+        let map = this.state.map;
 
-        Location.getAddressFromGeocode(geocodes.lat(), geocodes.lng())
-        .then(response => {
-            if (response && response.status === 'OK' && response.results.length > 0){
-                let location = Location.parseAddress(response.results[0]);
-                _this.props.onSelect(location);
+        if (!params.lat || !params.lng){
+            return null;
+        }
+
+        let marker = new window.google.maps.Marker({
+            map         : map,
+            position    : {lat: params.lat, lng: params.lng},
+            draggable   : params.draggable || false
+        });
+
+        if (params.draggable && params.onDragEnd){
+            marker.addListener('dragend', e => {
+                params.onDragEnd(e);
+            });
+        }
+
+        marker._id = 'marker_' + (new Date()).getTime();
+
+        let markers = this.state.markers;
+        markers[marker._id] = marker;
+
+        this.setState({markers : markers});
+        
+        if (params.focus){
+            this.focusOnLocation(params);
+        }
+
+        return marker;
+    }
+
+    // onDragEnd = (e) => {
+    //     let geocodes = e.latLng;
+    //     let _this = this;
+
+    //     Location.getAddressFromGeocode(geocodes.lat(), geocodes.lng())
+    //     .then(response => {
+    //         if (response && response.status === 'OK' && response.results.length > 0){
+    //             let location = Location.parseAddress(response.results[0]);
+    //             _this.props.onSelect(location);
+    //         }
+    //     });
+    // }
+
+    // onPlaceChanged() {
+    //     let autocomplete = this.state.autocomplete;
+
+    //     let place = autocomplete.getPlace();
+
+    //     if (place.geometry){
+    //         let location = Location.parseAddress(place);
+    //         this.focusOnLocation(location);
+    //         console.log(location);
+    //     }
+
+    // }
+
+    focusOnLocation(location){
+        let map = this.state.map;
+
+        let coords;
+        if (location.getGeometry){
+            coords = location.getGeometry();
+        } else if (location.lat && location.lng){
+            coords = {
+                lat : location.lat,
+                lng : location.lng
             }
-        });
+        } else {
+            return;
+        }
+
+        map.panTo(coords);
+        map.setZoom(15);
     }
 
     render() {
         return (
-            <Gmaps
-                lat={ coords.lat }
-                lng={ coords.lng }
-                params={ Location.getParams() }
-                zoom={ this.state.zoom }
-                width={ this.state.width }
-                height={ this.state.height }
-                loadingMessage={ trans.get('COMMON.LOADING') }
-                onMapCreated={ this.onMapCreated }
-            >
-                <Marker
-                    lat={ coords.lat }
-                    lng={ coords.lng }
-                    draggable={ true }
-                    onDragEnd={ this.onDragEnd }
-                />
-            </Gmaps>
+
+            <div>
+                {/*<input id="gmap-address" placeholder="Enter a city" type="text" />*/}
+
+                <div className="center">
+                    <Map 
+                        id="gmap"
+                        width={ this.state.width }
+                        height={ this.state.height }
+                        options={ this.initOptions() }
+                        onMapLoad={ map => this.onMapLoaded(map) }
+                    />
+                </div>
+            </div>
+
         );
     }
 

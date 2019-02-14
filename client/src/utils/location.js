@@ -1,28 +1,32 @@
 import Geocode from "react-geocode";
+import axios from 'axios';
 
-const version = "3.exp";
 const APIkey = "AIzaSyD6IzbyQKeIcbJTgMffqFOiYqyUY1WWduA";
 
-Geocode.setApiKey(APIkey);
-Geocode.enableDebug();
+const headers = {
+    'Content-Type'                  : 'application/json',
+    'Access-Control-Allow-Origin'   : '*'
+}
 
 const components = ['street_number', 'route', 'locality', 'country', 'postal_code'];
 
+
+Geocode.setApiKey(APIkey);
+Geocode.enableDebug();
+console.warn('debug activated');
+
 export default {
 
-    getParams   : function(){
-        return {
-            v   : version,
-            key : APIkey
-        };
+    getAPIkey   : function(){
+        return APIkey;
     },
 
-    getGeocodeFromAddress   : function(address){
-        Geocode.fromAddress("Eiffel Tower")
-        .catch(err => {
-            console.log(err);
-        });
-    },
+    // getGeocodeFromAddress   : function(address){
+    //     Geocode.fromAddress(address)
+    //     .catch(err => {
+    //         console.log(err);
+    //     });
+    // },
 
     getAddressFromGeocode   : function(lat, lng){
         return Geocode.fromLatLng(lat, lng)
@@ -38,6 +42,13 @@ export default {
             lng     : data.geometry.location.lng,
         };
 
+        location.getGeometry = function(){
+            return ({
+                lat : this.lat,
+                lng : this.lng
+            });
+        };
+
         for (let i in data.address_components){
             let info = data.address_components[i];
 
@@ -50,6 +61,11 @@ export default {
         }
 
         return location;
+    },
+
+    geolocate       : function(address, sessionToken){
+        let url = `https://www.googleapis.com/geolocation/v1/geolocate?key=${APIkey}`;
+        return axios.post(url, {}, {headers: headers});
     }
 
 }
