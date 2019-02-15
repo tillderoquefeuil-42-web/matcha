@@ -9,8 +9,17 @@
     padding: 20px;
 }
 
-#location .save-user-location{
+#location .save-user-location {
     margin-top: 20px;
+}
+
+#location .disclaimer {
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+#location .disclaimer > i {
+    display: block;
 }
 
 #informations textarea {

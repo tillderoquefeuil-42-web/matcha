@@ -18,8 +18,9 @@ export class UserLocation extends React.Component {
         let location = user.location || {label:''};
 
         this.state = {
-            location : location,
-            address  : location.label
+            location    : location,
+            address     : location.label,
+            disclaimer  : false
         }
 
         window._location = Location;
@@ -46,6 +47,8 @@ export class UserLocation extends React.Component {
           navigator.geolocation.getCurrentPosition(function(position) {
               _this.addMarker(position.coords.latitude, position.coords.longitude);
           }, function() {
+              _this.setState({disclaimer:true});
+              _this.new_disclaimer = true;
               Location.geolocate()
               .then(response => {
                   if (response.data && response.data.location){
@@ -90,7 +93,24 @@ export class UserLocation extends React.Component {
         });
     }
 
+    disclaimer() {
+
+        if (this.state.disclaimer){
+            return (
+                <i className="text-danger">{ trans.get('USER.DISCLAIMER.ADDRESS_ESTIMATION') }</i>
+            );
+        }
+
+        return null;
+    }
+
     updateLocation(location){
+        if (this.new_disclaimer){
+            this.new_disclaimer = false;
+        } else if (this.state.disclaimer) {
+            this.setState({disclaimer:false});
+        }
+
         console.log(location);
         this.setState({location:location});
     }
@@ -127,6 +147,11 @@ export class UserLocation extends React.Component {
                     height={ 400 }
                     onLoaded={ () => this.onMapLoaded() }
                 />
+
+                <div className="disclaimer">
+                    <i>{ trans.get('USER.DISCLAIMER.PRIVATE_LOCATION') }</i>
+                    { this.disclaimer() }
+                </div>
 
                 <Button
                     onClick={ () => this.saveLocation() }
