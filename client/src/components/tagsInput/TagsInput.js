@@ -17,7 +17,8 @@ export class TagsInput extends React.Component {
 
         this.state = {
             current     : '',
-            collection  : null
+            collection  : null,
+            selected    : props.tags || []
         };
 
     }
@@ -34,14 +35,17 @@ export class TagsInput extends React.Component {
         });
     }
 
-    sortTags(a, b){
-        return (a.label <= b.label? -1 : 1);
+    updateSelection(tags) {
+        this.setState({selected:tags});
+
+        let collection = this.filterCollection(tags);
+        this.searchbar.updateCollection(collection)
+
+        this.props.onChange(tags);
     }
 
-    handleChange = event => {
-        this.setState({
-            current : event.target.value
-        });
+    sortTags(a, b){
+        return (a.label <= b.label? -1 : 1);
     }
 
     handleSelect = (event, item) => {
@@ -51,11 +55,11 @@ export class TagsInput extends React.Component {
     addOneTag(tag){
 
         tag = utils.slugify(tag, ' ');
-        let tags = this.props.tags || [];
+        let tags = this.state.selected || [];
 
         if (tag && tags.indexOf(tag) === -1){
             tags.push(tag);
-            this.props.onChange(tags);
+            this.updateSelection(tags);
         }
 
         this.setState({current:''});
@@ -67,16 +71,16 @@ export class TagsInput extends React.Component {
 
     deleteOneTag(i){
 
-        let tags = this.props.tags || [];
+        let tags = this.state.selected || [];
 
         if (tags[i]){
             tags.splice(i, 1);
-            this.props.onChange(tags);
+            this.updateSelection(tags);
         }
     }
 
     getValue() {
-        let tags = this.props.tags || [];
+        let tags = this.state.selected || [];
         tags.sort();
 
         let value = [];
@@ -97,12 +101,32 @@ export class TagsInput extends React.Component {
         );
     }
 
+    filterCollection(tags) {
+
+        let filtred = [];
+        let c = this.state.collection || [];
+
+        for (let i in c){
+            let label = c[i].label;
+
+            if (tags.indexOf(label) === -1){
+                filtred.push(c[i]);
+            }
+        }
+
+        return filtred;
+    }
+
     buildSearchBar() {
 
         if (this.state.collection){
+            let tags = this.state.selected || [];
+            let collection = this.filterCollection(tags);
+
             return (
                 <SearchBar
-                    collection={ this.state.collection }
+                    ref={ el => this.searchbar = el }
+                    collection={ collection }
                     placeholder={ trans.get('USER.FIELDS.ADD_TAG') }
                     onSelect={ (event, item) => this.handleSelect(event, item) }
                     onCreate={ (value) => this.addOneTag(value) }

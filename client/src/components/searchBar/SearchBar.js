@@ -16,7 +16,6 @@ export class SearchBar extends React.Component {
         this.state = {
             value       : '',
             collection  : utils.indexCollection(props.collection),
-            length      : props.collection.length,
             slugs       : this.createSlugs(props.collection),
             showlist    : false,
             matches     : [],
@@ -83,6 +82,7 @@ export class SearchBar extends React.Component {
         if (event.key === 'Enter'){
             this.props.onCreate(event.target.value);
             if (this.props.resetValue){
+                this.preventKeyUpEvent = true;
                 this.setState({value : ''});
                 this.collapse();
             }
@@ -97,6 +97,16 @@ export class SearchBar extends React.Component {
 
     handleKeyUp = event => {
         let _this = this;
+
+        if (this.preventKeyUpEvent){
+            this.preventKeyUpEvent = null;
+            return;
+        }
+
+        if (event.key === 'Escape'){
+            this.collapse();
+            return;
+        }
 
         if (!this.timer){
             this.timer = 0;
@@ -133,23 +143,14 @@ export class SearchBar extends React.Component {
         return this.getLabel(item);
     }
 
-    updateCollection(){
-
-        if (this.state.length !== this.props.collection.length){
-            this.setState({
-                collection  : utils.indexCollection(this.props.collection),
-                length      : this.props.collection.length,
-                slugs       : this.createSlugs(this.props.collection),
-            });
-            return true;
-        }
-
-        return null;
+    updateCollection(collection){
+        this.setState({
+            collection  : utils.indexCollection(collection),
+            slugs       : this.createSlugs(collection),
+        });
     }
 
     filterCollection(value) {
-
-        this.updateCollection();
 
         let matches = [];
         let c = this.state.slugs;
@@ -233,14 +234,18 @@ export class SearchBar extends React.Component {
     }
 
     expand = event => {
-        document.removeEventListener('mousedown', this.handleMouseDown);
-        document.addEventListener('mousedown', this.handleMouseDown);
-        this.setState({showlist:true});
+        if (!this.state.showlist){
+            document.removeEventListener('mousedown', this.handleMouseDown);
+            document.addEventListener('mousedown', this.handleMouseDown);
+            this.setState({showlist:true});
+        }
     }
     
     collapse = event => {
-        document.removeEventListener('mousedown', this.handleMouseDown);
-        this.setState({showlist:false});
+        if (this.state.showlist){
+            document.removeEventListener('mousedown', this.handleMouseDown);
+            this.setState({showlist:false});
+        }
     }
 
     upTo(element, oneClass) {
