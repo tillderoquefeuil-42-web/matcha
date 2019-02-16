@@ -1,7 +1,8 @@
 import React from 'react';
-import { FormGroup, FormControl } from "react-bootstrap";
 
-import Location from '../../utils/location';
+import { Places } from './Places';
+
+// import Location from '../../utils/location';
 // import trans from '../../translations/translate';
 
 import './gmap.css';
@@ -12,46 +13,35 @@ export class Gplaces extends React.Component {
         super(props);
 
         this.state = {
-            address : ''
+            places  : null
         };
     }
 
-    componentDidMount(){
-        let _this = this;
+    onPlacesLoaded(places) {
+        this.setState({places : places});
 
-        let autocomplete = new window.google.maps.places.Autocomplete(
-            document.getElementById('gplaces-input'), {types: ['geocode']}
-        );
+        if (this.props.onLoaded){
+            this.props.onLoaded();
+        }
+    }
 
-        autocomplete.setFields('address_components');
-        autocomplete.addListener('place_changed', function(){
-            let place = autocomplete.getPlace();
-            let location = Location.parseAddress(place);
-            _this.props.onSelect(location);
+    initOptions() {
+        return ({
+            types   : ['geocode']
         });
     }
 
-    // handleChange = event => {
-    //     this.updateAddress(event.target.value);
-    // }
-
-    updateAddress(address) {
-        this.setState({
-            address : address
-        });
-    }
-
-                        // onChange={this.handleChange}
     render() {
         return (
+
             <div>
-                <FormGroup bsSize="large">
-                    <FormControl 
-                        id="gplaces-input"
-                        type="text"
-                        value={this.state.address}
+                <div className="center">
+                    <Places
+                        id="gmap-places"
+                        options={ this.initOptions() }
+                        onPlacesLoad={ places => this.onPlacesLoaded(places) }
                     />
-                </FormGroup>
+                </div>
             </div>
         );
     }

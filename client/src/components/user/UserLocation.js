@@ -3,7 +3,6 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 
 import { Gmap } from '../gmap/Gmap';
-// import { Gplaces } from '../gmap/Gplaces';
 
 import utils from '../../utils/utils';
 import Location from '../../utils/location';

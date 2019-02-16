@@ -18,18 +18,22 @@ export class Gmap extends React.Component {
         super(props);
 
         this.state = {
-            width   : props.width || 500,
-            height  : props.height || 500,
-            zoom    : props.zoom || 10,
-            map     : null,
-            markers : {}
+            width       : props.width || 500,
+            height      : props.height || 500,
+            zoom        : props.zoom || 10,
+            map         : null,
+            autocomplete: null,
+            markers     : {}
         }
 
         // this.onDragEnd.bind(this);
     }
 
-    onMapLoaded(map) {
-        this.setState({map : map});
+    onLoaded(data) {
+        this.setState({
+            map         : data.map,
+            autocomplete: data.autocomplete
+        });
 
         if (this.props.onLoaded){
             this.props.onLoaded();
@@ -43,6 +47,7 @@ export class Gmap extends React.Component {
             panControl          : false,
             mapTypeControl      : false,
             streetViewControl   : false,
+            types               : ['geocode']
         });
     }
 
@@ -128,15 +133,14 @@ export class Gmap extends React.Component {
         return (
 
             <div>
-                {/*<input id="gmap-address" placeholder="Enter a city" type="text" />*/}
-
                 <div className="center">
                     <Map 
-                        id="gmap"
+                        map="gmap-maps"
+                        autocomplete="gmap-autocomplete"
                         width={ this.state.width }
                         height={ this.state.height }
                         options={ this.initOptions() }
-                        onMapLoad={ map => this.onMapLoaded(map) }
+                        onLoad={ data => this.onLoaded(data) }
                     />
                 </div>
             </div>

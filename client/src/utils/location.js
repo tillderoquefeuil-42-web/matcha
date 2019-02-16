@@ -10,6 +10,7 @@ const headers = {
 
 const components = ['street_number', 'route', 'locality', 'country', 'postal_code'];
 
+let scriptLoading = {};
 
 Geocode.setApiKey(APIkey);
 Geocode.enableDebug();
@@ -20,13 +21,6 @@ export default {
     getAPIkey   : function(){
         return APIkey;
     },
-
-    // getGeocodeFromAddress   : function(address){
-    //     Geocode.fromAddress(address)
-    //     .catch(err => {
-    //         console.log(err);
-    //     });
-    // },
 
     getAddressFromGeocode   : function(lat, lng){
         return Geocode.fromLatLng(lat, lng)
@@ -66,6 +60,55 @@ export default {
     geolocate       : function(address, sessionToken){
         let url = `https://www.googleapis.com/geolocation/v1/geolocate?key=${APIkey}`;
         return axios.post(url, {}, {headers: headers});
+    },
+
+    loadGoogleMapsAPI   : function(callback){
+        let name = 'google_maps';
+
+        if (scriptLoading[name]){
+            return;
+        } else {
+            scriptLoading[name] = true;
+        }
+
+        console.log('load GMAP API')
+        let s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.src = `https://maps.google.com/maps/api/js?key=${ this.getAPIkey() }`;
+
+        let x = document.getElementsByTagName('script')[0];
+        x.parentNode.insertBefore(s, x);
+
+        s.addEventListener('load', e => {
+            if (typeof callback === 'function'){
+                callback(e);
+            }
+        });
+    },
+
+    loadGooglePlacesAPI : function(callback){
+        let name = 'google_places';
+
+        if (scriptLoading[name]){
+            return;
+        } else {
+            scriptLoading[name] = true;
+        }
+
+        console.log('load GPLACE API')
+        
+        let s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.src = `https://maps.google.com/maps/api/js?key=${ this.getAPIkey() }&libraries=places`;
+
+        let x = document.getElementsByTagName('script')[0];
+        x.parentNode.insertBefore(s, x);
+
+        s.addEventListener('load', e => {
+            if (typeof callback === 'function'){
+                callback(e);
+            }
+        });
     }
 
 }
