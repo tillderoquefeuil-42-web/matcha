@@ -42,16 +42,32 @@ export class Gmap extends React.Component {
 
     initOptions() {
         return ({
-            zoom                : this.state.zoom,
-            center              : coords,
-            panControl          : false,
-            mapTypeControl      : false,
-            streetViewControl   : false,
-            types               : ['geocode']
+            map     : {
+                zoom                : this.state.zoom,
+                center              : coords,
+                panControl          : false,
+                mapTypeControl      : false,
+                streetViewControl   : false
+            },
+            places  : {
+                types               : ['geocode']
+            }
         });
     }
 
-    addMarker(params){
+    removeMarkers() {
+        let markers = this.state.markers;
+
+        for (let i in markers){
+            this.removeMarker(markers[i]);
+        }
+    }
+
+    removeMarker(marker) {
+        marker.setMap(null);
+    }
+
+    addMarker(params) {
         let map = this.state.map;
 
         if (!params.lat || !params.lng){
@@ -84,31 +100,6 @@ export class Gmap extends React.Component {
         return marker;
     }
 
-    // onDragEnd = (e) => {
-    //     let geocodes = e.latLng;
-    //     let _this = this;
-
-    //     Location.getAddressFromGeocode(geocodes.lat(), geocodes.lng())
-    //     .then(response => {
-    //         if (response && response.status === 'OK' && response.results.length > 0){
-    //             let location = Location.parseAddress(response.results[0]);
-    //             _this.props.onSelect(location);
-    //         }
-    //     });
-    // }
-
-    // onPlaceChanged() {
-    //     let autocomplete = this.state.autocomplete;
-
-    //     let place = autocomplete.getPlace();
-
-    //     if (place.geometry){
-    //         let location = Location.parseAddress(place);
-    //         this.focusOnLocation(location);
-    //         console.log(location);
-    //     }
-
-    // }
 
     focusOnLocation(location){
         let map = this.state.map;
@@ -129,12 +120,17 @@ export class Gmap extends React.Component {
         map.setZoom(15);
     }
 
+    forceAutocomplete(address){
+        this.gmap.forceAutocomplete(address);
+    }
+
     render() {
         return (
 
             <div>
                 <div className="center">
                     <Map 
+                        ref={ el => this.gmap = el }
                         map="gmap-maps"
                         autocomplete="gmap-autocomplete"
                         width={ this.state.width }

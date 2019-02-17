@@ -10,8 +10,6 @@ const headers = {
 
 const components = ['street_number', 'route', 'locality', 'country', 'postal_code'];
 
-let scriptLoading = {};
-
 Geocode.setApiKey(APIkey);
 Geocode.enableDebug();
 console.warn('debug activated');
@@ -30,10 +28,18 @@ export default {
     },
 
     parseAddress    : function(data){
+
+        if (!data.geometry){
+            return;
+        }
+
+        let coords = data.geometry.location;
+        let typeCoords = (typeof coords.lat === 'function')? true : false;
+
         let location = {
             label   : data.formatted_address,
-            lat     : data.geometry.location.lat,
-            lng     : data.geometry.location.lng,
+            lat     : typeCoords? coords.lat() : coords.lat,
+            lng     : typeCoords? coords.lng() : coords.lng,
         };
 
         location.getGeometry = function(){
@@ -63,15 +69,7 @@ export default {
     },
 
     loadGoogleMapsAPI   : function(callback){
-        let name = 'google_maps';
 
-        if (scriptLoading[name]){
-            return;
-        } else {
-            scriptLoading[name] = true;
-        }
-
-        console.log('load GMAP API')
         let s = document.createElement('script');
         s.type = 'text/javascript';
         s.src = `https://maps.google.com/maps/api/js?key=${ this.getAPIkey() }`;
@@ -87,16 +85,7 @@ export default {
     },
 
     loadGooglePlacesAPI : function(callback){
-        let name = 'google_places';
 
-        if (scriptLoading[name]){
-            return;
-        } else {
-            scriptLoading[name] = true;
-        }
-
-        console.log('load GPLACE API')
-        
         let s = document.createElement('script');
         s.type = 'text/javascript';
         s.src = `https://maps.google.com/maps/api/js?key=${ this.getAPIkey() }&libraries=places`;

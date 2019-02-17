@@ -30,18 +30,28 @@ export class Map extends React.Component {
         if (this.props.map){
             data.map = new window.google.maps.Map(
                 document.getElementById(this.props.map),
-                this.props.options
+                this.props.options.map
             );
         }
 
         if (this.props.autocomplete){
             data.autocomplete = new window.google.maps.places.Autocomplete(
                 document.getElementById(this.props.autocomplete),
-                this.props.options
+                this.props.options.places
             );
+            data.autocomplete.setFields(['address_components', 'formatted_address', 'geometry']);
         }
 
         this.props.onLoad(data);
+    }
+
+    forceAutocomplete(address) {
+
+        if (!this.props.autocomplete){
+            return;
+        }
+
+        this.places_input.value = address;
     }
 
     buildAutocomplete(){
@@ -51,8 +61,10 @@ export class Map extends React.Component {
 
         return (
             <input
-                id={ this.props.autocomplete }
                 type="text"
+                className="autocomplete-input form-control"
+                id={ this.props.autocomplete }
+                ref={ el => this.places_input = el }
             />
         );
     }

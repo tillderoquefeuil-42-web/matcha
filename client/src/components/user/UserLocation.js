@@ -14,105 +14,131 @@ export class UserLocation extends React.Component {
         super(props);
 
         let user = utils.getLocalUser();
-        let location = user.location || {label:''};
 
         this.state = {
-            location    : location,
-            address     : location.label,
-            disclaimer  : false
+            location    : user.location,
+            disclaimer  : 0
         }
 
-        window._location = Location;
-
-    }
-
-    getMapWidth() {
-        let width = window.innerWidth;
-
-        if (width > 991){
-            return (Math.round(width/3.15));
-        }
-
-        return (width - 250);
+        this.updateFromPlaces.bind(this);
+        this.updateFromMap.bind(this);
+        this.updateLocation.bind(this);
     }
 
     onMapLoaded() {
+        this.initAutocomplete();
+        this.initUserLocation();
+    }
+
+    initAutocomplete(){
+        let _this = this;
+        let autocomplete = this.gmap.state.autocomplete;
+
+        autocomplete.addListener('place_changed', function(){
+            _this.updateFromPlaces();
+        });
+    }
+
+    initUserLocation() {
+
+        if (this.state.location){
+            this.updateLocation(this.state.location);
+            return;
+        }
+
         this.userGeolocation();
     }
 
-    userGeolocation() {
+
+    // UPDATE
+
+    updateLocation(location){
+
+        let disclaimer = this.state.disclaimer > 0? this.state.disclaimer - 1 : 0;
+
+        this.setState({
+            location    : location,
+            disclaimer  : disclaimer
+        });
+
+        this.gmap.forceAutocomplete(location.label);
+        this.addMarker(location);
+    }
+
+    updateFromPlaces() {
+        let autocomplete = this.gmap.state.autocomplete;
+
+        let place = autocomplete.getPlace();
+        let location = Location.parseAddress(place);
+
+        this.updateLocation(location);
+    }
+
+    updateFromMap(lat, lng) {
         let _this = this;
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-              _this.addMarker(position.coords.latitude, position.coords.longitude);
-          }, function() {
-              _this.setState({disclaimer:true});
-              _this.new_disclaimer = true;
-              Location.geolocate()
-              .then(response => {
-                  if (response.data && response.data.location){
-                      _this.addMarker(response.data.location.lat, response.data.location.lng);
-                  }
-              }).catch(err => {
-                  console.warn('Error: The Geolocation service failed.');
-              });
-          });
-        } else {
-              console.warn('Error: Your browser doesn\'t support geolocation.');
-        }
-    }
 
-    addMarker(lat, lng) {
-        const params = {
-            draggable   : true,
-            focus       : true,
-            lat         : lat,
-            lng         : lng,
-            onDragEnd   : this.onDragEnd
-        };
-
-        this.gmap.addMarker(params);
-
-        this.getLocationFromGeocode(lat, lng);
-    }
-
-    onDragEnd = (e) => {
-        let geocodes = e.latLng;
-        this.getLocationFromGeocode(geocodes.lat(), geocodes.lng());
-    }
-
-    getLocationFromGeocode(lat, lng) {
-        let _this = this;
         Location.getAddressFromGeocode(lat, lng)
         .then(response => {
             if (response && response.status === 'OK' && response.results.length > 0){
                 let location = Location.parseAddress(response.results[0]);
+
                 _this.updateLocation(location);
             }
         });
     }
 
-    disclaimer() {
 
-        if (this.state.disclaimer){
-            return (
-                <i className="text-danger">{ trans.get('USER.DISCLAIMER.ADDRESS_ESTIMATION') }</i>
-            );
+    // GEOLOCATION
+
+    userGeolocation() {
+        let _this = this;
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+                _this.updateFromMap(position.coords.latitude, position.coords.longitude);
+          }, function(){
+              _this.geolocateBlocked();
+          });
+        } else {
+            this.geolocateBlocked();
         }
-
-        return null;
     }
 
-    updateLocation(location){
-        if (this.new_disclaimer){
-            this.new_disclaimer = false;
-        } else if (this.state.disclaimer) {
-            this.setState({disclaimer:false});
-        }
+    geolocateBlocked() {
+        let _this = this;
+        this.setState({disclaimer:2});
 
-        console.log(location);
-        this.setState({location:location});
+        Location.geolocate()
+        .then(response => {
+            if (response.data && response.data.location){
+                _this.updateFromMap(response.data.location.lat, response.data.location.lng);
+            }
+        }).catch(err => {
+            console.warn('Error: The Geolocation service failed.');
+        });
     }
+
+
+    // MAP ACTION
+
+    addMarker(location) {
+        const params = {
+            draggable   : true,
+            focus       : true,
+            lat         : location.lat,
+            lng         : location.lng,
+            onDragEnd   : (e) => {
+                let geocodes = e.latLng;
+                this.updateFromMap(geocodes.lat(), geocodes.lng());
+            }
+        };
+
+        this.gmap.removeMarkers();
+        this.gmap.addMarker(params);
+    }
+
+
+    // SAVER
 
     saveLocation() {
         let location = this.state.location;
@@ -124,16 +150,31 @@ export class UserLocation extends React.Component {
         console.log(location);
     }
 
-    // handleSelect = location => {
-    //     console.log(location);
 
-    //     this.setState({
-    //         location    : location,
-    //         address     : location.label
-    //     });
+    // FOR DIRECT RENDERING
 
-    //     this.gplaces.updateAddress(location.label);
-    // }
+    getMapWidth() {
+        let width = window.innerWidth;
+
+        if (width > 991){
+            return (Math.round(width/3.15));
+        }
+
+        return (width - 250);
+    }
+
+    disclaimer() {
+        if (this.state.disclaimer > 0){
+            return (
+                <i className="text-danger">{ trans.get('USER.DISCLAIMER.ADDRESS_ESTIMATION') }</i>
+            );
+        }
+
+        return null;
+    }
+
+
+    // RENDER
 
     render() {
         return (
