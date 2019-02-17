@@ -68,18 +68,7 @@ export class EditEmail extends SuperModal {
 
             _this.props.onClose();
 
-        }, function(error){
-            if (error.response) {
-                if (API.redirection(error.response.data)){
-                    return;
-                }
-                let msg = trans.get('ERROR.' + error.response.data.text);
-                if (msg){
-                    alert.show({title: title, message: msg, type: 'error'});
-                }
-            }
-            return;
-        });
+        }, API.catchError);
     }
 
     buildtitle() {

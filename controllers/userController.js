@@ -22,6 +22,7 @@ module.exports = function (app) {
     app.post('/saveUser', account.saveUser);
     app.post('/saveNewEmail', account.saveNewEmail);
     app.post('/saveNewPassword', account.saveNewPassword);
+    app.post('/saveLocation', account.saveLocation);
 
     app.post('/savePicture', upload.single('profile_picture'), account.savePicture);
 

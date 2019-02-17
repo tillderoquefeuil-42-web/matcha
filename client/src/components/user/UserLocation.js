@@ -4,6 +4,8 @@ import { Button } from 'react-bootstrap';
 
 import { Gmap } from '../gmap/Gmap';
 
+import API from '../../utils/API';
+import alert from '../../utils/alert';
 import utils from '../../utils/utils';
 import Location from '../../utils/location';
 import trans from '../../translations/translate';
@@ -147,7 +149,15 @@ export class UserLocation extends React.Component {
             return;
         }
 
-        console.log(location);
+        API.saveUserLocation(location)
+        .then(function(data){
+            let title = trans.get('SUCCESS.TITLE');
+            let msg = trans.get('SUCCESS.DATA_SAVED');
+            alert.show({title: title, message: msg, type: 'success'});
+
+            let user = data.data.user;
+            utils.setLocalUser(user);
+        }, API.catchError);
     }
 
 

@@ -11,8 +11,6 @@ const headers = {
 const components = ['street_number', 'route', 'locality', 'country', 'postal_code'];
 
 Geocode.setApiKey(APIkey);
-Geocode.enableDebug();
-console.warn('debug activated');
 
 export default {
 
@@ -40,13 +38,6 @@ export default {
             label   : data.formatted_address,
             lat     : typeCoords? coords.lat() : coords.lat,
             lng     : typeCoords? coords.lng() : coords.lng,
-        };
-
-        location.getGeometry = function(){
-            return ({
-                lat : this.lat,
-                lng : this.lng
-            });
         };
 
         for (let i in data.address_components){

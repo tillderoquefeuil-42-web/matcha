@@ -36,8 +36,12 @@ function parseOneRecord(record){
         }
     }
 
-    let entity = new User(node.properties, params);
-    entity._id = node.identity.low;
+    if (record.has('l')){
+        params.location = record.get('l');
+    }
+
+
+    let entity = new User(node, params);
 
     return entity;
 }
@@ -95,10 +99,10 @@ let UserRepository = {
                 SET u = $user
                 WITH u
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
-                RETURN u, f, t
+                RETURN u, f, t, l
             `;
-                // RETURN u, f
 
             let params = {
                 user    : data
@@ -121,10 +125,10 @@ let UserRepository = {
                 MATCH (u:User)
                 WHERE $AND
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
-                RETURN u, f, t
+                RETURN u, f, t, l
             `;
-                // RETURN u, f
 
             let query = queryEx.buildRequest(request, {
                 object:'u',

@@ -34,8 +34,7 @@ function parseOneRecord(record){
         }
     }
 
-    entity = new Conversation(node.properties, params);
-    entity._id = node.identity.low;
+    entity = new Conversation(node, params);
 
     return entity;
 }

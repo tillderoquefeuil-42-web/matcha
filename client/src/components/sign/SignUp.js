@@ -66,13 +66,7 @@ export class SignUp extends React.Component {
                 localStorage.setItem('token', data.data.token);
                 window.location = "/home"
             }, 5000);
-        }, function(error){
-            if (error.response) {
-                let msg = trans.get('ERROR.' + error.response.data.text);
-                alert.show({title: title, message: msg, type: 'error'});
-            }
-            return;
-        });
+        }, API.catchError);
     }
 
     handleChange = event => {

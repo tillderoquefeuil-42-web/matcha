@@ -20,7 +20,10 @@ function transform(object) {
 
 class Message {
 
-    constructor (data, params){
+    constructor (node, params){
+        this._id = node.identity.low;
+        let data = node.properties;
+
         params = params || {};
 
         transform(data);

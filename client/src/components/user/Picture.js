@@ -99,19 +99,7 @@ export class Picture extends React.Component {
                 user        : user,
                 preview_url : (user.profile_picture? uploadURL + user.profile_picture : null)
             });
-        }, function(error){
-            if (error.response) {
-                if (API.redirection(error.response.data)){
-                    return;
-                }
-                let title = trans.get('ERROR.TITLE');
-                let msg = trans.get('ERROR.' + error.response.data.text);
-                if (msg){
-                    alert.show({title: title, message: msg, type: 'error'});
-                }
-            }
-            return;
-        });
+        }, API.catchError);
     }
 
     getProfilePicture() {

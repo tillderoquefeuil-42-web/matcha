@@ -1,8 +1,8 @@
 const parser = require('../parser');
 const queryEx = require('../query');
-const File = require('../models/File');
+const Location = require('../models/Location');
 
-const type = 'file';
+const type = 'location';
 
 parser.setSingle(type, function(record){
     return parseOneRecord(record);
@@ -12,26 +12,26 @@ function parseOneRecord(record){
 
     let entity;
 
-    let node = record.get('f');
+    let node = record.get('l');
 
-    entity = new File(node);
+    entity = new Location(node);
 
     return entity;
 }
 
-let FileRepository = {
+let LocationRepository = {
 
-    createOne   : function(file){
+    createOne   : function(location){
 
         return new Promise((resolve, reject) => {
 
             let query = `
-                CREATE (f:File $file)
-                RETURN f
+                CREATE (l:Location $location)
+                RETURN l
             `;
 
             let params = {
-                file : file
+                location    : location
             };
 
             queryEx.exec(query, params)
@@ -43,21 +43,19 @@ let FileRepository = {
         });
     },
 
-    userLinks   : function(filename, userId){
+    userLink    : function(location, user){
 
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (f:File), (u:User)
-                WHERE f.filename='${filename}' AND ID(u)=${userId}
+                MATCH (u:User), (l:Location)
+                WHERE ID(u) = ${user._id} AND ID(l) = ${location._id}
 
-                OPTIONAL MATCH (f)<-[pp:PROFILE_PIC]-(au:User)
-                OPTIONAL MATCH (f)-[b:BELONG_TO]->(m:Message)<-[o:OWN]-(c:Conversation)<-[me:MEMBERS]-(u)
-                    
-                WITH f, u
-                WHERE (pp IS NOT NULL) OR (b IS NOT NULL)
+                OPTIONAL MATCH (u)-[oldli:LIVES {current:true}]->(oldl:Location)
+                SET oldli.current = false
+                CREATE (u)-[li:LIVES {current:true}]->(l)
 
-                RETURN f
+                RETURN l
             `;
 
             queryEx.exec(query)
@@ -71,4 +69,4 @@ let FileRepository = {
 
 };
 
-module.exports = FileRepository;
+module.exports = LocationRepository;

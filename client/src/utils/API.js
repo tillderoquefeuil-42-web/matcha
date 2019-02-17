@@ -1,17 +1,20 @@
 
 import axios from 'axios';
 
+import trans from '../translations/translate';
+import alert from './alert';
+
 const headers = {
     'Content-Type': 'application/json'
 }
 const burl = "http://localhost:8000"
 
-export default {
+const API = {
 
     post                : function(url, params, header) {
 
         params = params || {};
-        
+
         let tokenData = {
             name    : '_token',
             token   : (localStorage.getItem('token')? localStorage.getItem('token') : "")
@@ -24,6 +27,16 @@ export default {
         }
 
         return axios.post(burl + url, params, {headers: header||headers});
+    },
+
+    catchError          : function(error){
+        if (!error.response || API.redirection(error.response.data)){
+            return;
+        }
+
+        let title = trans.get('ERROR.TITLE');
+        let msg = trans.get('ERROR.' + error.response.data.text);
+        alert.show({title: title, message: msg, type: 'error'});
     },
 
     redirection         : function(params){
@@ -116,8 +129,14 @@ export default {
         });
     },
 
+    saveUserLocation    : function(location){
+        return this.post('/user/saveLocation', {location : location});
+    },
+
     deleteAccount       : function(){
         return this.post('/user/deleteAccount');
     }
 
-}
+};
+
+export default API;

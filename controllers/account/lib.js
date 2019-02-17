@@ -6,6 +6,7 @@ const User = require('../../database/models/user.js');
 const UserRepo = require('../../database/repositories/user.js');
 
 const TagRepo = require('../../database/repositories/tag.js');
+const LocationRepo = require('../../database/repositories/location.js');
 
 const Com = require('./communication.js');
 const config = require('../../config/config');
@@ -753,6 +754,37 @@ exports.savePicture = function(req, res) {
 
     });
 };
+
+exports.saveLocation = function(req, res) {
+
+    if (!req.body.location) {
+        res.status(400).json({
+            text: "INVALID_PARAMETERS"
+        });
+        return;
+    }
+
+    return exports.getUserByToken(req, res, function(user) {
+        LocationRepo.createOne(req.body.location)
+        .then(result => {
+            LocationRepo.userLink(result, user)
+            .then(location => {
+                user.location = location;
+
+                res.status(200).json({
+                    text    : "SUCCESS",
+                    user    : user
+                });
+            });
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({
+                text: "INTERNAL_ERROR"
+            });
+        });
+    });
+};
+
 
 exports.getFriendsByUser = function(req, res){
 

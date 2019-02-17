@@ -2,7 +2,9 @@ const fields = [];
 
 class Conversation {
 
-    constructor (data, params){
+    constructor (node, params){
+        this._id = node.identity.low;
+        let data = node.properties;
 
         for (var i in fields){
             this[fields[i]] = data[fields[i]];

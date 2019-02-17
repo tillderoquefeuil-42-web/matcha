@@ -102,18 +102,14 @@ export class Gmap extends React.Component {
 
 
     focusOnLocation(location){
-        let map = this.state.map;
-
-        let coords;
-        if (location.getGeometry){
-            coords = location.getGeometry();
-        } else if (location.lat && location.lng){
-            coords = {
-                lat : location.lat,
-                lng : location.lng
-            }
-        } else {
+        if (!location.lat || !location.lng){
             return;
+        }
+
+        let map = this.state.map;
+        let coords = {
+            lat : location.lat,
+            lng : location.lng
         }
 
         map.panTo(coords);

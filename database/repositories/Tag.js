@@ -13,8 +13,7 @@ function parseOneRecord(record){
     let entity;
     let node = record.get('t');
 
-    entity = new Tag(node.properties);
-    entity._id = node.identity.low;
+    entity = new Tag(node);
 
     return entity;
 }

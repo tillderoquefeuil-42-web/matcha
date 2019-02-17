@@ -40,8 +40,7 @@ function parseOneRecord(record){
         }
     }
 
-    entity = new Friendship(node.properties, params);
-    entity._id = node.identity.low;
+    entity = new Friendship(node, params);
 
     return entity;
 }

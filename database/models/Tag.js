@@ -4,23 +4,11 @@ const fields = [
     'label'
 ];
 
-// function transform(object) {
-//     for (let property in object) {
-//         if (object.hasOwnProperty(property)) {
-//             const propertyValue = object[property];
-//             if (neo4j.isInt(propertyValue)) {
-//                 object[property] = propertyValue.toString();
-//             } else if (typeof propertyValue === 'object') {
-//                 transform(propertyValue);
-//             }
-//         }
-//     }
-// }
-
 class Tag {
 
-    constructor (data, params){
-        // transform(data);
+    constructor (node){
+        this._id = node.identity.low;
+        let data = node.properties;
 
         for (var i in fields){
             this[fields[i]] = data[fields[i]];

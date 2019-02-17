@@ -61,19 +61,7 @@ export class LockedAccount extends React.Component {
                 if (msg){
                     alert.show({title: title, message: msg, type: 'success'});
                 }
-            }, function(error){
-                if (error.response) {
-                    if (API.redirection(error.response.data)){
-                        return;
-                    }
-                    let title = trans.get('ERROR.TITLE');
-                    let msg = trans.get('ERROR.' + error.response.data.text);
-                    if (msg){
-                        alert.show({title: title, message: msg, type: 'error'});
-                    }
-                }
-                return;
-            });
+            }, API.catchError);
         }
 
         return;

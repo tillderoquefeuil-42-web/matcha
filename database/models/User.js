@@ -6,6 +6,8 @@ const jwt = require('jwt-simple');
 const config = require('../../config/config');
 const Files = require('../../controllers/utils/files.js');
 
+const Location = require('../models/Location');
+
 const fields = [
     'email', 'username', 'firstname', 'lastname',
     'valid', 'locked', 'connection_try',
@@ -29,7 +31,10 @@ function transform(object) {
 
 class User {
 
-    constructor (data, params){
+    constructor (node, params){
+        this._id = node.identity.low;
+        let data = node.properties;
+
         params = params || {};
 
         for (var i in fields){
@@ -52,6 +57,10 @@ class User {
 
         if (params.tags){
             this.tags = params.tags;
+        }
+
+        if (params.location){
+            this.location = new Location(params.location);
         }
 
     }

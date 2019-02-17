@@ -65,14 +65,7 @@ export class ResetPassword extends React.Component {
                 _this.setState({status:"EMAIL_SEND"});
             }, function(error){
                 alert.close(infoId);
-                
-                if (error.response) {
-
-                    let title = trans.get('ERROR.TITLE');
-                    let msg = trans.get('ERROR.' + error.response.data.text);
-                    alert.show({title: title, message: msg, type: 'error'});
-                }
-                
+                API.catchError(error);
                 return;
            });
         }, 2000);
@@ -101,13 +94,7 @@ export class ResetPassword extends React.Component {
         API.savePswdByToken(this.state.token, this.state.password)
         .then(function(data){
             window.location = "/";
-        }, function(error){
-            if (error.response) {
-                let msg = trans.get('ERROR.' + error.response.data.text);
-                alert.show({title: title, message: msg, type: 'error'});
-            }
-            return;
-        });
+        }, API.catchError);
     }
 
     build(){

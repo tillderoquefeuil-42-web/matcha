@@ -30,8 +30,7 @@ function parseOneRecord(record){
         }
     }
 
-    let entity = new Message(node.properties, params);
-    entity._id = node.identity.low;
+    let entity = new Message(node, params);
     return entity;
 }
 

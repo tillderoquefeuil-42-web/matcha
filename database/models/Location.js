@@ -1,7 +1,7 @@
 const neo4j = require('neo4j-driver').v1;
 
 const fields = [
-    'id', 'date', 'filename', 'type', 'size'
+    'street_number', 'route', 'locality', 'country', 'postal_code', 'lat', 'lng'
 ];
 
 function transform(object) {
@@ -17,7 +17,7 @@ function transform(object) {
     }
 }
 
-class File {
+class Location {
 
     constructor (node, params){
         this._id = node.identity.low;
@@ -29,8 +29,9 @@ class File {
             this[fields[i]] = data[fields[i]];
         }
 
+        this.label = `${this.street_number} ${this.route}, ${this.postal_code} ${this.locality}, ${this.country}`;
     }
 
 }
 
-module.exports = File;
+module.exports = Location;

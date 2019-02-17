@@ -39,18 +39,7 @@ export class SignIn extends React.Component {
         .then(function(data){
             localStorage.setItem('token', data.data.token);
             window.location = "/home";
-        }, function(error){
-            if (error.response) {
-                if (API.redirection(error.response.data)){
-                    return;
-                }
-                let msg = trans.get('ERROR.' + error.response.data.text);
-                if (msg){
-                    alert.show({title: title, message: msg, type: 'error'});
-                }
-            }
-            return;
-        });
+        }, API.catchError);
     }
 
     handleChange = event => {
