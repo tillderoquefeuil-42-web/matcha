@@ -133,8 +133,8 @@ const API = {
         return this.post('/user/saveLocation', {location : location});
     },
 
-    deleteAccount       : function(){
-        return this.post('/user/deleteAccount');
+    deleteAccount       : function(password){
+        return this.post('/user/deleteAccount', {password: password});
     }
 
 };

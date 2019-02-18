@@ -15,6 +15,7 @@ export class SearchBar extends React.Component {
 
         this.state = {
             value       : '',
+            values      : {},
             collection  : utils.indexCollection(props.collection),
             slugs       : this.createSlugs(props.collection),
             showlist    : false,
@@ -66,12 +67,47 @@ export class SearchBar extends React.Component {
     }
 
     handleSelect = (event, item) => {
+
+        if (this.props.multiSelect){
+            this.toggleSelection(item, event.target);
+            return;
+        }
+
         this.setState({
             value   : this.props.resetValue? '' : this.getLabel(item)
         });
 
         this.collapse();
         this.props.onSelect(event, item);
+    }
+
+    validateMultiSelection = event => {
+        this.props.onSelect(event, this.state.values);
+
+        if (this.props.resetValue){
+
+            this.setState({
+                values  : {},
+                matches : []
+            });
+        }
+
+        this.collapse();
+    }
+
+    toggleSelection(item, element) {
+
+        utils.toggleClass(element, 'active');
+
+        let values = this.state.values;
+        if (values[item._id]){
+            delete values[item._id];
+        } else {
+            values[item._id] = item;
+        }
+
+        this.setState({values : values});
+        return;
     }
 
     handleKeyPress = event => {
@@ -182,6 +218,25 @@ export class SearchBar extends React.Component {
         return classes;
     }
 
+    validateSelection() {
+
+        if (!this.props.multiSelect){
+            return;
+        }
+
+        return (
+            <Button
+                onClick={this.validateMultiSelection}
+                block
+                bsStyle="primary"
+                bsSize="large"
+                className="multi-select-validate"
+            >
+                { trans.get('BUTTON.VALIDATE') }
+            </Button>
+        );
+    }
+
     buildMatches() {
 
         let matches = [];
@@ -282,8 +337,11 @@ export class SearchBar extends React.Component {
                         onFocus={ this.handleFocus }
                     />
                 </InputGroup>
-                <div className={ this.getListClass() } ref={ (el) => { this.iScroll = el; }}>
-                    { this.buildMatches() }
+                <div className={ this.getListClass() }>
+                    { this.validateSelection() }
+                    <div className="searchbar-items-list" ref={ (el) => { this.iScroll = el; }}>
+                        { this.buildMatches() }
+                    </div>
                 </div>
             </FormGroup>
         );

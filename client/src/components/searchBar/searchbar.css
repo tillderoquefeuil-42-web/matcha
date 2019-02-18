@@ -5,18 +5,48 @@
 .searchbar-list {
     display: none;
     position: absolute;
-    background: #efefef;
     width: 100%;
-    min-height: 50px;
-    z-index: 100;
     padding: 15px;
+    z-index: 100;
+
+    background: #efefef;
     border: solid 1px #cecece;
     border-radius: 5px;
-    max-height: 50vh;
-    overflow: auto;
 }
 
 .searchbar-list.active {
     display: block !important;
 }
 
+.searchbar-items-list {
+    width: 100%;
+    min-height: 50px;
+    max-height: 50vh;
+    overflow: auto;
+}
+
+.searchbar-list .multi-select-validate {
+    margin-bottom: 10px;
+}
+
+.searchbar-list button.list-item {
+    color: #000;
+    border-color: #ccc;
+    background-color: #fff;
+}
+
+.searchbar-list button.list-item.active {
+    border-color: #adadad;
+    background-color: #e6e6e6 !important;
+
+    box-shadow: none;
+}
+
+.searchbar-list button.list-item:hover {
+    background-color: #d4d4d4 !important;
+}
+
+.searchbar-list button.list-item:focus {
+    outline: none;
+    background-color: #fff;
+}

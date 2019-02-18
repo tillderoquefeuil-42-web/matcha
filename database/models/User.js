@@ -77,6 +77,14 @@ class User {
 		return this.firstname + ' ' + this.lastname;
 	}
 
+    isLocal() {
+        if (this.providers.indexOf('local') !== -1){
+            return true;
+        }
+
+        return false;
+    }
+
 }
 
 module.exports = User;

@@ -103,10 +103,16 @@ export class Picture extends React.Component {
     }
 
     getProfilePicture() {
+        let user = utils.getLocalUser();
+        let url;
 
         if (this.state.preview_url){
+            url = this.state.preview_url;
+        } else if (user.profile_pic && user.profile_pic.filename){
+            url = `http://localhost:8000/file/private?filename=${user.profile_pic.filename}`;
+        } if (url){
             return (
-                <img src={ this.state.preview_url } alt={ trans.get('USER.FIELDS.PROFILE_PIC') } />
+                <img src={ url } alt={ trans.get('USER.FIELDS.PROFILE_PIC') } />
             );
         }
 

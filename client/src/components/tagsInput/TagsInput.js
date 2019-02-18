@@ -48,20 +48,25 @@ export class TagsInput extends React.Component {
         return (a.label <= b.label? -1 : 1);
     }
 
-    handleSelect = (event, item) => {
-        this.addOneTag(item.label);
+    handleSelect = (event, items) => {
+        this.addTags(items);
     }
 
-    addOneTag(tag){
+    addTags(items) {
 
-        tag = utils.slugify(tag, ' ');
         let tags = this.state.selected || [];
 
-        if (tag && tags.indexOf(tag) === -1){
-            tags.push(tag);
-            this.updateSelection(tags);
+        for (let i in items){
+            let tag = typeof items[i] === 'string'? items[i] : items[i].label;
+
+            tag = utils.slugify(tag, ' ');
+
+            if (tag && tags.indexOf(tag) === -1){
+                tags.push(tag);
+            }
         }
 
+        this.updateSelection(tags);
         this.setState({current:''});
     }
 
@@ -128,9 +133,10 @@ export class TagsInput extends React.Component {
                     ref={ el => this.searchbar = el }
                     collection={ collection }
                     placeholder={ trans.get('USER.FIELDS.ADD_TAG') }
-                    onSelect={ (event, item) => this.handleSelect(event, item) }
-                    onCreate={ (value) => this.addOneTag(value) }
+                    onSelect={ (event, items) => this.handleSelect(event, items) }
+                    onCreate={ (value) => this.addTags([value]) }
                     sort={ (a, b) => this.sortTags(a, b) }
+                    multiSelect
                     resetValue
                 />
             );

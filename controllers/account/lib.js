@@ -201,16 +201,13 @@ exports.findOrCreate = function(profile, callback) {
             });
         }
 
-    }).then(function (user) {
-        let _u;
-        
+    }).then(function(user) {
+
         if (user) {
-            _u = new User(user);
             return callback(null, user);
         }
 
-        _u = new User(profile);
-        UserRepo.createOne(_u)
+        UserRepo.createOne(profile)
         .then(_user => {
             return callback(null, _user);
         }).catch(err => {
@@ -264,9 +261,8 @@ exports.signUp = function(req, res) {
     });
 
     findUser.then(function () {
-        var _u = new User(user);
 
-        UserRepo.createOne(_u)
+        UserRepo.createOne(user)
         .then(_user => {
 
             Com.signUp.send(_user);
@@ -807,17 +803,26 @@ exports.getFriendsByUser = function(req, res){
 exports.deleteAccount = function(req, res){
 
     return exports.getUserByToken(req, res, function(user) {
-        UserRepo.deleteOne(user)
-        .then(results => {
-            res.status(200).json({
-                text    : "SUCCESS"
+
+        if (!user.isLocal() || user.authenticate(req.body.password)) {
+            UserRepo.deleteOne(user)
+            .then(results => {
+                res.status(200).json({
+                    text    : "SUCCESS"
+                });
+            }).catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    text    : "INTERNAL_ERROR"
+                });
             });
-        }).catch(err => {
-            console.log(err);
-            res.status(500).json({
-                text    : "INTERNAL_ERROR"
-            });
+            return;
+        }
+
+        res.status(401).json({
+            text: "INVALID_PASSWORD"
         });
+        return;
     });
 };
 

@@ -22,6 +22,7 @@ BUTTON:
     EDIT: Edit
     SAVE: Save
     DELETE: Delete
+    VALIDATE: Validate
 ERROR:
     TITLE: Oops
     AUTH_ERROR: Can't log you in

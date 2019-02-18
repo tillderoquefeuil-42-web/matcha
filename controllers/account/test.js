@@ -33,6 +33,5 @@ exports.createTestAccount = function(data) {
         providers   : ['local', 'test']
     }
 
-    var _u = new User(user);
-    return UserRepo.createOne(_u);
+    return UserRepo.createOne(user);
 };

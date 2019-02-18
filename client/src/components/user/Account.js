@@ -55,23 +55,12 @@ export class Account extends React.Component {
 
                 <div className="col-md-6">
                     <Profile />
-                </div>
-
-                <div className="col-md-6">
-                    <UserLocation />
-                </div>
-
-                <div className="col-md-6">
-                    <Picture _g={ this.props._g } />
-                </div>
-
-                <div className="clearfix" />
-
-                <div className="col-md-6">
                     <Connection />
                 </div>
 
                 <div className="col-md-6">
+                    {/*<UserLocation />*/}
+                    <Picture _g={ this.props._g } />
                     <Delete />
                 </div>
 

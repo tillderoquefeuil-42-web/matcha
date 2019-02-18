@@ -176,7 +176,54 @@ export default {
 
 
         return new RegExp(regex, 'gi');
+    },
+
+    addClass            : function(element, className){
+
+        if (!element || !element.className){
+            return;
+        }
+
+        let classList = element.className.split(' ');
+        if (classList.indexOf(className) === -1){
+            classList.push(className);
+            element.className = classList.join(' ');
+        }
+
+        return element;
+    },
+
+    removeClass         : function(element, className){
+
+        if (!element || !element.className){
+            return;
+        }
+
+        let classList = element.className.split(' ');
+        let index = classList.indexOf(className);
+        if (index !== -1){
+            classList.splice(index, 1);
+            element.className = classList.join(' ');
+        }
+
+        return element;
+    },
+
+    toggleClass         : function(element, className){
+
+        if (!element || !element.className){
+            return;
+        }
+
+        let classList = element.className.split(' ');
+        let index = classList.indexOf(className);
+        if (index === -1){
+            classList.push(className);
+        } else {
+            classList.splice(index, 1);
+        }
+
+        element.className = classList.join(' ');
+        return element;
     }
-
-
 }
