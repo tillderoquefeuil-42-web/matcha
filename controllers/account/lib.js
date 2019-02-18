@@ -842,9 +842,7 @@ exports.getTags = function(req, res){
 };
 
 exports.updateProfilePicture = function(user, upload) {
-
     return new Promise((resolve, reject) => {
-
         Files.save(upload.file);
 
         FileRepo.createOne(upload.file.light())
@@ -855,6 +853,27 @@ exports.updateProfilePicture = function(user, upload) {
             });
         });
 
+    });
+};
+
+exports.updateOtherPicture = function(user, upload) {
+    return new Promise((resolve, reject) => {
+        Files.save(upload.file);
+
+        FileRepo.createOne(upload.file.light())
+        .then(file => {
+            return resolve(file);
+        });
+    });
+};
+
+exports.updateOtherPictures = function(user, filesId) {
+    return new Promise((resolve, reject) => {
+
+        UserRepo.updateOtherPictures(filesId, user)
+        .then(_user => {
+            return resolve(_user);
+        });
     });
 };
 

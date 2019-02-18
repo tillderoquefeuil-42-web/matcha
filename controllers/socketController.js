@@ -225,8 +225,6 @@ module.exports = function (app, server) {
             let user = getUserBySocket(socket);
 
             let onlineRoom = rooms.getOnlineRoom(user._id);
-            // let userRoom = rooms.getOnchatRoom(user._id);
-
             let upload = Files.uploadFile(data, user);
 
             if (upload.end !== true) {
@@ -246,14 +244,33 @@ module.exports = function (app, server) {
                         break;
                     case 'profile_picture':
 
-                        account.updateProfilePicture(user, upload)
-                        .then(_user => {
-                            io.sockets.in(onlineRoom).emit('PROFILE_PICTURE_UPDATE', {user : _user});
-                            io.sockets.in(onlineRoom).emit('PP_UPDATE_CONFIRM', {user : _user});
-                        });
+                        if (data.status === 'profile_picture'){
+                            account.updateProfilePicture(user, upload)
+                            .then(_user => {
+                                io.sockets.in(onlineRoom).emit('PROFILE_PICTURE_UPDATE', {user : _user});
+                                io.sockets.in(onlineRoom).emit('PP_UPDATE_CONFIRM', {user : _user});
+                            });
+                        } else {
+                            account.updateOtherPicture(user, upload)
+                            .then(file => {
+                                io.sockets.in(onlineRoom).emit('OP_UPLOAD_CONFIRM', {file : file});
+                            });
+                        }
                         break;
                 }
             }
         });
+
+        socket.on('USER_OTHER_PICTURES', function(data){
+            let user = getUserBySocket(socket);
+
+            let onlineRoom = rooms.getOnlineRoom(user._id);
+
+            account.updateOtherPictures(user, data.files_id)
+            .then(_user => {
+                io.sockets.in(onlineRoom).emit('USER_OP_CONFIRM', {user : _user});
+            });
+        });
+
     });
 }

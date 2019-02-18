@@ -206,6 +206,28 @@ let UserRepository = {
         });
     },
 
+    updateOtherPictures             : function(filesId, user){
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (u:User), (f:File)
+                WHERE ID(u) = ${user._id} AND f.id IN [${filesId.join(', ')}]
+                OPTIONAL MATCH (u)-[oldop:OTHER_PIC {current:true}]->(oldf:File)
+                SET oldop.current = false
+                MERGE (u)-[op:OTHER_PIC {current:true}]->(f)
+                RETURN u
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
+                return reject(err);
+            });
+
+        });
+    },
+
     findLocalByUsernameOrEmail      : function(username){
         return new Promise((resolve, reject) => {
 

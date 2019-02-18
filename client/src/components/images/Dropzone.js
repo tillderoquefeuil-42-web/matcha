@@ -68,7 +68,8 @@ export class Dropzone extends React.Component {
         super(props);
 
         this.state = {
-            on_drop : false
+            on_drop : false,
+            maxFiles: props.maxFiles || maxFiles
         }
     }
 
@@ -88,7 +89,7 @@ export class Dropzone extends React.Component {
         let files = event.dataTransfer.files;
 
         let total = this.props.files.length + files.length;
-        if (total > maxFiles){
+        if (total > this.state.maxFiles){
             let title = trans.get('ERROR.TITLE');
             let msg = trans.get('ERROR.TOO_MANY_FILES');
             alert.show({title: title, message: msg, type: 'error'});
@@ -134,12 +135,20 @@ export class Dropzone extends React.Component {
 
 export class FileInput extends React.Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            maxFiles: props.maxFiles || maxFiles
+        }
+    }
+
     handleChange = event => {
 
         let files = event.target.files;
 
         let total = this.props.files.length + files.length;
-        if (total > maxFiles){
+        if (total > this.state.maxFiles){
             let title = trans.get('ERROR.TITLE');
             let msg = trans.get('ERROR.TOO_MANY_FILES');
             alert.show({title: title, message: msg, type: 'error'});

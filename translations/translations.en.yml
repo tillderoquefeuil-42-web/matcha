@@ -46,7 +46,7 @@ ERROR:
     NOT_A_FILE: You must drag a file
     FILE_TOO_BIG: Your file is too big (> 25Mo)
     TYPE_NOT_SUPPORTED: This file is not supported
-    TOO_MANY_FILES: To many files (max 9)
+    TOO_MANY_FILES: To many files!
 
 SUCCESS:
     TITLE: Yeah!
@@ -129,6 +129,7 @@ USER:
         EMAIL: Email
         USERNAME: Username
         PROFILE_PIC: Profile picture
+        OTHER_PIC: You can drop additional pictures here! (max. 4)
         INTERESTS: Interest
         ADD_TAG: Add a tag
         BIO: Bio

@@ -1,14 +1,12 @@
 import React from 'react';
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 
-import API from '../../utils/API';
+import { Dropzone, FileContainer } from '../images/Dropzone';
+
 import alert from '../../utils/alert';
 import utils from '../../utils/utils';
 import trans from '../../translations/translate';
 import filesManager from '../../utils/files';
-
-
-const uploadURL = '/uploads/pictures/';
 
 export class Picture extends React.Component {
 
@@ -19,8 +17,10 @@ export class Picture extends React.Component {
 
         this.state = {
             user        : user,
-            preview_url : (user.profile_picture? uploadURL + user.profile_picture : null),
-            file        : ''
+            preview_url : null,
+            file        : user.profile_pic,
+            files       : [],
+            uploading   : 0
         };
 
         this.socket = props._g.socket;
@@ -35,6 +35,14 @@ export class Picture extends React.Component {
 
         this.socket.off('PP_UPDATE_CONFIRM').on('PP_UPDATE_CONFIRM', function(data){
             _this.updateProfilePicture(data.user);
+        });
+
+        this.socket.off('OP_UPLOAD_CONFIRM').on('OP_UPLOAD_CONFIRM', function(data){
+            _this.otherPicturesUpload();
+        });
+
+        this.socket.off('USER_OP_CONFIRM').on('USER_OP_CONFIRM', function(data){
+            _this.confirmUpdate();
         });
     }
 
@@ -54,17 +62,38 @@ export class Picture extends React.Component {
 
     handleSubmit = event => {
 
-        let file = this.state.file;
         let files = {};
+        let length = 0;
 
-        if (!file){
+        if (this.state.file && this.state.file._id){
+            let file = this.state.file;
+            file.status = 'profile_picture';
+            files[file.id] = file;
+            length++;
+        }
+
+        if (this.state.files){
+            for (let i in this.state.files){
+                let file = this.state.files[i];
+                if (file._id){
+                    continue;
+                }
+                file.status = 'other_picture';
+                files[file.id] = file;
+                length++;
+            }
+        }
+
+        if (!length){
             let title = trans.get('ERROR.TITLE');
             let msg = trans.get('ERROR.INVALID_PARAMETERS');
             alert.show({title: title, message: msg, type: 'error'});
             return;
         }
 
-        files[file.id] = file;
+        this.setState({
+            uploading   : length
+        });
 
         let params = {
             file_case   : 'profile_picture'
@@ -72,35 +101,58 @@ export class Picture extends React.Component {
 
         filesManager.setSocket(this.socket);
         filesManager.sendFiles(files, params);
-
     }
 
-    updateProfilePicture(user) {
+    confirmUpdate(user) {
+        if (user){
+            utils.setLocalUser(user);
+        }
+
+        if (this.state.uploading){
+            return;
+        }
 
         let title = trans.get('SUCCESS.TITLE');
         let msg = trans.get('SUCCESS.PICTURE_SAVED');
         alert.show({title: title, message: msg, type: 'success'});
-
-        utils.setLocalUser(user);
     }
 
-    _handleSubmit = event => {
-        let _this = this;
+    updateProfilePicture(user) {
+        let uploading = this.state.uploading - 1;
 
-        API.saveUserPicture(this.state.file)
-        .then(function(data){
-            let title = trans.get('SUCCESS.TITLE');
-            let msg = trans.get('SUCCESS.PICTURE_SAVED');
-            alert.show({title: title, message: msg, type: 'success'});
+        this.setState({uploading : uploading});
 
-            let user = data.data.user;
-            utils.setLocalUser(user);
-            _this.setState({
-                user        : user,
-                preview_url : (user.profile_picture? uploadURL + user.profile_picture : null)
-            });
-        }, API.catchError);
+        this.confirmUpdate(user);
     }
+
+    otherPicturesUpload() {
+        let ids = this.getFilesId();
+        let uploading = this.state.uploading - 1;
+
+        this.setState({uploading : uploading});
+
+        if (uploading){
+            return;
+        }
+
+        let data = {
+            files_id: ids
+        }
+
+        this.socket.emit('USER_OTHER_PICTURES', data);
+    }
+
+    getFilesId() {
+        let ids = [];
+        let files = this.state.files;
+
+        for (let i in files){
+            ids.push(files[i].id);
+        }
+
+        return ids;
+    }
+
 
     getProfilePicture() {
         let user = utils.getLocalUser();
@@ -122,6 +174,28 @@ export class Picture extends React.Component {
     }
 
 
+    addOneFile(file) {
+        let files = this.state.files;
+        files.push(file);
+
+        this.setState({files : files});
+    }
+
+    removeOneFile(fileId) {
+        let files = [];
+
+        for (let i in this.state.files){
+            let file = this.state.files[i];
+
+            if (file.id !== fileId){
+                files.push(file);
+            }
+        }
+
+        this.setState({files : files});
+    }
+
+
     render() {
 
         return(
@@ -137,6 +211,19 @@ export class Picture extends React.Component {
                 <div className="profile-picture-preview">
                     { this.getProfilePicture() }
                 </div>
+
+                <Dropzone
+                    className="other-pictures"
+                    files={ this.state.files }
+                    addFile={ (file) => this.addOneFile(file) }
+                    maxFiles={ 4 }
+                >
+                    <i>{ trans.get('USER.FIELDS.OTHER_PIC') }</i>
+                    <FileContainer
+                        files={ this.state.files }
+                        removeFile={ (fileId) => this.removeOneFile(fileId) }
+                    />
+                </Dropzone>
 
                 <Button
                     onClick={ this.handleSubmit }

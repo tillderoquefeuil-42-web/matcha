@@ -48,14 +48,15 @@ let FileRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (f:File), (u:User)
+                MATCH (f:File), (u:User), (au:User)
                 WHERE f.filename='${filename}' AND ID(u)=${userId}
 
-                OPTIONAL MATCH (f)<-[pp:PROFILE_PIC]-(au:User)
+                OPTIONAL MATCH (f)<-[pp:PROFILE_PIC]-(au)
+                OPTIONAL MATCH (f)<-[op:OTHER_PIC]-(au)
                 OPTIONAL MATCH (f)-[b:BELONG_TO]->(m:Message)<-[o:OWN]-(c:Conversation)<-[me:MEMBERS]-(u)
-                    
+
                 WITH f, u
-                WHERE (pp IS NOT NULL) OR (b IS NOT NULL)
+                WHERE (pp IS NOT NULL) OR (b IS NOT NULL) OR (op IS NOT NULL)
 
                 RETURN f
             `;
