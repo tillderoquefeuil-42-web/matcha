@@ -1,12 +1,15 @@
 import React from 'react';
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 
-import { Dropzone, FileContainer } from '../images/Dropzone';
+import { Dropzone, FileContainer, FileInput } from '../images/Dropzone';
+import { Loader } from '../loader/Loader';
 
 import alert from '../../utils/alert';
 import utils from '../../utils/utils';
 import trans from '../../translations/translate';
 import filesManager from '../../utils/files';
+
+const maxPics = 5;
 
 export class Picture extends React.Component {
 
@@ -17,15 +20,12 @@ export class Picture extends React.Component {
 
         this.state = {
             user        : user,
-            preview_url : null,
-            file        : user.profile_pic,
-            files       : [],
+            files       : this.getDefaultFiles(user),
             uploading   : 0
         };
 
         this.socket = props._g.socket;
 
-        this.handleChange.bind(this);
         this.handleSubmit.bind(this);
 
     }
@@ -46,40 +46,41 @@ export class Picture extends React.Component {
         });
     }
 
-    handleChange = event => {
-        let file = event.target.files[0];
+    getDefaultFiles(user) {
+        let max = maxPics - 1;
+        let pictures = user.pictures;
+        let files = {};
 
-        let reader = new FileReader();
-        reader.onloadend = () => {
-            this.setState({
-                file        : file,
-                preview_url : reader.result
-            });
+        for (let i=0; i < max; i++){
+            let id = 'other' + i;
+            if (pictures[i]){
+                files[id] = pictures[i];
+            }
         }
 
-        reader.readAsDataURL(file);
+        return files;
     }
 
     handleSubmit = event => {
 
-        let files = {};
         let length = 0;
+        let files = this.state.files;
+        let data = {};
 
-        if (this.state.file && this.state.file._id){
-            let file = this.state.file;
+        if (files['main-picture'] && !files['main-picture']._id){
+            let file = files['main-picture'];
             file.status = 'profile_picture';
-            files[file.id] = file;
+            data[file.id] = file;
             length++;
         }
 
-        if (this.state.files){
-            for (let i in this.state.files){
-                let file = this.state.files[i];
-                if (file._id){
-                    continue;
-                }
+        let max = maxPics - 1;
+        for (let i=0; i < max; i++){
+            let id = 'other' + i;
+            if (files[id] && !files[id]._id){
+                let file = files[id];
                 file.status = 'other_picture';
-                files[file.id] = file;
+                data[file.id] = file;
                 length++;
             }
         }
@@ -100,7 +101,7 @@ export class Picture extends React.Component {
         }
 
         filesManager.setSocket(this.socket);
-        filesManager.sendFiles(files, params);
+        filesManager.sendFiles(data, params);
     }
 
     confirmUpdate(user) {
@@ -153,77 +154,71 @@ export class Picture extends React.Component {
         return ids;
     }
 
+    updateOneFile(file, id) {
+        let files = this.state.files;
 
-    getProfilePicture() {
-        let user = utils.getLocalUser();
-        let url;
+        if (file){
+            files[id] = file;
+        } else {
+            delete files[id];
+        }
 
-        if (this.state.preview_url){
-            url = this.state.preview_url;
-        } else if (user.profile_pic && user.profile_pic.filename){
-            url = `http://localhost:8000/file/private?filename=${user.profile_pic.filename}`;
-        } if (url){
-            return (
-                <img src={ url } alt={ trans.get('USER.FIELDS.PROFILE_PIC') } />
+        this.setState({files : files});
+    }
+
+    buildOtherPictures() {
+        let max = maxPics - 1;
+        let pictures = this.state.user.pictures;
+        let others = [];
+
+        for (let i=0; i < max; i++){
+            let id = 'other' + i;
+            let file = pictures[i]? pictures[i] : null;
+            others.push(
+                <ProfilePicture
+                    id={ id }
+                    key={ i }
+                    file={ file }
+                    updateFile={ (file) => this.updateOneFile(file, id) }
+                />
             );
         }
 
-        return (
-            <i>{ trans.get('DROPZONE.PREVIEW') }</i>
-        );
+        return others;
     }
 
+    loading(){
 
-    addOneFile(file) {
-        let files = this.state.files;
-        files.push(file);
-
-        this.setState({files : files});
-    }
-
-    removeOneFile(fileId) {
-        let files = [];
-
-        for (let i in this.state.files){
-            let file = this.state.files[i];
-
-            if (file.id !== fileId){
-                files.push(file);
-            }
+        if (this.state.uploading > 0){
+            return (
+                <div className="picture-uploading">
+                    <Loader />
+                </div>
+            );
         }
 
-        this.setState({files : files});
+        return;
     }
 
-
     render() {
+
+        let id = "main-picture";
 
         return(
 
             <div id="picture" className="account-block" >
+                { this.loading() }
                 <h2 className="form-section">{ trans.get('USER.FIELDS.PROFILE_PIC') }</h2>
 
-                <FormGroup controlId="profile_picture" bsSize="large">
-                    <ControlLabel>{ trans.get('USER.FIELDS.PROFILE_PIC') }</ControlLabel>
-                    <FormControl type="file" onChange={ this.handleChange } />
-                </FormGroup>
+                <ProfilePicture
+                    id={ id }
+                    file={ this.state.user.profile_pic }
+                    updateFile={ (file) => this.updateOneFile(file, id) }
+                />
 
-                <div className="profile-picture-preview">
-                    { this.getProfilePicture() }
+                <div className="other-pictures">
+                    { this.buildOtherPictures() }
                 </div>
-
-                <Dropzone
-                    className="other-pictures"
-                    files={ this.state.files }
-                    addFile={ (file) => this.addOneFile(file) }
-                    maxFiles={ 4 }
-                >
-                    <i>{ trans.get('USER.FIELDS.OTHER_PIC') }</i>
-                    <FileContainer
-                        files={ this.state.files }
-                        removeFile={ (fileId) => this.removeOneFile(fileId) }
-                    />
-                </Dropzone>
 
                 <Button
                     onClick={ this.handleSubmit }
@@ -236,4 +231,85 @@ export class Picture extends React.Component {
             </div>
         );
     }
+}
+
+class ProfilePicture extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            files   : props.file? [props.file] : []
+        };
+
+        this.handleAttach.bind(this);
+    }
+
+    handleAttach = event => {
+        this.attach_input.triggerClick();
+    }
+
+    addFile(file) {
+        if (!file.id){
+            file.id = (new Date()).getTime();
+        }
+
+        if (this.props.updateFile){
+            this.props.updateFile(file);
+        }
+
+        this.setState({files : [file]});
+    }
+
+    removeFile() {
+
+        if (this.props.updateFile){
+            this.props.updateFile(null);
+        }
+
+        this.setState({files : []});
+    }
+
+    buildFileContainer() {
+
+        if (this.state.files.length === 1){
+            return(
+                <FileContainer
+                    files={ this.state.files }
+                    removeFile={ (fileId) => this.removeFile() }
+                />
+            );
+        }
+
+        return (
+            <i
+                className="fas fa-plus-circle fa-3x"
+                onClick={ this.handleAttach }
+            >
+                <FileInput
+                    className="attach-files"
+                    files={ this.state.files }
+                    addFile={ (file) => this.addFile(file) }
+                    ref={ el => this.attach_input = el }
+                />
+            </i>
+        );
+    }
+
+    render() {
+        return (
+            <Dropzone
+                id={ this.props.id }
+                className="one-profile-picture"
+                files={ this.state.files }
+                addFile={ (file) => this.addFile(file) }
+                maxFiles={ 1 }
+                replace
+            >
+                { this.buildFileContainer() }
+            </Dropzone>
+        );
+    }
+
+
 }

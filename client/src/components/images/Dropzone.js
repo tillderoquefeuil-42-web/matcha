@@ -60,6 +60,12 @@ function parseOneFile(file, addOneFile){
     return file;
 }
 
+function getFileUrl(file) {
+    let token = (localStorage.getItem('token')? localStorage.getItem('token') : "");
+    let url = `http://localhost:8000/file/private?_t=${token}&filename=${file.filename}`;
+
+    return url;
+}
 
 
 export class Dropzone extends React.Component {
@@ -82,6 +88,12 @@ export class Dropzone extends React.Component {
         }
     }
 
+    onDragLeave = event => {
+        if (this.state.on_drop){
+            this.setState({on_drop : false});
+        }
+    }
+
     handleDrop = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -89,6 +101,11 @@ export class Dropzone extends React.Component {
         let files = event.dataTransfer.files;
 
         let total = this.props.files.length + files.length;
+
+        if (total > this.state.maxFiles && this.props.replace){
+            total = 0;
+        }
+
         if (total > this.state.maxFiles){
             let title = trans.get('ERROR.TITLE');
             let msg = trans.get('ERROR.TOO_MANY_FILES');
@@ -122,8 +139,10 @@ export class Dropzone extends React.Component {
     render() {
         return (
             <div
+                id={ this.props.id }
                 className={ this.getDroppableClasses() }
                 onDragOver={ this.onDragOver }
+                onDragLeave={ this.onDragLeave }
                 onDrop={ this.handleDrop }
             >
                 { this.props.children }
@@ -209,6 +228,10 @@ export class FileContainer extends React.Component {
             return <i className={ file.preview_icon } ></i>
         }
 
+        if (file._id){
+            return <img src={ getFileUrl(file) } alt="" />
+        }
+
         return null;
     }
 
@@ -268,23 +291,13 @@ export class OneFileView extends React.Component {
 
     }
 
-    getFileUrl() {
-
-        let file = this.props.file;
-        let token = (localStorage.getItem('token')? localStorage.getItem('token') : "");
-
-        let url = `http://localhost:8000/file/private?_t=${token}&filename=${file.filename}`;
-
-        return url;
-    }
-
     getFile() {
 
         let type = this.state.type;
 
         if (!type) {
         } else if (type === 'view-img'){
-            return <img src={ this.getFileUrl() } alt="" />
+            return <img src={ getFileUrl(this.props.file) } alt="" />
         } else if (type === 'view-file'){
             return <i className="far fa-file-pdf"></i>;
         } else if (type === 'view-txt'){
@@ -308,7 +321,7 @@ export class OneFileView extends React.Component {
 
         return (
             <div className={ this.getClasses() } >
-                <a href={ this.getFileUrl() } rel="noopener noreferrer" target="_blank">
+                <a href={ getFileUrl(this.props.file) } rel="noopener noreferrer" target="_blank">
                     { this.getFile() }
                 </a>
             </div>

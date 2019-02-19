@@ -2,24 +2,40 @@ const parser = require('../parser');
 const queryEx = require('../query');
 const User = require('../models/user.js');
 
+
 const type = 'user';
 
 parser.setSingle(type, function(record){
     return parseOneRecord(record);
 })
 
-parser.setMerges(type, ['tags']);
+parser.setMerges(type, ['tags', 'pictures']);
 
 function parseOneRecord(record){
 
     let params = {
         profile_pic : null,
+        others      : [],
         tags        : []
     };
 
     let node = record.get('u');
 
     if (record.has('f')){
+        params.profile_pic = record.get('f');
+    }
+
+    if (record.has('of')){
+        let others = record.get('of');
+        others = others || [];
+
+        if (others && others.properties){
+            others = [others];
+        }
+
+        for (let i in others){
+            params.others.push(others[i]);
+        }
         params.profile_pic = record.get('f');
     }
 
@@ -99,9 +115,10 @@ let UserRepository = {
                 SET u = $user
                 WITH u
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
-                RETURN u, f, t, l
+                RETURN u, f, t, l, of
             `;
 
             let params = {
@@ -125,9 +142,10 @@ let UserRepository = {
                 MATCH (u:User)
                 WHERE $AND
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
-                RETURN u, f, t, l
+                RETURN u, f, t, l, of
             `;
 
             let query = queryEx.buildRequest(request, {

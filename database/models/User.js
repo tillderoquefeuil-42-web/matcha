@@ -4,9 +4,9 @@ const passwordHash = require('password-hash');
 const jwt = require('jwt-simple');
 
 const config = require('../../config/config');
-const Files = require('../../controllers/utils/files.js');
 
 const Location = require('../models/Location');
+const File = require('./File');
 
 const fields = [
     'email', 'username', 'firstname', 'lastname',
@@ -48,11 +48,12 @@ class User {
         }
 
         if (params.profile_pic){
-            let file = params.profile_pic.properties;
-            transform(file);
-            file.url = Files.getFilePath() + file.filename;
+            this.profile_pic = new File(params.profile_pic);
+        }
 
-            this.profile_pic = file;
+        this.pictures = [];
+        for (let i in params.others){
+            this.pictures.push(new File(params.others[i]));
         }
 
         if (params.tags){

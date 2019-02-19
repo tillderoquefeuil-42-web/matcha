@@ -13,7 +13,6 @@ function parseOneRecord(record){
     let entity;
 
     let node = record.get('f');
-
     entity = new File(node);
 
     return entity;

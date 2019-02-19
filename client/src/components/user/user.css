@@ -35,27 +35,45 @@
 }
 
 
-#picture .other-pictures {
+#picture .files-container {
+    justify-content: center;
+}
+
+#picture .one-profile-picture {
     width: 100%;
     min-height: 50px;
     border: 1px dotted #cecece;
     margin-bottom: 10px;
     padding: 8px 10px;
-    padding-top: 0px;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
 }
 
-#picture .other-pictures .files-container {
+#picture .other-pictures {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#picture .other-pictures > .dropzone.one-profile-picture {
+    width: 45% !important;
+}
+
+#picture #main-picture .file-preview-container {
+    max-width: 100%;
+    max-height: 300px;
+}
+
+#picture .one-profile-picture .files-container {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 5px;
 }
 
-#picture .other-pictures .files-container > div {
+#picture .one-profile-picture .files-container > div {
     border-radius: 10px;
     overflow: hidden;
     max-height: 100px;
@@ -64,13 +82,43 @@
     margin-top: 5px;
 }
 
-#picture .other-pictures .files-container > div .file-preview > img {
+#picture .one-profile-picture .files-container > div .file-preview > img {
     max-width: 100%;
     max-height: 100%;
 }
 
+#picture i.fas.fa-plus-circle {
+    color: #bfbfbf;
+    cursor: pointer;
+}
+
+#picture i.fas.fa-plus-circle:hover {
+    color: #cfcfcf;
+}
+
+#picture i.fas.fa-plus-circle > .attach-files {
+    display: none;
+}
 
 
+
+#picture {
+    position: relative;
+}
+
+#picture .picture-uploading {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    background-color: #cecece;
+    opacity: 0.8;
+}
 
 #picture .profile-picture-preview {
     margin: 15px 0px;
