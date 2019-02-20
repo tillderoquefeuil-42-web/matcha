@@ -4,6 +4,7 @@ import io from "socket.io-client";
 
 import { Header } from './Header';
 import { Main } from './Main';
+import { FooterChat } from '../chat/FooterChat';
 
 import './layout.css';
 
@@ -48,6 +49,11 @@ export class Layout extends React.Component {
                 <Main
                     _g={ this.state }
                 />
+
+                <FooterChat
+                    _g={ this.state }
+                />
+
             </div>
         );
     }

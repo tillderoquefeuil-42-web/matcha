@@ -28,6 +28,25 @@ export class SearchBar extends React.Component {
         this.expand.bind(this);
     }
 
+
+    componentDidMount() {
+
+        if (this.props.defaultOpen){
+            let matches = this.filterCollection('');
+
+            if (this.props.sort){
+                let _this = this;
+                matches.sort(function(a, b){
+                    return _this.props.sort(a, b);
+                });
+            }
+
+            this.setState({
+                matches : matches
+            });
+        }
+    }
+
     componentDidUpdate() {
 
         if (this.iScroll && !this.iScroll.scrollListener){
@@ -211,7 +230,7 @@ export class SearchBar extends React.Component {
     getListClass() {
         let classes = 'searchbar-list ';
 
-        if (this.state.showlist){
+        if (this.state.showlist || this.props.defaultOpen){
             classes += 'active ';
         }
 
@@ -300,6 +319,10 @@ export class SearchBar extends React.Component {
         if (this.state.showlist){
             document.removeEventListener('mousedown', this.handleMouseDown);
             this.setState({showlist:false});
+
+            if (this.props.onClose){
+                this.props.onClose(event);
+            }
         }
     }
 
@@ -335,6 +358,7 @@ export class SearchBar extends React.Component {
                         onKeyUp={ this.handleKeyUp }
                         onKeyPress={ this.handleKeyPress }
                         onFocus={ this.handleFocus }
+                        ref={ el => this.input = el }
                     />
                 </InputGroup>
                 <div className={ this.getListClass() }>

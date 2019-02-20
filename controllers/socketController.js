@@ -145,8 +145,12 @@ module.exports = function (app, server) {
             chat.loadOneConversationByUsers([user._id, data.partner_id])
             .then(results => {
                 let userChatRoom = rooms.getOnchatRoom(user._id);
+                
+                let label = 'CHAT_SELECTED';
+                label += (data.status === 'footer_chat')? '_FOOTER' : '';
+
                 io.sockets.in(userChatRoom).emit('CHAT_UPDATE', results);
-                io.sockets.in(userChatRoom).emit('CHAT_SELECTED', results);
+                io.sockets.in(userChatRoom).emit(label, results);
             });
         });
 

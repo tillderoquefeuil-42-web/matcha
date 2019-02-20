@@ -117,6 +117,20 @@ export default {
         return null;
     },
 
+    setFooterChats      : function(partnersId){
+        localStorage.setItem('footer_chats', JSON.stringify(partnersId));
+    },
+
+    getFooterChats      : function(){
+        let partnersId = localStorage.getItem('footer_chats');
+
+        if (partnersId){
+            return JSON.parse(partnersId);
+        }
+
+        return [];
+    },
+
     indexCollection     : function(c, index){
 
         index = index || '_id';
@@ -226,4 +240,5 @@ export default {
         element.className = classList.join(' ');
         return element;
     }
+
 }

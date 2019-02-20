@@ -10,15 +10,15 @@ export class ChatIcon extends React.Component {
         };
 
         this.socket = props._g.socket;
+    }
 
+    componentDidMount() {
         let _this = this;
+
         this.socket.on('UNREAD_CHATS', function(data){
             _this.updateUnreads(data);
         });
 
-    }
-
-    componentDidMount() {
         this.socket.emit('UNREAD_CHATS');
     }
 

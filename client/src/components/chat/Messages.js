@@ -53,12 +53,21 @@ export class Messages extends React.Component {
             };
 
             if (_this.state.conv_id && parseInt(data.conv_id) !== _this.state.conv_id){
+
+                if (_this.props.miniChat){
+                    return;
+                }
+
                 _this.socket.emit('LEAVE_ONE_CHAT', {
                     conv_id : _this.state.conv_id
                 });
 
                 states.messages = [];
                 states.items = 0;
+            }
+
+            if (_this.props.miniChat && parseInt(data.conv_id) !== _this.props.selected){
+                return;
             }
 
             states.conv_id = parseInt(data.conv_id);
@@ -81,13 +90,17 @@ export class Messages extends React.Component {
         });
 
         this.socket.on('NEW_MESSAGE', function(data){
-            _this.addMessage(data.message);
-            _this.scrollToBottom();
+            if (data.message && data.message.conv_id === _this.state.conv_id){
+                _this.addMessage(data.message);
+                _this.scrollToBottom();
+            }
         });
 
         this.socket.on('MESSAGE_FILE_UPDATE', function(data){
-            _this.updateMessageFile(data.message);
-            _this.scrollToBottom();
+            if (data.message && data.message.conv_id === _this.state.conv_id){
+                _this.updateMessageFile(data.message);
+                _this.scrollToBottom();
+            }
         });
 
     }
@@ -116,7 +129,6 @@ export class Messages extends React.Component {
 
         this.pageTitle = this.state.conv_id;
     }
-
 
     getResetState() {
 
