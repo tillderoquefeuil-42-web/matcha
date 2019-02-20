@@ -3,6 +3,14 @@ let parser = {};
 parser.singles = {};
 parser.merges = {};
 
+function objectLength(object){
+    let length = 0;
+    for (let i in object){
+        length++;
+    }
+    return length;
+}
+
 parser.setSingle = function(type, funct){
     if (typeof funct === 'function'){
         parser.singles[type] = funct;
@@ -72,8 +80,31 @@ parser.oneMerging = function(n, node, property){
         return n;
     }
 
-    n[property] = n[property].concat(node[property]);
+    let data = {};
+    parser.parseOneNodeProperty(data, n[property]);
+    parser.parseOneNodeProperty(data, node[property]);
+
+    n[property] = Object.values(data);
     return n;
+}
+
+parser.parseOneNodeProperty = function(data, nodeProperty){
+
+    let length = objectLength(data);
+
+    for (let i in nodeProperty){
+        let elem = nodeProperty[i];
+
+        if (typeof elem === 'object'){
+            let id = elem._id? elem._id : length + i;
+            data[id] = elem;
+            continue;
+        }
+
+        data[length + i] = elem;
+    }
+
+    return data;
 }
 
 module.exports = parser;

@@ -24,6 +24,7 @@ export default {
                 name    : file.name,
                 type    : file.type,
                 size    : file.size,
+                status  : file.status,
                 data    : arrayBuffer
             }, params);
 

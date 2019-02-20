@@ -59,7 +59,7 @@ export class Account extends React.Component {
                 </div>
 
                 <div className="col-md-6">
-                    {/*<UserLocation />*/}
+                    <UserLocation />
                     <Picture _g={ this.props._g } />
                     <Delete />
                 </div>

@@ -589,7 +589,7 @@ exports.saveUser = function(req, res) {
 
             // TO UPDATE
             const fields = ['bio', 'firstname', 'lastname', 'username', 'gender', 'birthday', 'language', 'see_f', 'see_m', 'see_nb'];
-            const unwanted = ['profile_pic', 'profile_picture', 'tags'];
+            const unwanted = ['profile_pic', 'profile_picture', 'tags', 'pictures', 'location'];
             for (var i in fields) {
                 user[fields[i]] = _user[fields[i]];
             }
@@ -781,7 +781,6 @@ exports.saveLocation = function(req, res) {
     });
 };
 
-
 exports.getFriendsByUser = function(req, res){
 
     return exports.getUserByToken(req, res, function(user) {
@@ -876,8 +875,6 @@ exports.updateOtherPictures = function(user, filesId) {
         });
     });
 };
-
-
 
 
 // GET

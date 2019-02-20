@@ -67,6 +67,10 @@ export class Picture extends React.Component {
         let files = this.state.files;
         let data = {};
 
+        let params = {
+            file_case   : 'profile_picture'
+        }
+
         if (files['main-picture'] && !files['main-picture']._id){
             let file = files['main-picture'];
             file.status = 'profile_picture';
@@ -95,10 +99,6 @@ export class Picture extends React.Component {
         this.setState({
             uploading   : length
         });
-
-        let params = {
-            file_case   : 'profile_picture'
-        }
 
         filesManager.setSocket(this.socket);
         filesManager.sendFiles(data, params);
