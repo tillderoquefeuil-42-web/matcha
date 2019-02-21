@@ -17,6 +17,7 @@ export class SearchBar extends React.Component {
             value       : '',
             values      : {},
             collection  : utils.indexCollection(props.collection),
+            length      : props.collection.length,
             slugs       : this.createSlugs(props.collection),
             showlist    : false,
             matches     : [],
@@ -65,7 +66,6 @@ export class SearchBar extends React.Component {
     }
 
     buildMoreElements() {
-
         if ((this.iScroll.scrollTop + this.iScroll.clientHeight >= this.iScroll.scrollHeight) && this.state.length > this.state.count){
             this.setState({count : this.state.count + this.itemsCount()});
         }
@@ -201,7 +201,8 @@ export class SearchBar extends React.Component {
     updateCollection(collection){
         this.setState({
             collection  : utils.indexCollection(collection),
-            slugs       : this.createSlugs(collection),
+            length      : collection? collection.length : 0,
+            slugs       : this.createSlugs(collection)
         });
     }
 
