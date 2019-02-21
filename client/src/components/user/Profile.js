@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
+import { Component } from '../Component';
 import { DatePickerInput } from '../datepicker/Datepicker';
 import { Username } from '../sign/Username';
 import { Language } from '../language/Language';
@@ -11,7 +12,7 @@ import alert from '../../utils/alert';
 import utils from '../../utils/utils';
 import trans from '../../translations/translate';
 
-export class Profile extends React.Component {
+export class Profile extends Component {
 
     constructor(props) {
         super(props);

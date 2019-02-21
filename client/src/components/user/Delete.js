@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 
+import { Component } from '../Component';
 import { SuperModal } from '../modal/CustomModal';
 
 import utils from '../../utils/utils';
@@ -8,7 +9,7 @@ import API from '../../utils/API';
 import alert from '../../utils/alert';
 import trans from '../../translations/translate';
 
-export class Delete extends React.Component {
+export class Delete extends Component {
 
     constructor(props) {
         super(props);

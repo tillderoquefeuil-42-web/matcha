@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, FormGroup, FormControl, ControlLabel, InputGroup } from "react-bootstrap";
 
+import { Component } from '../Component';
 import { SuperModal } from '../modal/CustomModal';
 
 import utils from '../../utils/utils';
@@ -10,7 +11,7 @@ import trans from '../../translations/translate';
 
 import './user.css';
 
-export class Connection extends React.Component {
+export class Connection extends Component {
 
     constructor(props) {
         super(props);

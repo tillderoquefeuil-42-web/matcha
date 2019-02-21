@@ -310,20 +310,22 @@ i.notifs > .sup {
     margin: 0px 2px;
 }
 
+
+#layout.page-chat #footer-chat-container {
+    display: none !important;
+}
+
+
 #footer-chat-container {
-    display: none;
+    display: flex;
+    justify-content: flex-start;
     height: 45px;
     position: fixed;
     bottom: 0px;
     padding-left: 15px;
 }
 
-#footer-chat-container.active {
-    display: flex;
-    justify-content: flex-start;
-}
-
-#footer-chat-container.active .searchbar-container {
+#footer-chat-container .searchbar-container {
     height: 100%;
     cursor: pointer;
     position: relative;
@@ -335,7 +337,7 @@ i.notifs > .sup {
     z-index: 500;
 }
 
-#footer-chat-container.active .searchbar-container .close-searchbar {
+#footer-chat-container .searchbar-container .close-searchbar {
     display: none;
     cursor: pointer;
     position: absolute;
@@ -345,33 +347,33 @@ i.notifs > .sup {
     font-size: 20px;
 }
 
-#footer-chat-container.active .searchbar-container:hover .close-searchbar {
+#footer-chat-container .searchbar-container:hover .close-searchbar {
     display: block;
 }
 
-#footer-chat-container.active .searchbar-container .close-searchbar > i.fa.fa-times-circle {
+#footer-chat-container .searchbar-container .close-searchbar > i.fa.fa-times-circle {
     background: #fff;
     border-radius: 50%;
 }
 
-#footer-chat-container.active .searchbar-container .search-friends {
+#footer-chat-container .searchbar-container .search-friends {
     font-size: 20px;
 }
 
-#footer-chat-container.active .searchbar-container .search-friends > .fa.fa-users {
+#footer-chat-container .searchbar-container .search-friends > .fa.fa-users {
     height: 30px;
     padding-top: 10px;
 }
 
-#footer-chat-container.active .searchbar-container .searchbar.form-group {
+#footer-chat-container .searchbar-container .searchbar.form-group {
     margin-top: 5px;
 }
 
-#footer-chat-container.active .searchbar-container .searchbar.form-group .input-group {
+#footer-chat-container .searchbar-container .searchbar.form-group .input-group {
     z-index: 999;
 }
 
-#footer-chat-container.active .searchbar-container .searchbar-list.active {
+#footer-chat-container .searchbar-container .searchbar-list.active {
     bottom: -5px;
     left: -20px;
     border-bottom: none;

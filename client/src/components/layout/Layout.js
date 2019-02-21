@@ -38,9 +38,20 @@ export class Layout extends React.Component {
         this.setState({page:name});
     }
 
+    getClasses() {
+
+        let classes = 'g-layout';
+
+        if (this.state.page){
+            classes += ' page-' + this.state.page;
+        }
+
+        return classes;
+    }
+
     render() {
         return(
-            <div id="layout">
+            <div id="layout" className={ this.getClasses() }>
                 <Header
                     _g={ this.state }
                     pageChange={ (name)=> {this.pageChange(name)} }

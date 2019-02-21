@@ -1,6 +1,8 @@
 import React from 'react';
 
-export class ChatIcon extends React.Component {
+import { Component } from '../Component';
+
+export class ChatIcon extends Component {
 
     constructor(props) {
         super(props);
@@ -13,6 +15,8 @@ export class ChatIcon extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+
         let _this = this;
 
         this.socket.on('UNREAD_CHATS', function(data){

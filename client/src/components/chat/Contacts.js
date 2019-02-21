@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Component } from '../Component';
 import { SearchBar } from '../searchBar/SearchBar';
 import { UserIcon } from '../layout/UserIcon';
 
@@ -7,7 +8,7 @@ import utils from '../../utils/utils';
 import time from '../../utils/time';
 import translate from '../../translations/translate';
 
-export class Contacts extends React.Component {
+export class Contacts extends Component {
 
     constructor(props){
         super(props);
@@ -21,6 +22,8 @@ export class Contacts extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+
         let _this = this;
 
         this.socket.on('CHAT_SELECTED', function(data){

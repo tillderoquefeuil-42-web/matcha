@@ -1,7 +1,7 @@
 import React from 'react';
-
 import { Button } from 'react-bootstrap';
 
+import { Component } from '../Component';
 import { Gmap } from '../gmap/Gmap';
 
 import API from '../../utils/API';
@@ -10,7 +10,7 @@ import utils from '../../utils/utils';
 import Location from '../../utils/location';
 import trans from '../../translations/translate';
 
-export class UserLocation extends React.Component {
+export class UserLocation extends Component {
 
     constructor(props){
         super(props);
@@ -25,9 +25,15 @@ export class UserLocation extends React.Component {
         this.updateFromPlaces.bind(this);
         this.updateFromMap.bind(this);
         this.updateLocation.bind(this);
+        this.initAutocomplete.bind(this);
+        this.initUserLocation.bind(this);
     }
 
     onMapLoaded() {
+        if (!this.gmap){
+            return;
+        }
+
         this.initAutocomplete();
         this.initUserLocation();
     }
@@ -187,12 +193,13 @@ export class UserLocation extends React.Component {
     // RENDER
 
     render() {
+
         return (
             <div id="location" className="account-block">
                 <h2 className="form-section">{ trans.get('USER.LOCATION') }</h2>
 
                 <Gmap
-                    ref={ el => this.gmap = el }
+                    ref={ el => { this.gmap = el; }}
                     width={ this.getMapWidth() }
                     height={ 400 }
                     onLoaded={ () => this.onMapLoaded() }

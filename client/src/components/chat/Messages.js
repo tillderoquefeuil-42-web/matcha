@@ -3,6 +3,7 @@ import React from 'react';
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { Picker } from 'emoji-mart';
 
+import { Component } from '../Component';
 import { UserIcon } from '../layout/UserIcon';
 import { Loader } from '../loader/Loader';
 import { Dropzone, FileContainer, OneFileView, FileInput } from '../images/Dropzone';
@@ -16,7 +17,7 @@ import 'emoji-mart/css/emoji-mart.css';
 
 const urlRegex = utils.linkifyRegexp();
 
-export class Messages extends React.Component {
+export class Messages extends Component {
 
     constructor(props) {
         super(props);
@@ -38,6 +39,8 @@ export class Messages extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+
         let _this = this;
 
         this.socket.on('LOAD_MESSAGES', function(data){
@@ -483,7 +486,7 @@ export class Messages extends React.Component {
 
 }
 
-export class MessageInput extends React.Component {
+export class MessageInput extends Component {
 
     constructor(props) {
         super(props);
@@ -654,7 +657,7 @@ export class MessageInput extends React.Component {
 
 }
 
-export class Message extends React.Component {
+export class Message extends Component {
 
     constructor(props) {
         super(props);

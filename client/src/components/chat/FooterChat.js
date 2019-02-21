@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Component } from '../Component';
 import { Messages } from './Messages';
 import { UserIcon } from '../layout/UserIcon';
 import { SearchBar } from '../searchBar/SearchBar';
@@ -20,7 +21,7 @@ function getPartnerId(conv, user) {
     return null;
 }
 
-export class FooterChat extends React.Component {
+export class FooterChat extends Component {
 
     constructor(props) {
         super(props);
@@ -36,6 +37,7 @@ export class FooterChat extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
 
         let _this = this;
 
@@ -188,7 +190,7 @@ export class FooterChat extends React.Component {
         }
 
         return (
-            <div id="footer-chat-container" className="active">
+            <div id="footer-chat-container">
                 { this.buildSearchBar() }
                 { this.buildChats() }
             </div>
@@ -197,7 +199,7 @@ export class FooterChat extends React.Component {
 
 }
 
-class ChatWindow extends React.Component {
+class ChatWindow extends Component {
 
     constructor(props) {
         super(props);

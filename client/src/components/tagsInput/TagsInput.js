@@ -1,6 +1,7 @@
 import React from 'react';
 import { Badge } from "react-bootstrap";
 
+import { Component } from '../Component';
 import { SearchBar } from '../searchBar/SearchBar';
 import { Loader } from '../loader/Loader';
 
@@ -10,7 +11,7 @@ import trans from '../../translations/translate';
 
 import './tagsinput.css';
 
-export class TagsInput extends React.Component {
+export class TagsInput extends Component {
 
     constructor(props){
         super(props);
@@ -24,6 +25,8 @@ export class TagsInput extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+
         let _this = this;
 
         API.getTags()

@@ -1,8 +1,10 @@
 import React from 'react';
 
+import { Component } from '../Component';
 import Location from '../../utils/location';
 
-export class Map extends React.Component {
+export class Map extends Component {
+
     constructor(props) {
         super(props);
 
@@ -10,6 +12,8 @@ export class Map extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+
         if (!window.google) {
             this.loadGooglePlacesAPI()
         } else {
@@ -25,6 +29,10 @@ export class Map extends React.Component {
     }
 
     onScriptLoad() {
+        if (!this._isMounted){
+            return;
+        }
+
         let data = {};
 
         if (this.props.map){

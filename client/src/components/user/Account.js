@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Component } from '../Component';
+
 import { Loader } from '../loader/Loader';
 import { Profile } from './Profile.js';
 import { Connection } from './Connection.js';
@@ -13,7 +15,7 @@ import trans from '../../translations/translate';
 
 import './user.css';
 
-export class Account extends React.Component {
+export class Account extends Component {
 
     constructor(props) {
         super(props);
@@ -24,8 +26,10 @@ export class Account extends React.Component {
     }
 
     componentDidMount() {
-        let _this = this;
+        this._isMounted = true;
         document.title = utils.generatePageTitle(trans.get('PAGE_TITLE.ACCOUNT'));
+
+        let _this = this;
 
         API.isAuth()
         .then(function(data){

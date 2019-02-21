@@ -1,9 +1,7 @@
 import React from 'react';
 
+import { Component } from '../Component';
 import { Map } from './Map';
-
-// import Location from '../../utils/location';
-// import trans from '../../translations/translate';
 
 import './gmap.css';
 
@@ -12,7 +10,7 @@ const coords = {
     lng : 2.3487839388235443
 };
 
-export class Gmap extends React.Component {
+export class Gmap extends Component {
 
     constructor(props){
         super(props);
@@ -25,8 +23,6 @@ export class Gmap extends React.Component {
             autocomplete: null,
             markers     : {}
         }
-
-        // this.onDragEnd.bind(this);
     }
 
     onLoaded(data) {

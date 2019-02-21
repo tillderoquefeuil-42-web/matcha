@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button } from "react-bootstrap";
 
-import { Dropzone, FileContainer, FileInput } from '../images/Dropzone';
+import { Component } from '../Component';
 import { Loader } from '../loader/Loader';
+import { Dropzone, FileContainer, FileInput } from '../images/Dropzone';
 
 import alert from '../../utils/alert';
 import utils from '../../utils/utils';
@@ -11,7 +12,7 @@ import filesManager from '../../utils/files';
 
 const maxPics = 5;
 
-export class Picture extends React.Component {
+export class Picture extends Component {
 
     constructor(props) {
         super(props);
@@ -31,6 +32,8 @@ export class Picture extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
+
         let _this = this;
 
         this.socket.off('PP_UPDATE_CONFIRM').on('PP_UPDATE_CONFIRM', function(data){
@@ -233,7 +236,7 @@ export class Picture extends React.Component {
     }
 }
 
-class ProfilePicture extends React.Component {
+class ProfilePicture extends Component {
 
     constructor(props) {
         super(props);

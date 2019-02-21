@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Component } from '../Component';
 import { Contacts } from './Contacts';
 import { Messages } from './Messages';
 import { Loader } from '../loader/Loader';
@@ -9,7 +10,7 @@ import trans from '../../translations/translate';
 
 import './chat.css';
 
-export class Chat extends React.Component {
+export class Chat extends Component {
 
     constructor(props) {
         super(props);
@@ -23,12 +24,20 @@ export class Chat extends React.Component {
         this.socket = props._g.socket;
     }
 
+    componentWillUnmount() {
+        this._isMounted = false;
+
+        this.socket = null;
+    }
+
     componentDidMount() {
+        this._isMounted = true;
         document.title = utils.generatePageTitle(trans.get('PAGE_TITLE.CHAT'));
 
         let _this = this;
 
         this.socket.on('LOAD_CONVERSATIONS', function(data){
+
             let c = utils.indexCollection(data.conversations);
 
             let state = {conversations : c};
@@ -59,11 +68,14 @@ export class Chat extends React.Component {
         if (data.conv){
             let conv = data.conv;
             let convs = this.state.conversations;
-            convs[conv._id] = conv;
 
-            this.setState({
-                conversations   : convs
-            });
+            if (convs){
+                convs[conv._id] = conv;
+
+                this.setState({
+                    conversations   : convs
+                });
+            }
         } else if (data.ERROR){
             console.warn(data.ERROR);
         }
