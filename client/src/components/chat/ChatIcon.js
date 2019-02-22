@@ -20,16 +20,16 @@ export class ChatIcon extends Component {
         let _this = this;
 
         this.socket.on('UNREAD_CHATS', function(data){
-            _this.updateUnreads(data);
+            _this.updateUnreads(data.unreads);
         });
 
         this.socket.emit('UNREAD_CHATS');
     }
 
-    updateUnreads(data) {
-        if (data && data.unreads !== this.state.unreads){
+    updateUnreads(unreads) {
+        if (unreads && unreads.length !== this.state.unreads){
             this.setState({
-                unread  : data.unreads
+                unread  : unreads.length
             });
         }
     }

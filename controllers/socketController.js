@@ -79,7 +79,7 @@ const chatHelpers = {
 
         chat.getUnreadConversations(userId)
         .then(results => {
-            io.sockets.in(userRoom).emit('UNREAD_CHATS', {unreads : results.length});
+            io.sockets.in(userRoom).emit('UNREAD_CHATS', {unreads : results});
         });
     }
 

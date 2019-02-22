@@ -360,6 +360,7 @@ export class SearchBar extends React.Component {
                         onKeyPress={ this.handleKeyPress }
                         onFocus={ this.handleFocus }
                         ref={ el => this.input = el }
+                        autoFocus={ this.props.autofocus }
                     />
                 </InputGroup>
                 <div className={ this.getListClass() }>

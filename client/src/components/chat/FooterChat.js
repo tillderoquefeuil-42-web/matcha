@@ -21,6 +21,7 @@ function getPartnerId(conv, user) {
     return null;
 }
 
+
 export class FooterChat extends Component {
 
     constructor(props) {
@@ -39,6 +40,9 @@ export class FooterChat extends Component {
     componentDidMount() {
         this._isMounted = true;
 
+        this.lastChats = [];
+        this.unreadChats = [];
+
         let _this = this;
 
         this.socket.on('LOAD_CONTACTS', function(data){
@@ -49,8 +53,11 @@ export class FooterChat extends Component {
 
         this.socket.on('CHAT_SELECTED_FOOTER', function(data){
             if (data.conv){
-                let convs = _this.state.convs;
-                convs[data.conv._id] = data.conv;
+
+                data.conv.open = _this.setOpenConv(data.conv);
+                data.conv.unread = _this.setUnreadConv(data.conv);
+
+                let convs = _this.manageConvs(data.conv);
 
                 _this.setState({
                     convs : convs
@@ -58,14 +65,48 @@ export class FooterChat extends Component {
             }
         });
 
+        this.socket.on('UNREAD_CHATS', function(data){
+            _this.loadUnreadConvs(data.unreads);
+        });
+
+
         this.socket.emit('ON_CHAT');
 
         this.loadLastConvs();
     }
 
     componentDidUpdate() {
-
         this.saveLastPartners()
+    }
+
+    manageConvs(conv){
+
+        let convs = this.state.convs;
+
+        if (convs[conv._id]){
+            convs[conv._id] = conv;
+            return convs;
+        }
+
+        let max = window.innerWidth;
+        let convNb = utils.objectLength(convs) + 1;
+
+        let width = 75 + (250 * convNb);
+
+        if (width < max){
+            convs[conv._id] = conv;
+            return convs;
+        } else if (conv.unread){
+            return convs;
+        }
+
+        for (let i in convs){
+            delete convs[i];
+            break;
+        }
+
+        convs[conv._id] = conv;
+        return convs;
     }
 
     saveLastPartners() {
@@ -89,11 +130,74 @@ export class FooterChat extends Component {
         let chatsId = utils.getFooterChats();
 
         for (let i in chatsId){
+
+            if (this.lastChats.indexOf(chatsId[i]) !== -1){
+                continue;
+            }
+
+            this.lastChats.push(chatsId[i]);
+
             this.socket.emit('SELECT_ONE_CHAT', {
                 partner_id  : chatsId[i],
                 status      : 'footer_chat'
             });
         }
+    }
+
+    loadUnreadConvs(unreads) {
+        if (!unreads || !unreads.length){
+            return;
+        }
+
+        let user = utils.getLocalUser();
+
+        for (let i in unreads){
+            let id = getPartnerId(unreads[i], user);
+            if (this.unreadChats.indexOf(id) !== -1){
+                continue;
+            }
+            this.unreadChats.push(id);
+
+            this.socket.emit('SELECT_ONE_CHAT', {
+                partner_id  : id,
+                status      : 'footer_chat'
+            });
+        }
+
+    }
+
+    setOpenConv(conv) {
+
+        if (this.lastChats && this.lastChats.length > 0){
+
+            let user = utils.getLocalUser();
+            let partnerId = getPartnerId(conv, user);
+
+            let index = this.lastChats.indexOf(partnerId);
+            if (index !== -1){
+                delete this.lastChats[index];
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    setUnreadConv(conv) {
+
+        if (this.unreadChats && this.unreadChats.length > 0){
+
+            let user = utils.getLocalUser();
+            let partnerId = getPartnerId(conv, user);
+
+            let index = this.unreadChats.indexOf(partnerId);
+            if (index !== -1){
+                delete this.unreadChats[index];
+                return true;
+            }
+        }
+
+        return false;
     }
 
     closeOneChat(convId){
@@ -138,6 +242,7 @@ export class FooterChat extends Component {
                     getLabel={ function(item){ return (item.firstname + ' ' + item.lastname); } }
                     onClose={ event => this.hideSearchbar(event) }
                     defaultOpen
+                    autofocus
                 />
             </div>
         );
@@ -205,13 +310,17 @@ class ChatWindow extends Component {
         super(props);
 
         this.state = {
-            display : true
+            display : props.conv.open,
+            unread  : props.conv.unread
         };
     }
 
     showWindow = event => {
         if (!this.state.display){
-            this.setState({display : true});
+            this.setState({
+                display : true,
+                unread  : false
+            });
         }
     }
 
@@ -252,6 +361,14 @@ class ChatWindow extends Component {
         return partner.firstname + ' ' + partner.lastname;
     }
 
+    newMessage() {
+        this.setState({unread : true});
+    }
+
+    messageSeen() {
+        this.setState({unread : false});
+    }
+
     getData() {
         let data = {
             conv    : this.props.conv,
@@ -267,6 +384,10 @@ class ChatWindow extends Component {
 
         if (this.state.display){
             classes += ' active';
+        }
+
+        if (this.state.unread){
+            classes += ' unread';
         }
 
         return classes;
@@ -294,8 +415,12 @@ class ChatWindow extends Component {
 
                 <div className={ this.getClasses('window') }>
                     <Messages
+                        newMessage={ () => this.newMessage() }
+                        messageSeen={ () => this.messageSeen() }
                         selected={ this.props.conv._id }
                         data={ this.getData() }
+                        open={ this.state.display }
+                        unread={ this.state.unread }
                         miniChat
                     />
                 </div>

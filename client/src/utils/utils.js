@@ -4,7 +4,7 @@ import API from '../utils/API.js';
 const slugify = require('slugify');
 
 export default {
-    
+
     isDefine            : function(variable){
         if (typeof variable === 'undefined'){
             return false;
@@ -239,6 +239,19 @@ export default {
 
         element.className = classList.join(' ');
         return element;
+    },
+
+    objectLength        : function(object){
+
+        let length = 0;
+
+        for (let i in object){
+            if (typeof object[i] !== 'function'){
+                length++;
+            }
+        }
+
+        return length;
     }
 
 }

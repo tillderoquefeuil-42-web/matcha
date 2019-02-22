@@ -89,7 +89,7 @@ export class Messages extends Component {
                 _this.iScroll.over = (!data.messages.length || data.messages.length < 50)? true : false;
             }
 
-            _this.readChat();
+            _this.readChat(true);
         });
 
         this.socket.on('NEW_MESSAGE', function(data){
@@ -115,6 +115,10 @@ export class Messages extends Component {
                 this.buildMoreMessages();
             });
             this.iScroll.scrollListener = true;
+        }
+
+        if (this.props.miniChat && this.props.open){
+            this.readChat();
         }
     }
 
@@ -206,7 +210,12 @@ export class Messages extends Component {
         });
     }
 
-    readChat() {
+    readChat(force) {
+
+        if (this.props.miniChat && !force){
+            return;
+        }
+
         this.socket.emit('USER_READ_CHAT', {
             conv_id     : this.state.conv_id
         });
@@ -288,6 +297,19 @@ export class Messages extends Component {
     }
 
 
+    // ***** READ CONV ***** //
+
+    handleMouseEnter = event => {
+
+        if (this.props.unread || !this.props.miniChat){
+            if (this.props.messageSeen){
+                this.props.messageSeen();
+            }
+
+            this.readChat(true);
+        }
+    }
+
 
     // ***** MESSAGE INPUT ***** //
 
@@ -330,15 +352,20 @@ export class Messages extends Component {
             this.parseFilesMessage(message);
         }
 
+        let own = (parseInt(message.sender_id) === user._id)? true : false;
         let messages = this.state.messages;
         messages.push(message);
 
         this.setState({
             messages    : this.sortMessagesByDate(messages),
-            message     : (parseInt(message.sender_id) === user._id)? '' : this.state.message
+            message     : own? '' : this.state.message
         });
 
-        this.readChat();
+        if (this.props.miniChat && this.props.newMessage && !own){
+            this.props.newMessage();
+        }
+
+        // this.readChat();
     };
 
     updateMessageFile(message) {
@@ -415,7 +442,10 @@ export class Messages extends Component {
         let partner = this.getPartner();
 
         return (
-            <div className="open-conversation">
+            <div
+                className="open-conversation"
+                onMouseEnter={ this.handleMouseEnter }
+            >
                 <div className="contact">
                     <div>
                         <UserIcon user={ partner } />
@@ -623,7 +653,7 @@ export class MessageInput extends Component {
                         autoFocus 
                         autoComplete="off"
                         type="text"
-                        id="message"
+                        className="message"
                         ref={ (input) => { this.message_input = input; } }
                         placeholder={ translate.get('CHAT.WRITE') + ' ...' }
                         value={this.props.message} 
