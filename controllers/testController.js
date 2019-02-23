@@ -83,8 +83,8 @@ module.exports = function (app) {
 
             let user = account.generateUser(firstname, lastname, j);
             account.manageOrientation(user);
-            user.tags = account.getRandomTags(index);
-            user.coords = account.getRandomCoords();
+            account.getRandomTags(user);
+            account.getRandomCoords(user);
 
             account.createTestAccount(user)
             .then(user => {

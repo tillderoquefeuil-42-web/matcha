@@ -637,12 +637,18 @@ exports.saveNewPassword = function(req, res) {
 
             user.password = passwordHash.generate(req.body.password);
 
+            // NO UPDATE ON :
+            const unwanted = ['profile_pic', 'profile_picture', 'tags', 'pictures', 'location'];
+            for (var i in unwanted) {
+                delete user[unwanted[i]];
+            }
+
             UserRepo.updateOne(user)
-            .then(result => {
+            .then(_user => {
                 res.status(200).json({
                     text    : "SUCCESS",
-                    user    : user,
-                    token   : user.getToken()
+                    user    : _user,
+                    token   : _user.getToken()
                 });
             }).catch(err => {
                 res.status(500).json({

@@ -101,6 +101,14 @@ parser.parseOneNodeProperty = function(data, nodeProperty){
             continue;
         }
 
+        if (typeof elem === 'string'){
+            let array = Object.values(data);
+            if (array.indexOf(elem) === -1){
+                data[length + i] = elem;
+            }
+            continue;
+        }
+
         data[length + i] = elem;
     }
 

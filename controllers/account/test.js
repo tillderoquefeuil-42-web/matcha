@@ -113,22 +113,22 @@ exports.manageOrientation = function(user){
     return user;
 }
 
-exports.getRandomTags = function(index){
+exports.getRandomTags = function(user){
     let tagIndex;
-    let userTags = [];
     let r = random();
+    user.tags = [];
 
     for (let j=1; j<5; j++){
         tagIndex = ((j * r) % tags.length);
-        if (tags[index]){
-            userTags.push(tags[index]);
+        if (tags[tagIndex]){
+            user.tags.push(tags[tagIndex]);
         }
     }
 
-    return userTags;
+    return user;
 }
 
-exports.getRandomCoords = function(){
+exports.getRandomCoords = function(user){
     let lat = ((random() + random() + 1) / random());
     let lng = ((random() + random() + 1) / random());
 
@@ -145,10 +145,12 @@ exports.getRandomCoords = function(){
         lng : (random() % 2)? -1 : 1
     }
 
-    return ({
+    user.coords = {
         lat : (coords.lat + (pos.lat * lat)),
         lng : (coords.lng + (pos.lng * lng))
-    });
+    };
+
+    return user;
 }
 
 exports.createTestAccount = function(data) {
