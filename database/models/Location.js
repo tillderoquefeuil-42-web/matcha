@@ -29,7 +29,9 @@ class Location {
             this[fields[i]] = data[fields[i]];
         }
 
-        this.label = `${this.street_number} ${this.route}, ${this.postal_code} ${this.locality}, ${this.country}`;
+        if (this.street_number && this.route && this.postal_code && this.locality && this.country){
+            this.label = `${this.street_number} ${this.route}, ${this.postal_code} ${this.locality}, ${this.country}`;
+        }
     }
 
 }

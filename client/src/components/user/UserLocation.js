@@ -49,8 +49,11 @@ export class UserLocation extends Component {
 
     initUserLocation() {
 
-        if (this.state.location){
+        if (this.state.location && this.state.location.country){
             this.updateLocation(this.state.location);
+            return;
+        } else if (this.state.location){
+            this.updateFromMap(this.state.location.lat, this.state.location.lng);
             return;
         }
 
