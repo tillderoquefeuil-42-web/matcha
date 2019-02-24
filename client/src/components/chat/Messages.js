@@ -314,7 +314,7 @@ export class Messages extends Component {
     // ***** MESSAGE INPUT ***** //
 
     handleChange = event => {
-        this.setState({[event.target.id] : event.target.value});
+        this.setState({[event.target.name] : event.target.value});
     }
 
     setMessage(message) {
@@ -653,6 +653,7 @@ export class MessageInput extends Component {
                         autoFocus 
                         autoComplete="off"
                         type="text"
+                        name="message"
                         className="message"
                         ref={ (input) => { this.message_input = input; } }
                         placeholder={ translate.get('CHAT.WRITE') + ' ...' }
