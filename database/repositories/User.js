@@ -290,6 +290,50 @@ let UserRepository = {
             });
 
         });
+    },
+
+    matching        : function(user, distance){
+        
+        distance = distance || 50000;
+
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (u:User)-[ulr:LIVES {current:true}]->(ul:Location), (m:User)-[mlr:LIVES {current:true}]->(ml:Location)
+                WHERE ID(u)=${user._id} AND ID(m)<>${user._id}
+
+                SET m.g_matched = CASE
+                    WHEN u.see_m=TRUE AND m.gender='male' THEN TRUE
+                    WHEN u.see_f=TRUE AND m.gender='female' THEN TRUE
+                    WHEN u.see_nb=TRUE AND m.gender='nb' THEN TRUE
+                    ELSE NULL
+                END
+
+                SET m.o_matched = CASE
+                    WHEN m.see_m=TRUE AND u.gender='male' THEN TRUE
+                    WHEN m.see_f=TRUE AND u.gender='female' THEN TRUE
+                    WHEN m.see_nb=TRUE AND u.gender='nb' THEN TRUE
+                    ELSE NULL
+                END
+
+                SET ul.point = point({ longitude: ul.lng, latitude: ul.lat })
+                SET ml.point = point({ longitude: ml.lng, latitude: ml.lat })
+                SET m.distance = round(distance(ul.point, ml.point))
+
+                WITH m
+                WHERE m.g_matched IS NOT NULL AND m.o_matched IS NOT NULL AND m.distance < ${distance}
+
+                RETURN m
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
+                return reject(err);
+            });
+
+        });
     }
 
 };

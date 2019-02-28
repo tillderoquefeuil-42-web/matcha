@@ -29,9 +29,25 @@ class Location {
             this[fields[i]] = data[fields[i]];
         }
 
-        if (this.street_number && this.route && this.postal_code && this.locality && this.country){
-            this.label = `${this.street_number} ${this.route}, ${this.postal_code} ${this.locality}, ${this.country}`;
+        this.label = this.getLabel();
+    }
+
+    getLabel() {
+        let label = '';
+
+        if (this.street_number){
+            label += `${this.street_number} `;
+        } if (this.route){
+            label += `${this.route}, `;
+        } if (this.postal_code){
+            label += `${this.postal_code} `;
+        } if (this.locality){
+            label += `${this.locality}, `;
+        } if (this.country){
+            label += `${this.country}`;
         }
+
+        return label;
     }
 
 }

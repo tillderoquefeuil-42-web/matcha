@@ -85,6 +85,8 @@ exports.generateUser = function(firstname, lastname, j){
 
     let age = config.params.MIN_AGED_USERS + r % 10;
 
+    let gender = (r%3>0)? genders[j] : genders[2];
+
     let user = {
         firstname   : firstname,
         lastname    : lastname,
@@ -92,7 +94,7 @@ exports.generateUser = function(firstname, lastname, j){
         email       : 'tillderoquefeuil+' + username + '@gmail.com',
         password    : 'MyWebSite42!',
         language    : 'en',
-        gender      : genders[j],
+        gender      : gender,
         birthday    : parseInt(moment().subtract(age, 'years').format('x')),
     };
 
@@ -103,12 +105,12 @@ exports.manageOrientation = function(user){
     let r = random();
     let orientations = [1];
 
-    orientations.push(random());
-    orientations.push(random());
+    orientations.push(random() % 2);
+    orientations.push(random() % 2);
 
-    user.see_f = orientations[r % 3];
-    user.see_m = orientations[(r+1) % 3];
-    user.see_nb = orientations[(r+2) % 3];
+    user.see_f = orientations[r % 3]? true : false;
+    user.see_m = orientations[(r+1) % 3]? true : false;
+    user.see_nb = orientations[(r+2) % 3]? true : false;
 
     return user;
 }
