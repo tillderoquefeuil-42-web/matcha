@@ -970,3 +970,30 @@ exports.loadContacts = function(user){
         });
     });
 };
+
+exports.loadMatches = function(user, options){
+
+    let data = {
+        matches : [],
+        error   : null
+    };
+
+    return new Promise((resolve, reject) => {
+
+        if (!user){
+            data.error = "INVALID_PARAMETERS";
+            return reject(data);
+        }
+
+        UserRepo.matching(user, options)
+        .then(matches => {
+            data.matches = matches;
+            return resolve(data);
+
+        }).catch(err => {
+            console.log(err);
+            data.error = "INTERNAL_ERROR";
+            return reject(data);
+        });
+    });
+};

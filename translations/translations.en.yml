@@ -91,10 +91,11 @@ PAGE_TITLE:
     ACCOUNT: Account
     ACCOUNT_LOCKED: Account Locked
     ACCOUNT_VALIDATION: Validate Account
+    CHAT: Chat
+    MATCH: Match
     RESET_PASSWORD: Reset Password
     SIGN_IN: Sign in
     SIGN_UP: Sign up
-    CHAT: Chat
 USER:
     ACCOUNT_ALREADY_VALID: Your account has already been validate!
     ACCOUNT_VALIDATE: Your account has been validate!

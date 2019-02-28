@@ -113,6 +113,8 @@ module.exports = function (app, server) {
             rooms.joinOnlineRoom(socket, data.user_id);
         });
 
+        // CHAT
+
         socket.on('UNREAD_CHATS', function(data){
             let user = getUserBySocket(socket);
             rooms.joinUnreadsRoom(socket, user._id);
@@ -224,6 +226,23 @@ module.exports = function (app, server) {
                 console.log(err);
             });
         });
+
+        //MATCHES
+
+        socket.on('GET_MATCHES', function(data){
+            let user = getUserBySocket(socket);
+
+            let userRoom = rooms.getOnlineRoom(user._id);
+            rooms.joinRoom(socket, userRoom);
+
+            //LOAD CONTACTS
+            account.loadMatches(user, data)
+            .then(results => {
+                io.sockets.in(userRoom).emit('LOAD_MATCHES', results);
+            });
+        });
+
+        // FILES
 
         socket.on('FILE_SLICE_UPLOAD', function(data){
             let user = getUserBySocket(socket);

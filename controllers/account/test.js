@@ -131,8 +131,12 @@ exports.getRandomTags = function(user){
 }
 
 exports.getRandomCoords = function(user){
-    let lat = ((random() + random() + 1) / random());
-    let lng = ((random() + random() + 1) / random());
+    let r = [
+        random(), random(), random()
+    ];
+
+    let lat = ((r[0] + r[1] + 1) / (r[2]+1));
+    let lng = ((r[2] + r[1] + 1) / (r[0]+1));
 
     while (lat > coords.maxLat){
         lat = lat / 10;
@@ -143,8 +147,8 @@ exports.getRandomCoords = function(user){
     }
 
     let pos = {
-        lat : (random() % 2)? -1 : 1,
-        lng : (random() % 2)? -1 : 1
+        lat : (r[2] % 2)? -1 : 1,
+        lng : (r[0] % 2)? -1 : 1
     }
 
     user.coords = {

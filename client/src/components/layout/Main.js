@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Chat } from '../chat/Chat';
 import { Account } from '../user/Account';
+import { Matching } from '../matching/Matching';
 
 import './layout.css';
 
@@ -18,6 +19,8 @@ export class Main extends React.Component {
             default:
                 return (<h1>{ page }</h1>);
 
+            case 'home':
+                return (<Matching _g={ this.props._g } />);
             case 'account':
                 return (<Account _g={ this.props._g } />);
             case 'chat':
