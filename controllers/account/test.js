@@ -9,6 +9,10 @@ const UserRepo = require('../../database/repositories/user.js');
 const TagRepo = require('../../database/repositories/tag.js');
 const LocationRepo = require('../../database/repositories/location.js');
 
+const Files = require('../utils/files.js');
+const FileRepo = require('../../database/repositories/File.js');
+
+
 
 const firstNamesM = [
     'Aaron', 'Abel', 'Abraham', 'Adam', 'Adrian', 'Al', 'Alan', 'Albert', 'Alberto', 'Alejandro', 'Alex', 'Alexander', 'Alfonso', 'Alfred', 'Alfredo', 'Allan', 'Allen', 'Alonzo', 'Alton', 'Alvin', 'Amos', 'Andre', 'Andres', 'Andrew', 'Andy', 'Angel', 'Angelo', 'Anthony', 'Antonio', 'Archie', 'Armando', 'Arnold', 'Arthur', 'Arturo', 'Aubrey', 'Austin', 'Barry', 'Ben', 'Benjamin', 'Bennie', 'Benny', 'Bernard', 'Bert', 'Bill', 'Billy', 'Blake', 'Bob', 'Bobby', 'Boyd', 'Brad', 'Bradford', 'Bradley', 'Brandon', 'Brendan', 'Brent', 'Brett', 'Brian', 'Bruce', 'Bryan', 'Bryant', 'Byron', 'Caleb', 'Calvin', 'Cameron', 'Carl', 'Carlos', 'Carlton', 'Carroll', 'Cary', 'Casey', 'Cecil', 'Cedric', 'Cesar', 'Chad', 'Charles', 'Charlie', 'Chester', 'Chris', 'Christian', 'Christopher', 'Clarence', 'Clark', 'Claude', 'Clay', 'Clayton', 'Clifford', 'Clifton', 'Clint', 'Clinton', 'Clyde', 'Cody', 'Colin', 'Conrad', 'Corey', 'Cornelius', 'Cory', 'Courtney', 'Craig', 'Curtis', 'Dale', 'Dallas',
@@ -64,11 +68,15 @@ const required = [
     'gender', 'birthday', 'language'
 ];
 
+const pictures_path = {
+    male    : 'man_',
+    female  : 'woman_'
+};
+
 
 function random() {
     return Math.round((Math.random())*100);
 }
-
 
 exports.getLastNames = function(){
     return lastNames;
@@ -76,6 +84,16 @@ exports.getLastNames = function(){
 
 exports.getFirstNames = function(){
     return [firstNamesM, firstNamesF];
+}
+
+exports.getPicturePath = function(j, r){
+    let picture = 'fake_data/profiles/profile_' + pictures_path[genders[j]];
+
+    let nbr = r % 50;
+    picture += nbr < 10? '0' + nbr : nbr;
+    picture += '.jpeg';
+
+    return picture;
 }
 
 exports.generateUser = function(firstname, lastname, j){
@@ -96,6 +114,7 @@ exports.generateUser = function(firstname, lastname, j){
         language    : 'en',
         gender      : gender,
         birthday    : parseInt(moment().subtract(age, 'years').format('x')),
+        picture_url : exports.getPicturePath(j, r)
     };
 
     return user;
@@ -194,13 +213,28 @@ exports.createTestAccount = function(data) {
                     LocationRepo.userLink(result, _user)
                     .then(location => {
                         _user.location = location;
-                        return resolve(_user);
+
+                        if (data.picture_url){
+                            Files.saveFromUrl(_user, data.picture_url, 'img/jpeg')
+                            .then(file => {
+                                FileRepo.createOne(file.light())
+                                .then(_file => {
+                                    UserRepo.updateProfilePicture(_file, _user)
+                                    .then(u => {
+                                        return resolve(_user);
+                                    });
+                                });
+                            });
+                        } else {
+                            return resolve(_user);
+                        }
+
                     });
                 });
             });
         }).catch(error => {
             return reject(error);
-        })
+        });
 
     });
 };

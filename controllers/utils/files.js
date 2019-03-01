@@ -149,6 +149,23 @@ module.exports = {
         fs.readFile(filepath, 'utf8', callback);
     },
 
+    saveFromUrl     : function(user, filepath, type){
+        return new Promise((resolve, reject) => {
+            let filedata = this.init({
+                type    : type,
+                id      : (new Date()).getTime() 
+            }, user);
+
+            fs.readFile(filepath, function(err, data) {
+                if (err) throw err;
+                fs.writeFile(filedata.link, data, (err) => {
+                    if (err) throw err;
+                    return resolve(filedata);
+                });
+            });
+        });
+    },
+
     userHasRightToSee   : function(filename, user){
         return new Promise((resolve, reject) => {
 
