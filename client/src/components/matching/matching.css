@@ -1,0 +1,45 @@
+#matching {
+    height: 100%;
+}
+
+.matching-profiles {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 80%;
+    position: relative;
+}
+
+#matching .matching-profiles > .fas {
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.matching-profiles .one-profile {
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.one-profile > h1 {
+    float: left;
+    margin: 10px;
+}
+
+.one-profile > span {
+    float: right;
+    margin: 20px 10px 5px 5px;
+    font-size: 20px;
+}
+
+.matching-profiles .one-profile > .profile-pic {
+    height: 250px;
+    width: 250px;
+}
+
+.matching-profiles .one-profile > .profile-pic > img {
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    overflow: hidden;
+}

@@ -25,5 +25,13 @@ export default {
         }
     
         return false;
+    },
+
+    getAgeFromTime  : function(time){
+        var date = this.Moment(time);
+        var now = this.Moment();
+
+        var duration = this.Moment.duration(now.diff(date));
+        return Math.floor(duration.asYears());
     }
 }

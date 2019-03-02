@@ -90,8 +90,7 @@ exports.getPicturePath = function(j, r){
     let picture = 'fake_data/profiles/profile_' + pictures_path[genders[j]];
 
     let nbr = r % 50;
-    picture += nbr < 10? '0' + nbr : nbr;
-    picture += '.jpeg';
+    picture += nbr + '.jpeg';
 
     return picture;
 }

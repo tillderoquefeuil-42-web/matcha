@@ -324,7 +324,11 @@ let UserRepository = {
                 WITH u
                 WHERE u.g_matched IS NOT NULL AND u.o_matched IS NOT NULL AND u.distance < ${options.distance}
 
-                RETURN u
+                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
+                OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
+                OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
+                RETURN u, f, t, l, of
             `;
 
             queryEx.exec(query)
