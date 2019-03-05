@@ -778,6 +778,7 @@ export class Message extends Component {
                     <OneFileView
                         file={ file }
                         key={ i }
+                        multi
                     />
                 );
             } else {

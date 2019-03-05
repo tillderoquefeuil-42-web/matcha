@@ -47,6 +47,10 @@ class User {
             this.password = passwordHash.generate(data.password);
         }
 
+        if (data.distance){
+            this.distance = data.distance;
+        }
+
         if (params.profile_pic){
             this.profile_pic = new File(params.profile_pic);
         }

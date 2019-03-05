@@ -40,6 +40,38 @@ export class SuperModal extends React.Component {
         return this.props.body;
     }
 
+    buildheader() {
+        if (this.header === false){
+            return null;
+        }
+
+        return (
+            <Modal.Header closeButton>
+                <Modal.Title>{ this.buildtitle() }</Modal.Title>
+            </Modal.Header>
+        );
+    }
+
+    buildfooter() {
+        if (this.props.footer){
+            return (
+                <Modal.Footer>
+                    { this.props.footer }
+                </Modal.Footer>
+            );
+        } else if (this.footer === false){
+            return null;
+        }
+
+        return (
+            <Modal.Footer>
+                <Button onClick={this.props.onClose }>
+                    { trans.get('MODAL.CLOSE') }
+                </Button>
+            </Modal.Footer>
+        );
+    }
+
     render() {
 
         return (
@@ -49,17 +81,14 @@ export class SuperModal extends React.Component {
                 aria-labelledby="contained-modal-title-lg"
                 onHide={ this.props.onClose }
             >
-                <Modal.Header closeButton>
-                    <Modal.Title>{ this.buildtitle() }</Modal.Title>
-                </Modal.Header>
+
+                { this.buildheader() }
 
                 <Modal.Body>
                     { this.buildbody() }
                 </Modal.Body>
 
-                <Modal.Footer>
-                    <Button onClick={this.props.onClose }>{ trans.get('MODAL.CLOSE') }</Button>
-                </Modal.Footer>
+                { this.buildfooter() }
             </Modal>
         );
     }

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import utils from '../../utils/utils';
 import trans from '../../translations/translate';
 
 export class UserIcon extends React.Component {
@@ -24,12 +25,6 @@ export class UserIcon extends React.Component {
         }
     }
 
-    getFileUrl(file) {
-        let token = (localStorage.getItem('token')? localStorage.getItem('token') : "");
-        let url = `http://localhost:8000/file/private?_t=${token}&filename=${file.filename}`;
-        return url;
-    }
-
     render(){
         let user = this.state.user;
 
@@ -37,7 +32,7 @@ export class UserIcon extends React.Component {
 
             return (
                 <div className="user-profile-picture">
-                    <img src={ this.getFileUrl(user.profile_pic) } alt="" />
+                    <img src={ utils.getFileUrl(user.profile_pic) } alt="" />
                 </div>
             );
         }

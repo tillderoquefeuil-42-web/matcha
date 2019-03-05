@@ -252,6 +252,13 @@ export default {
         }
 
         return length;
+    },
+
+    getFileUrl          : function(file) {
+        let token = (localStorage.getItem('token')? localStorage.getItem('token') : "");
+        let url = `http://localhost:8000/file/private?_t=${token}&filename=${file.filename}`;
+
+        return url;
     }
 
 }

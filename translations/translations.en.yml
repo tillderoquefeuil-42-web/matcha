@@ -12,6 +12,9 @@ COMMON:
     LOADING: Loading
     SEARCH: Search
     YOU: You
+UNITS:
+    KM: km
+    AGE: yo
 BUTTON:
     CONFIRM: Confirm
     SIGN_IN: Sign In

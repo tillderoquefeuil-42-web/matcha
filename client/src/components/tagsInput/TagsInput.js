@@ -101,6 +101,14 @@ export class TagsInput extends Component {
 
     buildOneTag(tag, key) {
 
+        if (this.props.readOnly){
+            return (
+                <Badge className="badge-info" key={ key }>
+                    { tag }
+                </Badge>
+            );
+        }
+
         return (
             <Badge className="badge-info deletable" key={ key } onClick={ (e) => this.handleRemove(e, key) }>
                 { tag }
@@ -127,21 +135,27 @@ export class TagsInput extends Component {
 
     buildSearchBar() {
 
+        if (this.props.readOnly){
+            return null;
+        }
+
         if (this.state.collection){
             let tags = this.state.selected || [];
             let collection = this.filterCollection(tags);
 
             return (
-                <SearchBar
-                    ref={ el => this.searchbar = el }
-                    collection={ collection }
-                    placeholder={ trans.get('USER.FIELDS.ADD_TAG') }
-                    onSelect={ (event, items) => this.handleSelect(event, items) }
-                    onCreate={ (value) => this.addTags([value]) }
-                    sort={ (a, b) => this.sortTags(a, b) }
-                    multiSelect
-                    resetValue
-                />
+                <div className="input">
+                    <SearchBar
+                        ref={ el => this.searchbar = el }
+                        collection={ collection }
+                        placeholder={ trans.get('USER.FIELDS.ADD_TAG') }
+                        onSelect={ (event, items) => this.handleSelect(event, items) }
+                        onCreate={ (value) => this.addTags([value]) }
+                        sort={ (a, b) => this.sortTags(a, b) }
+                        multiSelect
+                        resetValue
+                    />
+                </div>
             );
         }
 
@@ -156,9 +170,9 @@ export class TagsInput extends Component {
 
         return (
             <div className="tags-input">
-                <div className="input">
-                    { this.buildSearchBar() }
-                </div>
+
+                { this.buildSearchBar() }
+
                 <div className="tags">
                     { this.getValue() }
                 </div>

@@ -8,6 +8,7 @@ import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 import { PublicRoute } from './components/PublicRoute.js';
 import { PrivateRoute } from './components/PrivateRoute.js';
 import { Error } from './components/error/Error.js';
+import { PicturesDisplay } from './components/images/Dropzone';
 
 import { Sign } from './components/sign/Sign.js';
 import { ResetPassword } from './components/sign/ResetPassword.js';
@@ -20,6 +21,8 @@ class App extends Component {
     return (
       <div className="App">
         <ReactAlert stack={{limit: 5}} html={true} />
+        <PicturesDisplay />
+
         <div className="App-content">
           <Switch>
             <PublicRoute path="/user/validateAccount" component={ValidateAccount}/>

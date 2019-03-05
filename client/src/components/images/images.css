@@ -85,3 +85,38 @@
 .one-file-view > a > i.fa-file-pdf {
     max-height: 100%;
 }
+
+.pictures-display {
+    height: 100%;
+    width: 100%;
+    background: #000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 9000;
+}
+
+.pictures-display > .close-picture-display {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    z-index: 9001;
+    font-size: 20px;
+}
+
+.pictures-display > .fas {
+    cursor: pointer;
+    font-size: 30px;
+    padding: 30px;
+}
+
+.pictures-display > img {
+    max-width: 85%;
+    max-height: 90%;
+    padding: 20px;
+}

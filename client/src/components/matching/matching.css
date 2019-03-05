@@ -19,6 +19,7 @@
     border: 1px solid rgba(0,0,0,.125);
     border-radius: 5px;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .one-profile > h1 {
@@ -38,6 +39,58 @@
 }
 
 .matching-profiles .one-profile > .profile-pic > img {
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+#extended-profile {
+    display: flex;
+    justify-content: space-between;
+}
+
+#extended-profile > .profile-info {
+    width: 50%;
+    padding: 20px 20px 0px 20px;
+}
+
+#extended-profile > .profile-info .profile-infos-display {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#extended-profile > .profile-info  .profile-identity {
+    font-size: 30px;
+}
+
+#extended-profile > .profile-info  .profile-identity > span{
+    font-size: 25px;
+    color: #bfbfbf;
+    margin-left: 10px;
+}
+
+#extended-profile > .profile-info  .profile-bio {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+#extended-profile > .profile-info  .profile-pictures {
+    display: flex;
+}
+
+#extended-profile > .profile-info  .profile-pictures .one-file-view.view-img {
+    margin-bottom: 0px;
+}
+
+#extended-profile > .profile-pic {
+    height: 100%;
+    width: 50%;
+}
+
+#extended-profile > .profile-pic > img {
     width:100%;
     height:100%;
     object-fit: cover;

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import utils from '../../utils/utils';
 import alert from '../../utils/alert';
 import trans from '../../translations/translate';
 
@@ -59,14 +60,6 @@ function parseOneFile(file, addOneFile){
 
     return file;
 }
-
-function getFileUrl(file) {
-    let token = (localStorage.getItem('token')? localStorage.getItem('token') : "");
-    let url = `http://localhost:8000/file/private?_t=${token}&filename=${file.filename}`;
-
-    return url;
-}
-
 
 export class Dropzone extends React.Component {
 
@@ -229,7 +222,7 @@ export class FileContainer extends React.Component {
         }
 
         if (file._id){
-            return <img src={ getFileUrl(file) } alt="" />
+            return <img src={ utils.getFileUrl(file) } alt="" />
         }
 
         return null;
@@ -286,18 +279,31 @@ export class OneFileView extends React.Component {
         }
 
         this.state = {
-            type    : type
+            type        : type,
+            showPicture : false,
+            url         : utils.getFileUrl(props.file)
         };
 
+    }
+
+    componentDidMount() {
+
+        let e = new Event('pictures-display');
+
+        e.data = {
+            multi       : this.props.multi,
+            url         : this.state.url
+        };
+
+        document.dispatchEvent(e);
     }
 
     getFile() {
 
         let type = this.state.type;
 
-        if (!type) {
-        } else if (type === 'view-img'){
-            return <img src={ getFileUrl(this.props.file) } alt="" />
+        if (type === 'view-img'){
+            return <img src={ this.state.url } alt="" />
         } else if (type === 'view-file'){
             return <i className="far fa-file-pdf"></i>;
         } else if (type === 'view-txt'){
@@ -305,6 +311,39 @@ export class OneFileView extends React.Component {
         }
 
         return null;
+    }
+
+    buildSelectableFile(file) {
+        let type = this.state.type;
+
+        if (type !== 'view-img'){
+            return (
+                <a href={ this.state.url } rel="noopener noreferrer" target="_blank">
+                    { this.getFile() }
+                </a>
+            );
+        }
+
+
+        return (
+            <a href="# " src={ this.state.url } onClick={ this.showPicture }>
+                { this.getFile() }
+            </a>
+        );
+
+    }
+
+    showPicture = event => {
+
+        let e = new Event('pictures-display');
+
+        e.data = {
+            showPicture : true,
+            multi       : this.props.multi,
+            url         : this.state.url
+        };
+
+        document.dispatchEvent(e);
     }
 
     getClasses() {
@@ -321,11 +360,167 @@ export class OneFileView extends React.Component {
 
         return (
             <div className={ this.getClasses() } >
-                <a href={ getFileUrl(this.props.file) } rel="noopener noreferrer" target="_blank">
-                    { this.getFile() }
-                </a>
+                { this.buildSelectableFile(this.props.file) }
             </div>
         );
     }
 
+}
+
+
+export class PicturesDisplay extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            show    : false,
+            urls    : [],
+            index   : 0
+        };
+    }
+
+    
+    componentDidMount() {
+        let _this = this;
+        document.addEventListener("pictures-display", function(e){
+            _this.handleEvent(e.data);
+        });
+    }
+
+    componentDidUpdate() {
+
+        if (this.state.show){
+            document.addEventListener("keyup", this.handleKeyPress);
+        } else {
+            document.removeEventListener("keyup", this.handleKeyPress);
+        }
+
+    }
+
+    handleKeyPress = e => {
+        let arrows = ['ArrowRight', 'ArrowLeft'];
+
+        if (arrows.indexOf(e.key) === -1){
+            return;
+        }
+
+        switch (e.key){
+            default:
+                break;
+            case 'ArrowRight':
+                e.target.id = 'next-picture';
+                break;
+            case 'ArrowLeft':
+                e.target.id = 'last-picture'
+                break;
+        }
+
+        this.changePicture(e);
+    }
+
+    handleEvent(data){
+
+        let urls = this.state.urls;
+        let index = 0;
+
+        if (data.resetUrls){
+            urls = [];
+        }
+
+        let show = data.showPicture;
+
+        if (data.multi && data.url){
+            index = urls.indexOf(data.url);
+
+            if (index === -1){
+                index = urls.length;
+                urls.push(data.url);
+            }
+        } else if (data.url){
+            urls = [data.url];
+        }
+
+        this.setState({
+            show    : show,
+            urls    : urls,
+            index   : index
+        });
+    }
+
+    handleClosing = event => {
+        this.setState({show:false});
+    }
+
+    changePicture = event => {
+        let urls = this.state.urls;
+        let index = this.state.index;
+
+        if (event.target.id === 'last-picture'){
+            index = (index - 1 >= 0)? index - 1 : urls.length - 1;
+        } else if (event.target.id === 'next-picture'){
+            index = (index + 1 <= urls.length - 1)? index + 1 : 0;
+        }
+
+        this.setState({index : index});
+    }
+
+    buildPictureView() {
+        let urls = this.state.urls;
+        let index = this.state.index;
+
+        let data = [];
+        if (urls.length && urls[index]){
+
+            if (urls.length > 1){
+                data.push(
+                    <i
+                        key="last"
+                        id="last-picture"
+                        className="fas fa-caret-left"
+                        onClick={ this.changePicture }
+                    ></i>
+                );
+            }
+
+            data.push(
+                <img
+                    src={ urls[index] }
+                    alt=""
+                    key="picture"
+                />
+            );
+
+            if (urls.length > 1){
+                data.push(
+                    <i
+                        key="next"
+                        id="next-picture"
+                        className="fas fa-caret-right"
+                        onClick={ this.changePicture }
+                    ></i>
+                );
+            }
+        }
+
+        return data;
+    }
+
+    render() {
+        if (!this.state.show){
+            return null;
+        }
+
+        return (
+            <div className="pictures-display">
+
+                <span className="close-picture-display" onClick={ () => this.handleClosing() }>
+                    <i className="fa fa-times"></i>
+                </span>
+
+                { this.buildPictureView() }
+
+            </div>
+        );
+    }
 }
