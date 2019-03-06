@@ -259,6 +259,12 @@ export default {
         let url = `http://localhost:8000/file/private?_t=${token}&filename=${file.filename}`;
 
         return url;
+    },
+
+    resetPicturesDisplay    : function(){
+        let e = new Event('pictures-display');
+        e.data = {resetUrls : true};
+        document.dispatchEvent(e);
     }
 
 }

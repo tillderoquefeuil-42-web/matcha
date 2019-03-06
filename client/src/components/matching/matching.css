@@ -11,7 +11,8 @@
 }
 
 #matching .matching-profiles > .fas {
-    font-size: 25px;
+    font-size: 40px;
+    padding: 10px;
     cursor: pointer;
 }
 
@@ -50,6 +51,14 @@
     justify-content: space-between;
 }
 
+#extended-profile .close-extended-profile {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
 #extended-profile > .profile-info {
     width: 50%;
     padding: 20px 20px 0px 20px;
@@ -66,7 +75,7 @@
     font-size: 30px;
 }
 
-#extended-profile > .profile-info  .profile-identity > span{
+#extended-profile > .profile-info  .profile-identity > span {
     font-size: 25px;
     color: #bfbfbf;
     margin-left: 10px;
@@ -86,8 +95,10 @@
 }
 
 #extended-profile > .profile-pic {
-    height: 100%;
     width: 50%;
+    height: 100%;
+    min-height: 400px;
+    display: flex;
 }
 
 #extended-profile > .profile-pic > img {
@@ -95,4 +106,5 @@
     height:100%;
     object-fit: cover;
     overflow: hidden;
+    margin: auto;
 }

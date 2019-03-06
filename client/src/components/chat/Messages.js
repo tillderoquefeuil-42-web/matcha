@@ -65,6 +65,8 @@ export class Messages extends Component {
                     conv_id : _this.state.conv_id
                 });
 
+                utils.resetPicturesDisplay();
+
                 states.messages = [];
                 states.items = 0;
             }

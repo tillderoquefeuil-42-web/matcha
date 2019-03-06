@@ -80,6 +80,7 @@ export class SuperModal extends React.Component {
                 bsSize="large"
                 aria-labelledby="contained-modal-title-lg"
                 onHide={ this.props.onClose }
+                keyboard={ this.props.keyboard === false? false : true }
             >
 
                 { this.buildheader() }

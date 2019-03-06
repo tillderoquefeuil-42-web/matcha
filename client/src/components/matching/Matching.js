@@ -27,7 +27,7 @@ export class Matching extends Component {
         this.state = {
             matches : null,
             match   : null,
-            page    : 0
+            index   : 0,
         };
 
         this.socket = props._g.socket;
@@ -50,36 +50,36 @@ export class Matching extends Component {
     selectOneProfile(_id) {
         let matches = this.state.matches;
         if (matches && matches[_id]){
+            console.log(matches[_id]);
             this.setState({match : matches[_id]});
         }
     }
 
-    updateMatches(matches){
-        console.log(matches);
+    updateMatches(data){
+        let matches = utils.indexCollection(data);
 
         this.setState({
-            matches : utils.indexCollection(matches)
+            matches : matches
         });
+
+        console.warn('Globale variable to delete');
+        window.matches = matches;
     }
 
     buildMatches(){
 
         let elems = [];
         let matches = Object.values(this.state.matches);
-        let page = this.state.page;
+        let count = this.state.index;
 
-        let count = page * maxProfilesPage;
-
-        if (page > 0){
-            elems.push(
-                <i
-                    key="last"
-                    id="last-profiles"
-                    className="fas fa-caret-left"
-                    onClick={ this.changePageProfiles }
-                ></i>
-            );
-        }
+        elems.push(
+            <i
+                key="last"
+                id="last-profiles"
+                className="fas fa-caret-left"
+                onClick={ this.changePageProfiles }
+            ></i>
+        );
 
         let j = 0;
         while (j++ < maxProfilesPage){
@@ -99,26 +99,33 @@ export class Matching extends Component {
             count++;
         }
 
-        if (matches.length > maxProfilesPage * (page+1)){
-            elems.push(
-                <i
-                    key="next"
-                    id="next-profiles"
-                    className="fas fa-caret-right"
-                    onClick={ this.changePageProfiles }
-                ></i>
-            );
-        }
+        elems.push(
+            <i
+                key="next"
+                id="next-profiles"
+                className="fas fa-caret-right"
+                onClick={ this.changePageProfiles }
+            ></i>
+        );
 
         return elems;
     }
 
     changePageProfiles = event => {
+
+        let index = this.state.index;
+        let matches = Object.values(this.state.matches);
+        let length = matches.length;
+
         if (event.target.id === 'last-profiles'){
-            this.setState({page : this.state.page-1});
+            index = index - maxProfilesPage;
+            index = (index < 0)? index + length : index;
         } else if (event.target.id === 'next-profiles'){
-            this.setState({page : this.state.page+1});
+            index = index + maxProfilesPage;
+            index = (index >= length)? index - length : index;
         }
+
+        this.setState({index : index});
     }
 
     showExtendedProfile() {
@@ -131,6 +138,7 @@ export class Matching extends Component {
 
     closeExtendedProfile() {
         this.setState({match : null});
+        utils.resetPicturesDisplay();
     }
 
     render() {
@@ -150,6 +158,7 @@ export class Matching extends Component {
                     show={ this.showExtendedProfile() }
                     onClose={ () => this.closeExtendedProfile() }
                     match={ this.state.match }
+                    keyboard={ false }
                 />
 
                 <div className="matching-profiles">
@@ -198,15 +207,6 @@ class ExtendedProfile extends SuperModal {
         basics += this.getDistance(match) + trans.get('UNITS.KM');
 
         return basics;
-    }
-
-    buildtitle() {
-        let match = this.props.match;
-        if (match){
-            return match.firstname;
-        }
-
-        return null;
     }
 
     buildFile() {
@@ -271,10 +271,20 @@ class ExtendedProfile extends SuperModal {
         );
     }
 
+    buildClose() {
+
+        return (
+            <span className="close-extended-profile" onClick={ () => this.props.onClose() }>
+                <i className="fa fa-times"></i>
+            </span>
+        );
+    }
+
     buildbody() {
 
         return(
             <div id="extended-profile">
+                { this.buildClose() }
 
                 <div className="profile-pic">
                     { this.buildFile() }

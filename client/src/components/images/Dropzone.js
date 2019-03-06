@@ -380,7 +380,6 @@ export class PicturesDisplay extends React.Component {
         };
     }
 
-    
     componentDidMount() {
         let _this = this;
         document.addEventListener("pictures-display", function(e){
@@ -391,7 +390,7 @@ export class PicturesDisplay extends React.Component {
     componentDidUpdate() {
 
         if (this.state.show){
-            document.addEventListener("keyup", this.handleKeyPress);
+            document.addEventListener("keyup", this.handleKeyPress, true);
         } else {
             document.removeEventListener("keyup", this.handleKeyPress);
         }
@@ -399,7 +398,7 @@ export class PicturesDisplay extends React.Component {
     }
 
     handleKeyPress = e => {
-        let arrows = ['ArrowRight', 'ArrowLeft'];
+        let arrows = ['ArrowRight', 'ArrowLeft', 'Escape'];
 
         if (arrows.indexOf(e.key) === -1){
             return;
@@ -407,6 +406,9 @@ export class PicturesDisplay extends React.Component {
 
         switch (e.key){
             default:
+                break;
+            case 'Escape':
+                this.handleClosing(e);
                 break;
             case 'ArrowRight':
                 e.target.id = 'next-picture';
