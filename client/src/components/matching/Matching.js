@@ -72,6 +72,10 @@ export class Matching extends Component {
         let matches = Object.values(this.state.matches);
         let count = this.state.index;
 
+        if (!matches.length){
+            return null;
+        }
+
         elems.push(
             <i
                 key="last"
@@ -87,15 +91,7 @@ export class Matching extends Component {
                 count = 0;
             }
 
-            let match = matches[count];
-
-            elems.push(
-                <OneProfile 
-                    key={j}
-                    match={ match }
-                    handleClick={ () => this.selectOneProfile(match._id) }
-                />
-            );
+            elems.push(this.buildOneProfile(matches[count], j));
             count++;
         }
 
@@ -109,6 +105,29 @@ export class Matching extends Component {
         );
 
         return elems;
+    }
+
+    buildOneProfile(match, j) {
+
+        if (!match){
+            return null;
+        }
+
+        return (
+            <div
+                key={ j }
+                className="one-profile"
+                onClick={ () => this.selectOneProfile(match._id) }
+            >
+
+                <div className="profile-pic">
+                    <img src={ utils.getFileUrl(match.profile_pic) } alt="" />
+                </div>
+
+                <h1>{ match.firstname }</h1>
+                <span>{ getAge(match) }</span>
+            </div>
+        );
     }
 
     changePageProfiles = event => {
@@ -167,26 +186,6 @@ export class Matching extends Component {
             </div>
         );
     }
-}
-
-class OneProfile extends Component {
-
-    render() {
-
-        return (
-            <div className="one-profile" onClick={ this.props.handleClick }>
-
-                <div className="profile-pic">
-                    <img src={ utils.getFileUrl(this.props.match.profile_pic) } alt="" />
-                </div>
-
-                <h1>{ this.props.match.firstname }</h1>
-                <span>{ getAge(this.props.match) }</span>
-            </div>
-        );
-
-    }
-
 }
 
 class ExtendedProfile extends SuperModal {

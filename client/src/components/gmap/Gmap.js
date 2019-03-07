@@ -25,14 +25,42 @@ export class Gmap extends Component {
         }
     }
 
+    componentDidMount() {
+        this._isMounted = true;
+
+        if (this.onLoadedData){
+            this.onLoaded(this.onLoadedData);
+            this.onLoadedData = null;
+        }
+    }
+
+
+    componentDidUpdate() {
+
+        if (this.on_loaded && this.props.onLoaded){
+            this.on_loaded = false;
+            this.props.onLoaded();
+        }
+
+    }
+
     onLoaded(data) {
+        if (!this._isMounted){
+            this.onLoadedData = data;
+            return;
+        }
+
+        this.on_loaded = true;
         this.setState({
             map         : data.map,
             autocomplete: data.autocomplete
         });
+    }
 
-        if (this.props.onLoaded){
-            this.props.onLoaded();
+    getData() {
+        return {
+            map             : this.state.map,
+            autocomplete    : this.state.autocomplete
         }
     }
 

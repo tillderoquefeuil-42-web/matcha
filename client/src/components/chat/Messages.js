@@ -128,7 +128,7 @@ export class Messages extends Component {
 
     updatePageTitle() {
 
-        if (!this.state.conv_id || this.state.conv_id === this.pageTitle){
+        if (!this.state.conv_id || this.state.conv_id === this.pageTitle || this.props.miniChat){
             return;
         }
 

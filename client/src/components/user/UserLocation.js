@@ -29,8 +29,19 @@ export class UserLocation extends Component {
         this.initUserLocation.bind(this);
     }
 
+    componentDidMount() {
+        this._isMounted = true;
+
+        if (this.map_loaded){
+            this.map_loaded = false;
+            this.onMapLoaded();
+        }
+    }
+
+
     onMapLoaded() {
         if (!this.gmap){
+            this.map_loaded = true;
             return;
         }
 
@@ -64,7 +75,6 @@ export class UserLocation extends Component {
     // UPDATE
 
     updateLocation(location){
-
         let disclaimer = this.state.disclaimer > 0? this.state.disclaimer - 1 : 0;
 
         this.setState({
@@ -73,7 +83,15 @@ export class UserLocation extends Component {
         });
 
         this.gmap.forceAutocomplete(location.label);
-        this.addMarker(location);
+        let _this = this;
+        setTimeout(function(){
+            _this.addMarker(location);
+        });
+
+        if (this.geolocate){
+            this.geolocate = false;
+            this.saveLocation();
+        }
     }
 
     updateFromPlaces() {
@@ -102,6 +120,8 @@ export class UserLocation extends Component {
     // GEOLOCATION
 
     userGeolocation() {
+        this.geolocate = true;
+
         let _this = this;
 
         if (navigator.geolocation) {
@@ -192,6 +212,10 @@ export class UserLocation extends Component {
         return null;
     }
 
+    setGmap = element => {
+        this.gmap = element;
+    }
+
 
     // RENDER
 
@@ -202,7 +226,7 @@ export class UserLocation extends Component {
                 <h2 className="form-section">{ trans.get('USER.LOCATION') }</h2>
 
                 <Gmap
-                    ref={ el => { this.gmap = el; }}
+                    ref={ this.setGmap }
                     width={ this.getMapWidth() }
                     height={ 400 }
                     onLoaded={ () => this.onMapLoaded() }
