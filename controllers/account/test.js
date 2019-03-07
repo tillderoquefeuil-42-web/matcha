@@ -100,7 +100,7 @@ exports.generateUser = function(firstname, lastname, j){
     let r = random();
     let username = (firstname + '.' + lastname).toLowerCase();
 
-    let age = config.params.MIN_AGED_USERS + r % 10;
+    let age = config.params.MIN_AGED_USERS + 4 + r % 10;
 
     let gender = (r%3>0)? genders[j] : genders[2];
 
