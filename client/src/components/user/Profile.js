@@ -93,6 +93,7 @@ export class Profile extends Component {
         let user = this.state.user;
         let _this = this;
 
+        user.birthday = (new Date(user.birthday)).getTime();
         API.saveUserData(user)
         .then(function(data){
             let title = trans.get('SUCCESS.TITLE');

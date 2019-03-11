@@ -149,3 +149,7 @@
 #user-profile-orientation > .orientation-checkboxes > label > input {
     margin-right: 5px;
 }
+
+#search-params > .form-group {
+    margin-bottom: 40px;
+}

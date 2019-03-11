@@ -29,6 +29,13 @@ const API = {
         return axios.post(burl + url, params, {headers: header||headers});
     },
 
+    catchSuccess        : function(){
+        let title = trans.get('SUCCESS.TITLE');
+        let msg = trans.get('SUCCESS.DATA_SAVED');
+
+        alert.show({title: title, message: msg, type: 'success'});
+    },
+
     catchError          : function(error){
         if (!error.response || API.redirection(error.response.data)){
             return;

@@ -303,6 +303,8 @@ let UserRepository = {
                 MATCH (m:User)-[mlr:LIVES {current:true}]->(ml:Location), (u:User)-[ulr:LIVES {current:true}]->(ul:Location)
                 WHERE ID(m)=${user._id} AND ID(u)<>${user._id}
 
+                OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
+
                 SET u.g_matched = CASE
                     WHEN m.see_m=TRUE AND u.gender='male' THEN TRUE
                     WHEN m.see_f=TRUE AND u.gender='female' THEN TRUE
@@ -322,7 +324,12 @@ let UserRepository = {
                 SET u.distance = round(distance(ml.point, ul.point))
 
                 WITH u
-                WHERE u.g_matched IS NOT NULL AND u.o_matched IS NOT NULL AND u.distance < ${options.distance}
+                WHERE u.g_matched IS NOT NULL
+                AND u.o_matched IS NOT NULL
+                AND u.distance <= (sp.distance*1000)
+                AND sp.age_min >= u.birthday
+                AND sp.age_max <= u.birthday
+
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)

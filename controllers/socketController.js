@@ -295,5 +295,34 @@ module.exports = function (app, server) {
             });
         });
 
+
+        //SEARCH PARAMS
+
+        socket.on('GET_SEARCH_PARAMS', function(data){
+            let user = getUserBySocket(socket);
+
+            let userRoom = rooms.getOnlineRoom(user._id);
+            rooms.joinRoom(socket, userRoom);
+
+            //LOAD CONTACTS
+            account.loadSearchParams(user)
+            .then(results => {
+                io.sockets.in(userRoom).emit('LOAD_SEARCH_PARAMS', results);
+            });
+        });
+
+        socket.on('SET_SEARCH_PARAMS', function(data){
+            let user = getUserBySocket(socket);
+
+            let userRoom = rooms.getOnlineRoom(user._id);
+            rooms.joinRoom(socket, userRoom);
+
+            //LOAD CONTACTS
+            account.updateSearchParams(user, data)
+            .then(results => {
+                io.sockets.in(userRoom).emit('UPDATE_SEARCH_PARAMS', results);
+            });
+        });
+
     });
 }

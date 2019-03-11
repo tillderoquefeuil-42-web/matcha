@@ -8,6 +8,7 @@ import { Connection } from './Connection.js';
 import { Delete } from './Delete.js';
 import { Picture } from './Picture.js';
 import { UserLocation } from './UserLocation.js';
+import { Search } from './Search.js';
 
 import API from '../../utils/API';
 import utils from '../../utils/utils.js';
@@ -59,6 +60,7 @@ export class Account extends Component {
 
                 <div className="col-md-6">
                     <Profile />
+                    <Search _g={ this.props._g } />
                     <Connection />
                 </div>
 

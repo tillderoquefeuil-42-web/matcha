@@ -5,8 +5,9 @@ const moment = require('moment');
 const User = require('../../database/models/user.js');
 const UserRepo = require('../../database/repositories/user.js');
 
-const TagRepo = require('../../database/repositories/tag.js');
-const LocationRepo = require('../../database/repositories/location.js');
+const TagRepo = require('../../database/repositories/Tag.js');
+const LocationRepo = require('../../database/repositories/Location.js');
+const SearchParamsRepo = require('../../database/repositories/SearchParams.js');
 
 const Com = require('./communication.js');
 const config = require('../../config/config');
@@ -767,7 +768,7 @@ exports.saveLocation = function(req, res) {
     }
 
     return exports.getUserByToken(req, res, function(user) {
-        LocationRepo.createOne(req.body.location)
+        SearchParamsRepo.createOne(req.body.location)
         .then(result => {
             LocationRepo.userLink(result, user)
             .then(location => {
@@ -777,24 +778,6 @@ exports.saveLocation = function(req, res) {
                     text    : "SUCCESS",
                     user    : user
                 });
-            });
-        }).catch(err => {
-            console.log(err);
-            res.status(500).json({
-                text: "INTERNAL_ERROR"
-            });
-        });
-    });
-};
-
-exports.getFriendsByUser = function(req, res){
-
-    return exports.getUserByToken(req, res, function(user) {
-        UserRepo.findAllFriends(user)
-        .then(friends => {
-            res.status(200).json({
-                text    : "SUCCESS",
-                friends : friends
             });
         }).catch(err => {
             console.log(err);
@@ -842,42 +825,6 @@ exports.getTags = function(req, res){
         console.log(err);
         res.status(500).json({
             text    : "INTERNAL_ERROR"
-        });
-    });
-};
-
-exports.updateProfilePicture = function(user, upload) {
-    return new Promise((resolve, reject) => {
-        Files.save(upload.file);
-
-        FileRepo.createOne(upload.file.light())
-        .then(file => {
-            UserRepo.updateProfilePicture(file, user)
-            .then(_user => {
-                return resolve(_user);
-            });
-        });
-
-    });
-};
-
-exports.updateOtherPicture = function(user, upload) {
-    return new Promise((resolve, reject) => {
-        Files.save(upload.file);
-
-        FileRepo.createOne(upload.file.light())
-        .then(file => {
-            return resolve(file);
-        });
-    });
-};
-
-exports.updateOtherPictures = function(user, filesId) {
-    return new Promise((resolve, reject) => {
-
-        UserRepo.updateOtherPictures(filesId, user)
-        .then(_user => {
-            return resolve(_user);
         });
     });
 };
@@ -944,6 +891,14 @@ exports.unlockAccount = function(req, res) {
 
 };
 
+
+
+
+
+// ***** ***** SOCKET ***** ***** //
+
+// GET
+
 exports.loadContacts = function(user){
 
     let data = {
@@ -997,3 +952,78 @@ exports.loadMatches = function(user, options){
         });
     });
 };
+
+exports.loadSearchParams = function(user){
+
+    return new Promise((resolve, reject) => {
+        SearchParamsRepo.getOneByUser(user)
+        .then(searchParams => {
+            return resolve(searchParams);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+};
+
+
+// SET
+
+exports.updateProfilePicture = function(user, upload) {
+    return new Promise((resolve, reject) => {
+        Files.save(upload.file);
+
+        FileRepo.createOne(upload.file.light())
+        .then(file => {
+            UserRepo.updateProfilePicture(file, user)
+            .then(_user => {
+                return resolve(_user);
+            });
+        });
+
+    });
+};
+
+exports.updateOtherPicture = function(user, upload) {
+    return new Promise((resolve, reject) => {
+        Files.save(upload.file);
+
+        FileRepo.createOne(upload.file.light())
+        .then(file => {
+            return resolve(file);
+        });
+    });
+};
+
+exports.updateOtherPictures = function(user, filesId) {
+    return new Promise((resolve, reject) => {
+
+        UserRepo.updateOtherPictures(filesId, user)
+        .then(_user => {
+            return resolve(_user);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+};
+
+exports.updateSearchParams = function(user, data) {
+
+    let searchParams = {
+        distance    : data.distance,
+        age_min     : data.age_min,
+        age_max     : data.age_max
+    }
+
+    return new Promise((resolve, reject) => {
+        SearchParamsRepo.updateOneWithUser(searchParams, user)
+        .then(_sp => {
+            return resolve(_sp);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+
+}

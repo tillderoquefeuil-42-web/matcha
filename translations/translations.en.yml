@@ -144,7 +144,11 @@ USER:
         MALE: Male
         FEMALE: Female
         NB: Non-binary
+        AGE: Age
+        DISTANCE: Distance
 CHAT:
     WRITE: Write a message,
     FILE:
         SENT: A file was sent
+MATCHING:
+    PARAMS: Search parameters

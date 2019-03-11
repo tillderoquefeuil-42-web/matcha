@@ -26,7 +26,6 @@ module.exports = function (app) {
 
     app.post('/savePicture', upload.single('profile_picture'), account.savePicture);
 
-    app.post('/get/friends', account.getFriendsByUser);
     app.post('/deleteAccount', account.deleteAccount);
 
     app.post('/tags', account.getTags);
