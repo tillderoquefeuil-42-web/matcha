@@ -196,6 +196,25 @@ class ExtendedProfile extends SuperModal {
         this.footer = false;
     }
 
+    componentDidUpdate() {
+        if (this.props.show){
+            document.addEventListener("keyup", this.handleExtendedKeyPress);
+        } else {
+            document.removeEventListener("keyup", this.handleExtendedKeyPress);
+        }
+    }
+
+    handleExtendedKeyPress = e => {
+        let arrows = ['Escape'];
+
+        if (!this.props.show || arrows.indexOf(e.key) === -1){
+            return;
+        }
+
+        this.props.onClose();
+    }
+
+
     getDistance(match) {
         return Math.round(match.distance / 1000);
     }

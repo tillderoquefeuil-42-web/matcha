@@ -388,21 +388,21 @@ export class PicturesDisplay extends React.Component {
     }
 
     componentDidUpdate() {
-
         if (this.state.show){
             document.addEventListener("keyup", this.handleKeyPress, true);
         } else {
             document.removeEventListener("keyup", this.handleKeyPress);
         }
-
     }
 
     handleKeyPress = e => {
         let arrows = ['ArrowRight', 'ArrowLeft', 'Escape'];
 
-        if (arrows.indexOf(e.key) === -1){
+        if (!this.state.show || arrows.indexOf(e.key) === -1){
             return;
         }
+
+        e.stopPropagation();
 
         switch (e.key){
             default:
