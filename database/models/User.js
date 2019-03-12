@@ -4,6 +4,7 @@ const passwordHash = require('password-hash');
 const jwt = require('jwt-simple');
 
 const config = require('../../config/config');
+const time = require('../../controllers/utils/time');
 
 const Location = require('../models/Location');
 const File = require('./File');
@@ -66,6 +67,10 @@ class User {
 
         if (params.location){
             this.location = new Location(params.location);
+        }
+
+        if (this.birthday){
+            this.age = time.getAgeFromTime(this.birthday);
         }
 
     }

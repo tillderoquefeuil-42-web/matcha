@@ -2,6 +2,21 @@
     height: 100%;
 }
 
+#matching > .sorting-dropdown {
+    position: absolute;
+    top: 65px;
+    right: 15px;
+}
+
+#matching > .sorting-dropdown .caret {
+    display: none;
+}
+
+#matching > .sorting-dropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
 .matching-profiles {
     display: flex;
     justify-content: space-around;

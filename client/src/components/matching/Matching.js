@@ -5,9 +5,9 @@ import { Loader } from '../loader/Loader';
 import { SuperModal } from '../modal/CustomModal';
 import { TagsInput } from '../tagsInput/TagsInput';
 import { OneFileView } from '../images/Dropzone';
+import { Sorting } from '../filter/Filter';
 
 import utils from '../../utils/utils.js';
-import time from '../../utils/time';
 import trans from '../../translations/translate';
 
 import './matching.css';
@@ -15,19 +15,16 @@ import './matching.css';
 const maxProfilesPage = 3;
 
 
-function getAge(match) {
-    return time.getAgeFromTime(match.birthday);
-}
-
 export class Matching extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            matches : null,
-            match   : null,
-            index   : 0,
+            matches     : null,
+            match       : null,
+            sorted      : null,
+            index       : 0
         };
 
         this.socket = props._g.socket;
@@ -66,13 +63,41 @@ export class Matching extends Component {
         window.matches = matches;
     }
 
+    buildSort() {
+
+        let sorts = [{
+                value   : 'birthday',
+                label   : trans.get('USER.FIELDS.AGE')
+            }, {
+                value   : 'distance',
+                label   : trans.get('USER.FIELDS.DISTANCE')
+            }
+        ];
+
+        return (
+            <Sorting
+                collection={ this.state.matches }
+                onSort={ (c) => this.handleSorting(c) }
+                defaultValue={ 0 }
+                sorts={ sorts }
+            />
+        );
+    }
+
+    handleSorting = matches => {
+        this.setState({
+            sorted  : matches,
+            index   : 0
+        });
+    }
+
     buildMatches(){
 
         let elems = [];
-        let matches = Object.values(this.state.matches);
         let count = this.state.index;
+        let matches = this.state.sorted;
 
-        if (!matches.length){
+        if (!matches || !matches.length){
             return null;
         }
 
@@ -125,7 +150,7 @@ export class Matching extends Component {
                 </div>
 
                 <h1>{ match.firstname }</h1>
-                <span>{ getAge(match) }</span>
+                <span>{ match.age }</span>
             </div>
         );
     }
@@ -180,6 +205,8 @@ export class Matching extends Component {
                     keyboard={ false }
                 />
 
+                { this.buildSort() }
+
                 <div className="matching-profiles">
                     { this.buildMatches() }
                 </div>
@@ -220,7 +247,7 @@ class ExtendedProfile extends SuperModal {
     }
 
     getBasicsInfos(match){
-        let basics = getAge(match) + trans.get('UNITS.AGE');
+        let basics = match.age + trans.get('UNITS.AGE');
         basics += ' | ';
         basics += this.getDistance(match) + trans.get('UNITS.KM');
 

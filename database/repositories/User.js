@@ -5,6 +5,20 @@ const User = require('../models/user.js');
 
 const type = 'user';
 
+const defaultParams = {
+    distance    : 50,
+    age         : {
+        min     : function(){
+            var n = new Date()
+            return (n.setFullYear(n.getUTCFullYear() - 18));
+        },
+        max     : function(){
+            var n = new Date()
+            return (n.setFullYear(n.getUTCFullYear() - 99));
+        },
+    }
+};
+
 parser.setSingle(type, function(record){
     return parseOneRecord(record);
 })
@@ -295,7 +309,9 @@ let UserRepository = {
 
         options = options || {};
 
-        options.distance = options.distance || 50000;
+        options.distance = options.distance || 0;
+        options.age_min = options.age_min || 0;
+        options.age_max = options.age_max || 0;
 
         return new Promise((resolve, reject) => {
 
@@ -304,6 +320,24 @@ let UserRepository = {
                 WHERE ID(m)=${user._id} AND ID(u)<>${user._id}
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
+
+                SET sp.distance = CASE
+                    WHEN ${options.distance} > 0 THEN ${options.distance}
+                    WHEN sp.distance > 0 THEN sp.distance
+                    ELSE ${defaultParams.distance}
+                END
+
+                SET sp.age_min = CASE
+                    WHEN ${options.age_min} > 0 THEN ${options.age_min}
+                    WHEN sp.age_min > 0 THEN sp.age_min
+                    ELSE ${defaultParams.age.min()}
+                END
+
+                SET sp.age_max = CASE
+                    WHEN ${options.age_max} > 0 THEN ${options.age_max}
+                    WHEN sp.age_max > 0 THEN sp.age_max
+                    ELSE ${defaultParams.age.max()}
+                END
 
                 SET u.g_matched = CASE
                     WHEN m.see_m=TRUE AND u.gender='male' THEN TRUE
