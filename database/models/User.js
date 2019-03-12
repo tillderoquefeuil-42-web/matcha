@@ -37,6 +37,7 @@ class User {
         let data = node.properties;
 
         params = params || {};
+        transform(data);
 
         for (var i in fields){
             this[fields[i]] = data[fields[i]];
@@ -50,6 +51,10 @@ class User {
 
         if (data.distance){
             this.distance = data.distance;
+        }
+
+        if (data.common_tags){
+            this.common_tags = parseInt(data.common_tags);
         }
 
         if (params.profile_pic){
@@ -75,8 +80,16 @@ class User {
 
     }
 
+    getPassword() {
+        return this.password;
+    }
+
+    setPassword(pswd) {
+        this.password = pswd;
+    }
+
     authenticate(password) {
-		return passwordHash.verify(password, this.password);
+		return passwordHash.verify(password, this.getPassword());
 	}
 	
 	getToken() {

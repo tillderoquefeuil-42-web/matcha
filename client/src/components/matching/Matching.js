@@ -66,11 +66,16 @@ export class Matching extends Component {
     buildSort() {
 
         let sorts = [{
+                inverse : true,
                 value   : 'birthday',
                 label   : trans.get('USER.FIELDS.AGE')
             }, {
                 value   : 'distance',
                 label   : trans.get('USER.FIELDS.DISTANCE')
+            }, {
+                inverse : true,
+                value   : 'common_tags',
+                label   : trans.get('USER.FIELDS.COMMON_INTERESTS')
             }
         ];
 
@@ -206,6 +211,8 @@ export class Matching extends Component {
                 />
 
                 { this.buildSort() }
+
+                <div className="clearfix"></div>
 
                 <div className="matching-profiles">
                     { this.buildMatches() }

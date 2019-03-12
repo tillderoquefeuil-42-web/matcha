@@ -73,12 +73,25 @@ export class Sorting extends Component {
         return options;
     }
 
+    inverseType(type) {
+        if (type === 'asc'){
+            return 'desc';
+        }
+
+        return 'asc';
+    }
+
     handleChange = (sort) => {
-        let type = 'asc';
+
+        let type = this.state.type || 'asc';
         let oldSort = this.state.sort;
 
-        if (oldSort && oldSort.id === sort.id){
-            type = this.state.type === type? 'desc' : type;
+        if (oldSort){
+            type = (oldSort.id === sort.id)? this.inverseType(type) : 'asc';
+        }
+
+        if (sort.inverse && (!oldSort || oldSort.id !== sort.id)){
+            type = this.inverseType(type);
         }
 
         this.setState({

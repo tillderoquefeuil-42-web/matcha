@@ -3,9 +3,8 @@
 }
 
 #matching > .sorting-dropdown {
-    position: absolute;
-    top: 65px;
-    right: 15px;
+    float: right;
+    margin-top: 15px;
 }
 
 #matching > .sorting-dropdown .caret {
@@ -21,7 +20,7 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 80%;
+    height: 75%;
     position: relative;
 }
 

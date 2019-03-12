@@ -467,10 +467,10 @@ exports.savePswdByToken = function(req, res) {
         }
 
         UserRepo.updateOne(user)
-        .then(result => {
+        .then(_user => {
             res.status(200).json({
                 text    : "SUCCESS",
-                user    : user
+                user    : _user
             });
         }).catch(err => {
             res.status(500).json({

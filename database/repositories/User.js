@@ -320,6 +320,9 @@ let UserRepository = {
                 WHERE ID(m)=${user._id} AND ID(u)<>${user._id}
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
+                OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
+                WITH u, m, sp, ml, ul, count(ct) AS common_tags 
+                SET u.common_tags = common_tags
 
                 SET sp.distance = CASE
                     WHEN ${options.distance} > 0 THEN ${options.distance}
