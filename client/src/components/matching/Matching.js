@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'react-bootstrap';
 
 import { Component } from '../Component';
 import { Loader } from '../loader/Loader';
@@ -6,8 +7,10 @@ import { SuperModal } from '../modal/CustomModal';
 import { TagsInput } from '../tagsInput/TagsInput';
 import { OneFileView } from '../images/Dropzone';
 import { Sorting } from '../filter/Filter';
+import { Distance, Age } from '../matching/Inputs';
 
 import utils from '../../utils/utils.js';
+import time from '../../utils/time';
 import trans from '../../translations/translate';
 
 import './matching.css';
@@ -24,7 +27,8 @@ export class Matching extends Component {
             matches     : null,
             match       : null,
             sorted      : null,
-            index       : 0
+            index       : 0,
+            showFilters : false
         };
 
         this.socket = props._g.socket;
@@ -91,6 +95,21 @@ export class Matching extends Component {
                 sorts={ sorts }
             />
         );
+    }
+
+    buildFilters(){
+
+        return (
+            <Button
+                onClick={ this.toggleFilters }
+            >
+                <i className="fas fa-filter"></i>
+            </Button>
+        );
+    }
+
+    toggleFilters = e => {
+        this.setState({showFilters:(!this.state.showFilters)});
     }
 
     handleSorting = matches => {
@@ -207,6 +226,12 @@ export class Matching extends Component {
         return (
             <div id="matching" className="container">
 
+                <Filters
+                    show={ this.state.showFilters }
+                    onClose={ this.toggleFilters }
+                    _g={ this.props._g }
+                />
+
                 <ExtendedProfile
                     show={ this.showExtendedProfile() }
                     onClose={ () => this.closeExtendedProfile() }
@@ -215,6 +240,7 @@ export class Matching extends Component {
                 />
 
                 <div className="matching-sorting">
+                    { this.buildFilters() }
                     { this.buildSort() }
                 </div>
 
@@ -224,6 +250,129 @@ export class Matching extends Component {
             </div>
         );
     }
+}
+
+class Filters extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            distance    : null,
+            age         : null
+        };
+
+        this.socket = props._g.socket;
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
+
+        let _this = this;
+
+        this.socket.off('LOAD_SEARCH_PARAMS').on('LOAD_SEARCH_PARAMS', function(data){
+            _this.updateSearchParams(data);
+        });
+
+        this.socket.emit('GET_SEARCH_PARAMS');
+    }
+
+    // SETTERS
+    updateSearchParams(data) {
+        this.setState({
+            distance    : data.distance,
+            age         : [time.getAgeFromTime(data.age_min), time.getAgeFromTime(data.age_max)]
+        });
+    }
+
+    setParam = (param, label) => {
+        this.setState({[label] : param});
+    }
+
+    // PARSE & SAVE
+    parseInputData() {
+        let inputs = ['distance', 'age', 'popularity'];
+
+        let data = {};
+
+        for (let i in inputs){
+            let label = inputs[i];
+            let value = this.state[label];
+
+            if (value && value.length === 2){
+                data[label+'_min'] = value[0];
+                data[label+'_max'] = value[1];
+            } else {
+                data[label] = value;
+            }
+        }
+
+        return data;
+    }
+
+    save = e => {
+        let data = this.parseInputData();
+        console.log(data);
+
+        this.close();
+    }
+
+    upTo(element, oneClass) {
+        while (element && element.parentNode) {
+            if (element.className && element.className.split(' ').indexOf(oneClass) !== -1) {
+                return element;
+            }
+
+            element = element.parentNode;
+        }
+        return null;
+    }
+
+    handleMouseDown = event => {
+        if (!this.upTo(event.toElement, 'matching-filters')){
+            this.close();
+        }
+    }
+
+    close() {
+        document.removeEventListener('mousedown', this.handleMouseDown);
+        this.props.onClose();
+    }
+
+    render() {
+
+        document.removeEventListener('mousedown', this.handleMouseDown);
+        if (!this.props.show){
+            return null;
+        }
+
+        document.addEventListener('mousedown', this.handleMouseDown);
+
+        return (
+            <div className="matching-filters">
+
+                <Distance
+                    value={ this.state.distance }
+                    onChange={ (param) => this.setParam(param, 'distance') }
+                />
+
+                <Age
+                    value={ this.state.age }
+                    onChange={ (param) => this.setParam(param, 'age') }
+                />
+
+                <Button
+                    onClick={this.save}
+                    block
+                    bsSize="large"
+                >
+                    { trans.get('BUTTON.SAVE') }
+                </Button>
+
+            </div>
+        );
+    }
+
 }
 
 class ExtendedProfile extends SuperModal {

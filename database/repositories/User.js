@@ -328,21 +328,21 @@ let UserRepository = {
                 OPTIONAL MATCH (m)-[mi:INTEREST_IN]->(mt:Tag)
                 WITH u, m, sp, ml, ul, count(mt) AS user_tags
 
-                SET sp.distance = CASE
-                    WHEN ${options.distance} > 0 THEN ${options.distance}
+                SET sp.c_distance = CASE
+                    //WHEN ${options.distance} > 0 THEN ${options.distance}
                     WHEN sp.distance > 0 THEN sp.distance
                     ELSE ${defaultParams.distance}
                 END
 
-                SET sp.age_min = CASE
-                    WHEN ${options.age_min} > 0 THEN ${options.age_min}
-                    WHEN sp.age_min > 0 THEN sp.age_min
+                SET sp.c_age_min = CASE
+                    //WHEN ${options.age_min} > 0 THEN ${options.age_min}
+                    WHEN exists(sp.age_min) THEN sp.age_min
                     ELSE ${defaultParams.age.min()}
                 END
 
-                SET sp.age_max = CASE
-                    WHEN ${options.age_max} > 0 THEN ${options.age_max}
-                    WHEN sp.age_max > 0 THEN sp.age_max
+                SET sp.c_age_max = CASE
+                    //WHEN ${options.age_max} > 0 THEN ${options.age_max}
+                    WHEN exists(sp.age_max) THEN sp.age_max
                     ELSE ${defaultParams.age.max()}
                 END
 
@@ -377,9 +377,9 @@ let UserRepository = {
                 WITH u
                 WHERE u.g_matched IS NOT NULL
                 AND u.o_matched IS NOT NULL
-                AND u.distance <= (sp.distance*1000)
-                AND sp.age_min >= u.birthday
-                AND sp.age_max <= u.birthday
+                AND u.distance <= (sp.c_distance*1000)
+                AND u.birthday <= sp.c_age_min
+                AND u.birthday >= sp.c_age_max
 
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)

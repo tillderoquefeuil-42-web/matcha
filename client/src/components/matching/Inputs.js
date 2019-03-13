@@ -52,6 +52,9 @@ const defaultParams = {
 export class Distance extends Component {
 
     render() {
+
+        let value = (this.props.value !== null)? this.props.value : defaultParams.distance.default;
+
         return (
             <FormGroup controlId="distance">
                 <ControlLabel>{ trans.get('USER.FIELDS.DISTANCE') }</ControlLabel>
@@ -60,7 +63,7 @@ export class Distance extends Component {
                     min={ defaultParams.distance.min }
                     max={ defaultParams.distance.max }
                     marks={ defaultParams.distance.marks }
-                    value={ this.props.value }
+                    value={ value }
                     handleChange={ this.props.onChange }
                 />
             </FormGroup>
@@ -71,6 +74,8 @@ export class Distance extends Component {
 export class Age extends Component {
 
     render() {
+        let value = (this.props.value !== null)? this.props.value : [defaultParams.age.min, defaultParams.age.max];
+
         return (
             <FormGroup controlId="age">
                 <ControlLabel>{ trans.get('USER.FIELDS.AGE') }</ControlLabel>
@@ -79,7 +84,7 @@ export class Age extends Component {
                     min={ defaultParams.age.min }
                     max={ defaultParams.age.max }
                     marks={ defaultParams.age.marks }
-                    value={ this.props.value }
+                    value={ value }
                     handleChange={ this.props.onChange }
                 />
             </FormGroup>
@@ -90,6 +95,8 @@ export class Age extends Component {
 export class Popularity extends Component {
 
     render() {
+        let value = (this.props.value !== null)? this.props.value : [defaultParams.popularity.min, defaultParams.popularity.max];
+
         return (
             <FormGroup controlId="popularity">
                 <ControlLabel>{ trans.get('USER.FIELDS.POPULARITY') }</ControlLabel>
@@ -98,7 +105,7 @@ export class Popularity extends Component {
                     min={ defaultParams.popularity.min }
                     max={ defaultParams.popularity.max }
                     marks={ defaultParams.popularity.marks }
-                    value={ this.props.value }
+                    value={ value }
                     handleChange={ this.props.onChange }
                 />
             </FormGroup>

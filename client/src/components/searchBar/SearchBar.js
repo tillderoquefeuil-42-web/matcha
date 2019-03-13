@@ -329,10 +329,11 @@ export class SearchBar extends React.Component {
 
     upTo(element, oneClass) {
         while (element && element.parentNode) {
-            element = element.parentNode;
             if (element.className && element.className.split(' ').indexOf(oneClass) !== -1) {
                 return element;
             }
+
+            element = element.parentNode;
         }
         return null;
     }

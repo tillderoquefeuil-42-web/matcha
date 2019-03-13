@@ -9,58 +9,15 @@ import API from '../../utils/API';
 import time from '../../utils/time';
 import trans from '../../translations/translate';
 
-const distanceUnit = trans.get('UNITS.KM');
-
-const defaultParams = {
-    distance    : {
-        default : 50,
-        min     : 1,
-        max     : 250,
-        marks   : {
-            1   : <strong>{ 1 + distanceUnit }</strong>,
-            50 : '50' + distanceUnit,
-            100 : '100' + distanceUnit,
-            150 : '150' + distanceUnit,
-            200 : '200' + distanceUnit,
-            250 : <strong>{ 250 + distanceUnit }</strong>
-        },
-    },
-    age         : {
-        min     : 16,
-        max     : 100,
-        marks   : {
-            18  : <strong>18</strong>,
-            25  : '25',
-            40  : '40',
-            55  : '55',
-            70  : '70',
-            85  : '85',
-            99  : <strong>99</strong>
-        },
-    },
-    popularity  : {
-        min     : 0,
-        max     : 5,
-        marks   : {
-            0   : '0',
-            1   : '1',
-            2   : '2',
-            3   : '3',
-            4   : '4',
-            5   : '5',
-        },
-    }
-}
-
 export class Search extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            distance    : defaultParams.distance.default,
-            age         : [defaultParams.age.min, defaultParams.age.max],
-            popularity  : [defaultParams.popularity.min, defaultParams.popularity.max]
+            distance    : null,
+            age         : null,
+            popularity  : null
         };
 
         this.socket = props._g.socket;
@@ -125,11 +82,6 @@ export class Search extends Component {
 
         data.age_min = time.getTimeFromAge(data.age_min);
         data.age_max = time.getTimeFromAge(data.age_max);
-
-        // console.log(data);
-        // if (data){
-        //     return;
-        // }
 
         this.socket.emit('SET_SEARCH_PARAMS', data);
     }
