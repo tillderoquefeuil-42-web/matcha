@@ -2,16 +2,16 @@
     height: 100%;
 }
 
-#matching > .sorting-dropdown {
+#matching .matching-sorting {
     float: right;
     margin-top: 15px;
 }
 
-#matching > .sorting-dropdown .caret {
+#matching .sorting-dropdown .caret {
     display: none;
 }
 
-#matching > .sorting-dropdown .dropdown-menu {
+#matching .sorting-dropdown .dropdown-menu {
     right: 0;
     left: auto;
 }
@@ -22,6 +22,7 @@
     align-items: center;
     height: 75%;
     position: relative;
+    width: 100%;
 }
 
 #matching .matching-profiles > .fas {

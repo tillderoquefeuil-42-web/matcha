@@ -321,8 +321,12 @@ let UserRepository = {
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
-                WITH u, m, sp, ml, ul, count(ct) AS common_tags 
+                WITH u, m, sp, ml, ul, count(ct) AS common_tags
                 SET u.common_tags = common_tags
+
+                WITH u, m, sp, ml, ul
+                OPTIONAL MATCH (m)-[mi:INTEREST_IN]->(mt:Tag)
+                WITH u, m, sp, ml, ul, count(mt) AS user_tags
 
                 SET sp.distance = CASE
                     WHEN ${options.distance} > 0 THEN ${options.distance}
@@ -359,6 +363,16 @@ let UserRepository = {
                 SET ml.point = point({ longitude: ml.lng, latitude: ml.lat })
                 SET ul.point = point({ longitude: ul.lng, latitude: ul.lat })
                 SET u.distance = round(distance(ml.point, ul.point))
+
+                SET u.p_tags = CASE
+                    WHEN user_tags > 0 THEN (toFloat(u.common_tags) / user_tags)
+                    ELSE 1
+                END
+
+                SET u.p_location = CASE
+                    WHEN sp.distance > 0 THEN (1 - (toFloat(u.distance) / (sp.distance*1000)))
+                    ELSE 0
+                END
 
                 WITH u
                 WHERE u.g_matched IS NOT NULL

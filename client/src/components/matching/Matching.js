@@ -67,6 +67,10 @@ export class Matching extends Component {
 
         let sorts = [{
                 inverse : true,
+                value   : 'pertinence',
+                label   : trans.get('COMMON.PERTINENCE')
+            }, {
+                inverse : true,
                 value   : 'birthday',
                 label   : trans.get('USER.FIELDS.AGE')
             }, {
@@ -210,9 +214,9 @@ export class Matching extends Component {
                     keyboard={ false }
                 />
 
-                { this.buildSort() }
-
-                <div className="clearfix"></div>
+                <div className="matching-sorting">
+                    { this.buildSort() }
+                </div>
 
                 <div className="matching-profiles">
                     { this.buildMatches() }

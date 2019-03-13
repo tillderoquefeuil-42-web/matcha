@@ -57,6 +57,17 @@ class User {
             this.common_tags = parseInt(data.common_tags);
         }
 
+        if (data.p_tags >= 0 && data.p_location >= 0){
+
+            let pertinence = [
+                (parseFloat(data.p_location) * 80),
+                (parseFloat(data.p_tags) * 20)
+            ];
+
+            this.pertinence = pertinence.reduce(function(a, b){return a + b});
+        }
+
+
         if (params.profile_pic){
             this.profile_pic = new File(params.profile_pic);
         }
