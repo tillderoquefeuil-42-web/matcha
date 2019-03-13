@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, FormGroup, ControlLabel } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
-import { Slider, Range } from '../slider/Slider';
 import { Component } from '../Component';
+// import { Distance, Age, Popularity } from '../matching/Inputs';
+import { Distance, Age } from '../matching/Inputs';
 
 import API from '../../utils/API';
 import time from '../../utils/time';
@@ -36,6 +37,18 @@ const defaultParams = {
             85  : '85',
             99  : <strong>99</strong>
         },
+    },
+    popularity  : {
+        min     : 0,
+        max     : 5,
+        marks   : {
+            0   : '0',
+            1   : '1',
+            2   : '2',
+            3   : '3',
+            4   : '4',
+            5   : '5',
+        },
     }
 }
 
@@ -46,7 +59,8 @@ export class Search extends Component {
 
         this.state = {
             distance    : defaultParams.distance.default,
-            age         : [defaultParams.age.min, defaultParams.age.max]
+            age         : [defaultParams.age.min, defaultParams.age.max],
+            popularity  : [defaultParams.popularity.min, defaultParams.popularity.max]
         };
 
         this.socket = props._g.socket;
@@ -78,25 +92,44 @@ export class Search extends Component {
         });
     }
 
-    setDistance = distance => {
-        this.setState({distance : distance});
+    setParam = (param, label) => {
+        this.setState({[label] : param});
     }
 
-    setAge = age => {
-        this.setState({age : age});
-    }
 
+    parseInputData() {
+        let inputs = ['distance', 'age', 'popularity'];
+
+        let data = {};
+
+        for (let i in inputs){
+            let label = inputs[i];
+            let value = this.state[label];
+
+            if (value && value.length === 2){
+                data[label+'_min'] = value[0];
+                data[label+'_max'] = value[1];
+            } else {
+                data[label] = value;
+            }
+        }
+
+        return data;
+    }
 
     // SAVER
 
     saveSearchParams = event => {
-        let age = this.state.age;
 
-        let data = {
-            distance    : this.state.distance,
-            age_min     : time.getTimeFromAge(age[0]),
-            age_max     : time.getTimeFromAge(age[1])
-        };
+        let data = this.parseInputData();
+
+        data.age_min = time.getTimeFromAge(data.age_min);
+        data.age_max = time.getTimeFromAge(data.age_max);
+
+        // console.log(data);
+        // if (data){
+        //     return;
+        // }
 
         this.socket.emit('SET_SEARCH_PARAMS', data);
     }
@@ -109,30 +142,20 @@ export class Search extends Component {
             <div id="search-params" className="account-block" >
                 <h2 className="form-section">{ trans.get('MATCHING.PARAMS') }</h2>
 
-                <FormGroup controlId="distance">
-                    <ControlLabel>{ trans.get('USER.FIELDS.DISTANCE') }</ControlLabel>
-                    <Slider
-                        step={ 1 }
-                        min={ defaultParams.distance.min }
-                        max={ defaultParams.distance.max }
-                        marks={ defaultParams.distance.marks }
-                        value={ this.state.distance }
-                        handleChange={ this.setDistance }
-                    />
-                </FormGroup>
+                <Distance
+                    value={ this.state.distance }
+                    onChange={ (param) => this.setParam(param, 'distance') }
+                />
 
-                <FormGroup controlId="age">
-                    <ControlLabel>{ trans.get('USER.FIELDS.AGE') }</ControlLabel>
-                    <Range
-                        step={ 1 }
-                        min={ defaultParams.age.min }
-                        max={ defaultParams.age.max }
-                        marks={ defaultParams.age.marks }
-                        value={ this.state.age }
-                        handleChange={ this.setAge }
-                    />
-                </FormGroup>
+                <Age
+                    value={ this.state.age }
+                    onChange={ (param) => this.setParam(param, 'age') }
+                />
 
+                {/*<Popularity
+                    value={ this.state.popularity }
+                    onChange={ (param) => this.setParam(param, 'popularity') }
+                />*/}
 
                 <hr />
 

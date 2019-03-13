@@ -148,6 +148,7 @@ USER:
         AGE: Age
         DISTANCE: Distance
         COMMON_INTERESTS: Shared interests
+        POPULARITY: Popularity rate
 CHAT:
     WRITE: Write a message,
     FILE:

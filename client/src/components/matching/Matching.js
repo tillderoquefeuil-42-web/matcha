@@ -37,7 +37,7 @@ export class Matching extends Component {
 
         let _this = this;
 
-        this.socket.on('LOAD_MATCHES', function(data){
+        this.socket.off('LOAD_MATCHES').on('LOAD_MATCHES', function(data){
             _this.updateMatches(data.matches);
         });
 
@@ -251,7 +251,6 @@ class ExtendedProfile extends SuperModal {
 
         this.props.onClose();
     }
-
 
     getDistance(match) {
         return Math.round(match.distance / 1000);
