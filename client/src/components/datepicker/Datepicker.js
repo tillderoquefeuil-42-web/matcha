@@ -4,6 +4,8 @@ import Moment from 'moment';
 import { Calendar } from 'react-date-range';
 import { FormControl } from "react-bootstrap";
 
+import time from '../../utils/time';
+
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 
@@ -35,7 +37,7 @@ export class DatePickerInput extends React.Component {
     constructor(props){
         super(props);
 
-        let date = this.props.date? new Date(this.props.date) : new Date();
+        let date = this.props.date? time.datetimeToDate(this.props.date) : new Date();
 
         this.state = {
             date    : date,

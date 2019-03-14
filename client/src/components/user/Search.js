@@ -29,7 +29,9 @@ export class Search extends Component {
         let _this = this;
 
         this.socket.off('LOAD_SEARCH_PARAMS').on('LOAD_SEARCH_PARAMS', function(data){
-            _this.updateSearchParams(data);
+            if (data){
+                _this.updateSearchParams(data);
+            }
         });
 
         this.socket.off('UPDATE_SEARCH_PARAMS').on('UPDATE_SEARCH_PARAMS', function(data){
@@ -45,7 +47,7 @@ export class Search extends Component {
     updateSearchParams(data) {
         this.setState({
             distance    : data.distance,
-            age         : [time.getAgeFromTime(data.age_min), time.getAgeFromTime(data.age_max)]
+            age         : [time.getAgeFromDatetime(data.age_min), time.getAgeFromDatetime(data.age_max)]
         });
     }
 
@@ -80,8 +82,11 @@ export class Search extends Component {
 
         let data = this.parseInputData();
 
-        data.age_min = time.getTimeFromAge(data.age_min);
-        data.age_max = time.getTimeFromAge(data.age_max);
+        data.age_min = time.ageToDatetime(data.age_min);
+        data.age_max = time.ageToDatetime(data.age_max);
+
+        // data.age_min = time.getTimeFromAge(data.age_min);
+        // data.age_max = time.getTimeFromAge(data.age_max);
 
         this.socket.emit('SET_SEARCH_PARAMS', data);
     }

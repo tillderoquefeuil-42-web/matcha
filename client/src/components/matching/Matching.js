@@ -271,7 +271,9 @@ class Filters extends Component {
         let _this = this;
 
         this.socket.off('LOAD_SEARCH_PARAMS').on('LOAD_SEARCH_PARAMS', function(data){
-            _this.updateSearchParams(data);
+            if (data){
+                _this.updateSearchParams(data);
+            }
         });
 
         this.socket.emit('GET_SEARCH_PARAMS');
@@ -281,7 +283,7 @@ class Filters extends Component {
     updateSearchParams(data) {
         this.setState({
             distance    : data.distance,
-            age         : [time.getAgeFromTime(data.age_min), time.getAgeFromTime(data.age_max)]
+            age         : [time.getAgeFromDatetime(data.age_min), time.getAgeFromDatetime(data.age_max)]
         });
     }
 
@@ -312,6 +314,14 @@ class Filters extends Component {
 
     save = e => {
         let data = this.parseInputData();
+
+        data.age_min = time.ageToDatetime(data.age_min);
+        data.age_max = time.ageToDatetime(data.age_max);
+
+        // data.age_min = time.getTimeFromAge(data.age_min);
+        // data.age_max = time.getTimeFromAge(data.age_max);
+
+        console.log(data.age_max);
         console.log(data);
 
         this.close();

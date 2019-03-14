@@ -2,19 +2,26 @@ const parser = require('../parser');
 const queryEx = require('../query');
 const User = require('../models/user.js');
 
+const time = require('../../controllers/utils/time');
 
 const type = 'user';
 
 const defaultParams = {
     distance    : 50,
     age         : {
+        _min    : 18,
+        _max    : 99,
         min     : function(){
-            var n = new Date()
-            return (n.setFullYear(n.getUTCFullYear() - 18));
+            let n = new Date()
+            n.setFullYear(n.getUTCFullYear() - defaultParams.age._min);
+
+            return time.toDatetime(n);
         },
         max     : function(){
             var n = new Date()
-            return (n.setFullYear(n.getUTCFullYear() - 99));
+            n.setFullYear(n.getUTCFullYear() - defaultParams.age._max);
+
+            return time.toDatetime(n);
         },
     }
 };
@@ -329,19 +336,19 @@ let UserRepository = {
                 WITH u, m, sp, ml, ul, count(mt) AS user_tags
 
                 SET sp.c_distance = CASE
-                    //WHEN ${options.distance} > 0 THEN ${options.distance}
+                    WHEN ${options.distance} > 0 THEN ${options.distance}
                     WHEN sp.distance > 0 THEN sp.distance
                     ELSE ${defaultParams.distance}
                 END
 
                 SET sp.c_age_min = CASE
-                    //WHEN ${options.age_min} > 0 THEN ${options.age_min}
+                    WHEN ${options.age_min} > 0 THEN ${options.age_min}
                     WHEN exists(sp.age_min) THEN sp.age_min
                     ELSE ${defaultParams.age.min()}
                 END
 
                 SET sp.c_age_max = CASE
-                    //WHEN ${options.age_max} > 0 THEN ${options.age_max}
+                    WHEN ${options.age_max} > 0 THEN ${options.age_max}
                     WHEN exists(sp.age_max) THEN sp.age_max
                     ELSE ${defaultParams.age.max()}
                 END
@@ -380,7 +387,6 @@ let UserRepository = {
                 AND u.distance <= (sp.c_distance*1000)
                 AND u.birthday <= sp.c_age_min
                 AND u.birthday >= sp.c_age_max
-
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)

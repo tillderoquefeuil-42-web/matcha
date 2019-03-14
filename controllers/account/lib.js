@@ -768,7 +768,7 @@ exports.saveLocation = function(req, res) {
     }
 
     return exports.getUserByToken(req, res, function(user) {
-        SearchParamsRepo.createOne(req.body.location)
+        LocationRepo.createOne(req.body.location)
         .then(result => {
             LocationRepo.userLink(result, user)
             .then(location => {

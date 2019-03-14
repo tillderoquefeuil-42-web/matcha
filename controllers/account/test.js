@@ -2,6 +2,7 @@ const passwordHash = require("password-hash");
 const moment = require('moment');
 
 const config = require('../../config/config');
+const time = require('../utils/time');
 
 const User = require('../../database/models/user.js');
 const UserRepo = require('../../database/repositories/user.js');
@@ -100,7 +101,7 @@ exports.generateUser = function(firstname, lastname, j){
     let r = random();
     let username = (firstname + '.' + lastname).toLowerCase();
 
-    let age = config.params.MIN_AGED_USERS + 4 + r % 10;
+    let age = config.params.MIN_AGED_USERS + 2 + r % 20;
 
     let gender = (r%3>0)? genders[j] : genders[2];
 
@@ -112,7 +113,7 @@ exports.generateUser = function(firstname, lastname, j){
         password    : 'MyWebSite42!',
         language    : 'en',
         gender      : gender,
-        birthday    : parseInt(moment().subtract(age, 'years').format('x')),
+        birthday    : time.toDatetime(moment().subtract(age, 'years')),
         picture_url : exports.getPicturePath(j, r)
     };
 

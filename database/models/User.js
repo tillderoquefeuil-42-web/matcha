@@ -86,9 +86,13 @@ class User {
         }
 
         if (this.birthday){
-            this.age = time.getAgeFromTime(this.birthday);
+            if (typeof this.birthday === 'string'){
+                this.birthday = this.birthday.slice(0, 8);
+            }
+            this.age = time.getAgeFromDatetime(this.birthday);
         }
 
+        // this.birthday = null;
     }
 
     getPassword() {

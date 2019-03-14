@@ -8,6 +8,7 @@ import { Language } from '../language/Language';
 import { TagsInput } from '../tagsInput/TagsInput';
 
 import API from '../../utils/API';
+import time from '../../utils/time';
 import alert from '../../utils/alert';
 import utils from '../../utils/utils';
 import trans from '../../translations/translate';
@@ -93,7 +94,9 @@ export class Profile extends Component {
         let user = this.state.user;
         let _this = this;
 
-        user.birthday = (new Date(user.birthday)).getTime();
+        // user.birthday = (new Date(user.birthday)).getTime();
+        user.birthday = time.toDatetime(new Date(user.birthday));
+
         API.saveUserData(user)
         .then(function(data){
             let title = trans.get('SUCCESS.TITLE');
@@ -119,7 +122,14 @@ export class Profile extends Component {
 
                 <FormGroup controlId="bio">
                     <ControlLabel>{ trans.get('USER.FIELDS.BIO') }</ControlLabel>
-                    <FormControl maxLength="250" componentClass="textarea" placeholder={ trans.get('USER.BIO_PLACEHOLDER') } autoFocus value={this.state.user.bio} onChange={this.handleChange} />
+                    <FormControl 
+                        autoFocus
+                        maxLength="250"
+                        componentClass="textarea"
+                        value={this.state.user.bio}
+                        onChange={this.handleChange}
+                        placeholder={ trans.get('USER.BIO_PLACEHOLDER') }
+                    />
                 </FormGroup>
 
                 <FormGroup controlId="interests">
