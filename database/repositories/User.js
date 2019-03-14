@@ -2,28 +2,23 @@ const parser = require('../parser');
 const queryEx = require('../query');
 const User = require('../models/user.js');
 
+const defaultParams = require('../../config/config').MATCHING;
 const time = require('../../controllers/utils/time');
 
 const type = 'user';
 
-const defaultParams = {
-    distance    : 50,
-    age         : {
-        _min    : 18,
-        _max    : 99,
-        min     : function(){
-            let n = new Date()
-            n.setFullYear(n.getUTCFullYear() - defaultParams.age._min);
 
-            return time.toDatetime(n);
-        },
-        max     : function(){
-            var n = new Date()
-            n.setFullYear(n.getUTCFullYear() - defaultParams.age._max);
+defaultParams.AGE._min = function(){
+    let n = new Date()
+    n.setFullYear(n.getUTCFullYear() - defaultParams.AGE.MIN);
+    return time.toDatetime(n);
+};
 
-            return time.toDatetime(n);
-        },
-    }
+defaultParams.AGE._max = function(){
+    var n = new Date()
+    n.setFullYear(n.getUTCFullYear() - defaultParams.AGE.MAX);
+
+    return time.toDatetime(n);
 };
 
 parser.setSingle(type, function(record){
@@ -338,19 +333,19 @@ let UserRepository = {
                 SET sp.c_distance = CASE
                     WHEN ${options.distance} > 0 THEN ${options.distance}
                     WHEN sp.distance > 0 THEN sp.distance
-                    ELSE ${defaultParams.distance}
+                    ELSE ${defaultParams.DISTANCE}
                 END
 
                 SET sp.c_age_min = CASE
                     WHEN ${options.age_min} > 0 THEN ${options.age_min}
                     WHEN exists(sp.age_min) THEN sp.age_min
-                    ELSE ${defaultParams.age.min()}
+                    ELSE ${defaultParams.AGE._min()}
                 END
 
                 SET sp.c_age_max = CASE
                     WHEN ${options.age_max} > 0 THEN ${options.age_max}
                     WHEN exists(sp.age_max) THEN sp.age_max
-                    ELSE ${defaultParams.age.max()}
+                    ELSE ${defaultParams.AGE._max()}
                 END
 
                 SET u.g_matched = CASE
@@ -385,8 +380,8 @@ let UserRepository = {
                 WHERE u.g_matched IS NOT NULL
                 AND u.o_matched IS NOT NULL
                 AND u.distance <= (sp.c_distance*1000)
-                AND u.birthday <= sp.c_age_min
-                AND u.birthday >= sp.c_age_max
+                AND toInteger(u.birthday) <= toInteger(sp.c_age_min)
+                AND toInteger(u.birthday) >= toInteger(sp.c_age_max)
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
@@ -394,6 +389,8 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
                 RETURN u, f, t, l, of
             `;
+
+            // console.log(query);
 
             queryEx.exec(query)
             .then(results => {

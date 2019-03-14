@@ -24,10 +24,11 @@ export class Matching extends Component {
         super(props);
 
         this.state = {
+            index       : 0,
             matches     : null,
             match       : null,
             sorted      : null,
-            index       : 0,
+            options     : null,
             showFilters : false
         };
 
@@ -117,6 +118,15 @@ export class Matching extends Component {
             sorted  : matches,
             index   : 0
         });
+    }
+
+    handleFiltering = options => {
+        this.setState({
+            matches : null,
+            options : options
+        });
+
+        this.socket.emit('GET_MATCHES', {options:options});
     }
 
     buildMatches(){
@@ -229,6 +239,8 @@ export class Matching extends Component {
                 <Filters
                     show={ this.state.showFilters }
                     onClose={ this.toggleFilters }
+                    onFilter={ this.handleFiltering }
+                    filters={ this.state.options }
                     _g={ this.props._g }
                 />
 
@@ -269,6 +281,11 @@ class Filters extends Component {
         this._isMounted = true;
 
         let _this = this;
+
+        if (this.props.filters){
+            _this.updateSearchParams(this.props.filters);
+            return;
+        }
 
         this.socket.off('LOAD_SEARCH_PARAMS').on('LOAD_SEARCH_PARAMS', function(data){
             if (data){
@@ -318,12 +335,7 @@ class Filters extends Component {
         data.age_min = time.ageToDatetime(data.age_min);
         data.age_max = time.ageToDatetime(data.age_max);
 
-        // data.age_min = time.getTimeFromAge(data.age_min);
-        // data.age_max = time.getTimeFromAge(data.age_max);
-
-        console.log(data.age_max);
-        console.log(data);
-
+        this.props.onFilter(data);
         this.close();
     }
 

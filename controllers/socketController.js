@@ -236,7 +236,8 @@ module.exports = function (app, server) {
             rooms.joinRoom(socket, userRoom);
 
             //LOAD CONTACTS
-            account.loadMatches(user, data)
+            let options = data? data.options : {};
+            account.loadMatches(user, options)
             .then(results => {
                 io.sockets.in(userRoom).emit('LOAD_MATCHES', results);
             });

@@ -38,6 +38,15 @@ module.exports = {
         CLIENT_SECRET   : "UQkvHxkdENvkJOVbbptXYCw1",
         API_KEY         : "AIzaSyD6IzbyQKeIcbJTgMffqFOiYqyUY1WWduA",
         CALLBACK        : "auth/google/callback"
+    },
+
+    MATCHING    : {
+        DISTANCE    : 50,
+        AGE         : {
+            MIN    : 18,
+            MAX    : 99
+        }
     }
+
 
 }

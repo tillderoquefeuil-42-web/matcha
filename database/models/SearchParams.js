@@ -1,5 +1,7 @@
 const neo4j = require('neo4j-driver').v1;
 
+const defaultParams = require('../../config/config').MATCHING;
+
 const fields = [
     'distance', 'age_min', 'age_max'
 ];
@@ -17,6 +19,8 @@ function transform(object) {
     }
 }
 
+
+
 class SearchParams {
 
     constructor (node, params){
@@ -27,6 +31,22 @@ class SearchParams {
 
         for (var i in fields){
             this[fields[i]] = data[fields[i]];
+        }
+
+        if (!this.distance){
+            this.distance = defaultParams.DISTANCE;
+        }
+
+        if (!this.age_min){
+            let n = new Date()
+            n.setFullYear(n.getUTCFullYear() - defaultParams.AGE.MIN);
+            this.age_min = time.toDatetime(n);
+        }
+
+        if (!this.age_max){
+            let n = new Date()
+            n.setFullYear(n.getUTCFullYear() - defaultParams.AGE.MAX);
+            this.age_max = time.toDatetime(n);
         }
 
     }

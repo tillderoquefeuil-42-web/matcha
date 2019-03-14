@@ -9,7 +9,6 @@ import { TagsInput } from '../tagsInput/TagsInput';
 
 import API from '../../utils/API';
 import time from '../../utils/time';
-import alert from '../../utils/alert';
 import utils from '../../utils/utils';
 import trans from '../../translations/translate';
 
@@ -29,7 +28,6 @@ export class Profile extends Component {
 
 
     // USEFULL
-
     handleChange = event => {
 
         let user = this.state.user;
@@ -42,9 +40,7 @@ export class Profile extends Component {
         this.setState({user:user});
     }
 
-
     // TAGS INPUT
-
     handleTagDelete(i) {
         let tags = this.state.tags.slice(0)
         tags.splice(i, 1);
@@ -58,7 +54,6 @@ export class Profile extends Component {
 
 
     // SETTERS
-
     setUsername(username) {
         let user = this.state.user;
         user.username = username;
@@ -68,7 +63,7 @@ export class Profile extends Component {
 
     setBirthday(birthday) {
         let user = this.state.user;
-        user.birthday = birthday;
+        user.birthday = time.toDatetime(new Date(birthday))
 
         this.setState({user:user});
     }
@@ -89,19 +84,13 @@ export class Profile extends Component {
 
 
     // SAVER
-
     saveUserData = event => {
         let user = this.state.user;
         let _this = this;
 
-        // user.birthday = (new Date(user.birthday)).getTime();
-        user.birthday = time.toDatetime(new Date(user.birthday));
-
         API.saveUserData(user)
         .then(function(data){
-            let title = trans.get('SUCCESS.TITLE');
-            let msg = trans.get('SUCCESS.DATA_SAVED');
-            alert.show({title: title, message: msg, type: 'success'});
+            API.catchSuccess();
 
             let user = data.data.user;
             utils.setLocalUser(user);
@@ -114,9 +103,7 @@ export class Profile extends Component {
 
 
     render() {
-
         return(
-
             <div id="informations" className="account-block" >
                 <h2 className="form-section">{ trans.get('COMMON.INFO') }</h2>
 
