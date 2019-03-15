@@ -1,6 +1,8 @@
 import React from 'react';
 import { FormGroup, FormControl, InputGroup, Button } from "react-bootstrap";
 
+import { Component } from '../Component';
+
 import utils from '../../utils/utils';
 import trans from '../../translations/translate';
 
@@ -8,7 +10,7 @@ import './searchbar.css';
 
 const minItems = 10;
 
-export class SearchBar extends React.Component {
+export class SearchBar extends Component {
 
     constructor(props){
         super(props);
@@ -29,8 +31,8 @@ export class SearchBar extends React.Component {
         this.expand.bind(this);
     }
 
-
     componentDidMount() {
+        this._isMounted = true;
 
         if (this.props.defaultOpen){
             let matches = this.filterCollection('');

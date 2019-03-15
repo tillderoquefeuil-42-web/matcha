@@ -78,6 +78,27 @@ function parseOneRecord(record){
     return entity;
 }
 
+function filterByTags(results, tags){
+    let data = [];
+
+    for (let i in results){
+        let user = results[i];
+
+        let toAdd = true;
+        for (let j in tags){
+            if (user.tags.indexOf(tags[j]) === -1){
+                toAdd = false;
+                break;
+            }
+        }
+
+        if (toAdd){
+            data.push(user);
+        }
+    }
+
+    return data;
+}
 
 let UserRepository = {
 
@@ -314,6 +335,7 @@ let UserRepository = {
         options.distance = options.distance || 0;
         options.age_min = options.age_min || 0;
         options.age_max = options.age_max || 0;
+        options.tags = (options.tags && options.tags.length > 0)? options.tags : null;
 
         return new Promise((resolve, reject) => {
 
@@ -394,7 +416,13 @@ let UserRepository = {
 
             queryEx.exec(query)
             .then(results => {
-                return resolve(parser.records(results, type));
+                let data = parser.records(results, type);
+
+                if (options.tags){
+                    data = filterByTags(data, options.tags);
+                }
+
+                return resolve(data);
             }).catch(err => {
                 return reject(err);
             });

@@ -271,7 +271,8 @@ class Filters extends Component {
 
         this.state = {
             distance    : null,
-            age         : null
+            age         : null,
+            tags        : null
         };
 
         this.socket = props._g.socket;
@@ -300,7 +301,8 @@ class Filters extends Component {
     updateSearchParams(data) {
         this.setState({
             distance    : data.distance,
-            age         : [time.getAgeFromDatetime(data.age_min), time.getAgeFromDatetime(data.age_max)]
+            age         : [time.getAgeFromDatetime(data.age_min), time.getAgeFromDatetime(data.age_max)],
+            tags        : data.tags
         });
     }
 
@@ -310,7 +312,7 @@ class Filters extends Component {
 
     // PARSE & SAVE
     parseInputData() {
-        let inputs = ['distance', 'age', 'popularity'];
+        let inputs = ['distance', 'age', 'tags'];
 
         let data = {};
 
@@ -318,7 +320,7 @@ class Filters extends Component {
             let label = inputs[i];
             let value = this.state[label];
 
-            if (value && value.length === 2){
+            if (value && value.length === 2 && label !== 'tags'){
                 data[label+'_min'] = value[0];
                 data[label+'_max'] = value[1];
             } else {
@@ -382,6 +384,12 @@ class Filters extends Component {
                     value={ this.state.age }
                     onChange={ (param) => this.setParam(param, 'age') }
                 />
+
+                <TagsInput
+                    tags={ this.state.tags }
+                    onChange={(value) => this.setParam(value, 'tags')}
+                />
+
 
                 <Button
                     onClick={this.save}
