@@ -1026,4 +1026,24 @@ exports.updateSearchParams = function(user, data) {
         });
     });
 
-}
+};
+
+exports.updateLike = function(user, data) {
+
+    let params = {
+        like    : data.like,
+        match   : data.match
+    }
+    return console.log(data);
+
+    // return new Promise((resolve, reject) => {
+    //     SearchParamsRepo.updateOneWithUser(searchParams, user)
+    //     .then(_sp => {
+    //         return resolve(_sp);
+    //     }).catch(err => {
+    //         console.log(err);
+    //         return reject(err);
+    //     });
+    // });
+
+};

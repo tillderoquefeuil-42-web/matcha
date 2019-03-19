@@ -39,6 +39,90 @@
     margin-top: 60px;
 }
 
+.matching-filters > .close-matching-filters {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.like-icon {
+    height: 50px;
+    width: 85px;
+    font-size: 50px;
+    color: #cecece;
+    position: relative;
+    cursor: pointer;
+}
+
+.like-icon .vertical-split {
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    width: 50px;
+}
+
+.like-icon .vertical-split .horizontal-split {
+    position: absolute;
+    overflow: hidden;
+    width: 50px;
+}
+
+.top-half.horizontal-split {
+    top: 0px;
+    height: 40%;
+}
+.bottom-half.horizontal-split {
+    bottom: 1px;
+    height: 60%;
+ }
+
+.horizontal-split > i.fa-heart {
+    position: absolute;
+}
+
+.top-half.horizontal-split > i.fa-heart {
+    top: 0px;
+}
+
+.bottom-half.horizontal-split > i.fa-heart {
+    bottom: 0px;
+}
+
+
+.like-icon > .left-half {
+    left: 0px;
+}
+
+.like-icon > .right-half {
+    right: 0px;
+}
+
+.right-half .top-half.horizontal-split {
+    z-index: 5;
+}
+
+.right-half .bottom-half.horizontal-split {
+    z-index: 6;
+}
+
+.left-half .top-half.horizontal-split {
+    z-index: 6;
+}
+
+.left-half .bottom-half.horizontal-split {
+    z-index: 5;
+}
+
+.like-icon > .left-half.active {
+    color: red;
+}
+.like-icon > .right-half.active {
+    color: dodgerblue;
+}
+
+
 .matching-profiles {
     display: flex;
     justify-content: space-around;

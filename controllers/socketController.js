@@ -325,5 +325,15 @@ module.exports = function (app, server) {
             });
         });
 
+        //MATCH
+        socket.on('UPDATE_LIKE_STATE', function(data){
+            let user = getUserBySocket(socket);
+
+            account.updateLike(user, data)
+        });
+
+
+
+
     });
 }

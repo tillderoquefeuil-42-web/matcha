@@ -267,23 +267,25 @@ export class SearchBar extends Component {
             if (i > this.state.count){
                 break;
             }
-
-            let match = this.state.matches[i];
-
-            matches.push(
-                <Button
-                    className="list-item"
-                    onClick={(event) => this.handleSelect(event, match) }
-                    key={ i }
-                    bsSize="large"
-                    block
-                >
-                    { this.renderItem(match) }
-                </Button>
-            );
+            matches.push(this.buildOneMatch(this.state.matches[i], i));
         }
 
         return matches;
+    }
+
+    buildOneMatch(match, i) {
+
+        return (
+            <Button
+                className="list-item"
+                onClick={(event) => this.handleSelect(event, match) }
+                key={ i }
+                bsSize="large"
+                block
+            >
+                { this.renderItem(match) }
+            </Button>
+        );
     }
 
     autocomplete = event => {

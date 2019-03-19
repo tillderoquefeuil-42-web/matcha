@@ -100,17 +100,23 @@ export class Matching extends Component {
 
     buildFilters(){
 
+        if (this.state.showFilters){
+            return (<div />);
+        }
+
         return (
             <Button
-                onClick={ this.toggleFilters }
+                onClick={ (e) => this.toggleFilters(e, true) }
             >
                 <i className="fas fa-filter"></i>
             </Button>
         );
     }
 
-    toggleFilters = e => {
-        this.setState({showFilters:(!this.state.showFilters)});
+    toggleFilters = (e, force) => {
+        let showFilters = (force === false || force === true)? force : (!this.state.showFilters);
+
+        this.setState({showFilters:showFilters});
     }
 
     handleSorting = matches => {
@@ -238,7 +244,7 @@ export class Matching extends Component {
 
                 <Filters
                     show={ this.state.showFilters }
-                    onClose={ this.toggleFilters }
+                    onClose={ (e) => this.toggleFilters(e, false) }
                     onFilter={ this.handleFiltering }
                     filters={ this.state.options }
                     _g={ this.props._g }
@@ -249,6 +255,7 @@ export class Matching extends Component {
                     onClose={ () => this.closeExtendedProfile() }
                     match={ this.state.match }
                     keyboard={ false }
+                    _g={ this.props._g }
                 />
 
                 <div className="matching-sorting">
@@ -385,6 +392,10 @@ class Filters extends Component {
         return (
             <div className="matching-filters">
 
+                <span className="close-matching-filters" onClick={ () => this.close() }>
+                    <i className="fa fa-times"></i>
+                </span>
+
                 <Distance
                     value={ this.state.distance }
                     onChange={ (param) => this.setParam(param, 'distance') }
@@ -421,6 +432,13 @@ class ExtendedProfile extends SuperModal {
         this._isMounted = true;
         this.header = false;
         this.footer = false;
+
+        this.socket = this.props._g.socket;
+
+        this.setState({
+            hasLiked        : false,
+            hasBeenLiked    : false
+        });
     }
 
     componentDidUpdate() {
@@ -439,6 +457,22 @@ class ExtendedProfile extends SuperModal {
         }
 
         this.props.onClose();
+    }
+
+    toggleLike = e => {
+        let liked = (!this.state.hasLiked);
+        this.setState({hasLiked : liked});
+
+        this.saveLikeState(liked);
+    }
+
+    saveLikeState(liked) {
+        let data = {
+            like    : liked,
+            match   : this.props.match
+        }
+
+        this.socket.emit('UPDATE_LIKE_STATE', {data:data});
     }
 
     getDistance(match) {
@@ -491,7 +525,17 @@ class ExtendedProfile extends SuperModal {
 
         return (
             <div className="profile-infos-display">
+
                 <div>
+
+                    <div>
+                        <LikeIcon
+                            hasLiked={ this.state.hasLiked }
+                            hasBeenLiked={ this.state.hasBeenLiked }
+                            onClick={ this.toggleLike }
+                        />
+                    </div>
+
                     <p className="profile-identity">
                         <b>{ match.firstname }</b>
                         <span>{ this.getBasicsInfos(match) }</span>
@@ -538,6 +582,51 @@ class ExtendedProfile extends SuperModal {
                     { this.buildInfos() }
                 </div>
 
+            </div>
+        );
+    }
+
+}
+
+class LikeIcon extends Component {
+
+    hasLiked() {
+        let classes = 'left-half vertical-split';
+
+        if (this.props.hasLiked){
+            classes += ' active'
+        }
+        return classes;
+    }
+
+    hasBeenLiked() {
+        let classes = 'right-half vertical-split';
+
+        if (this.props.hasBeenLiked){
+            classes += ' active'
+        }
+        return classes;
+    }
+
+    render() {
+        return (
+            <div className="like-icon" onClick={ this.props.onClick }>
+                <div className={ this.hasLiked() }>
+                    <div className="top-half horizontal-split">
+                        <i className="far fa-heart"></i>
+                    </div>
+                    <div className="bottom-half horizontal-split">
+                        <i className="far fa-heart"></i>
+                    </div>
+                </div>
+                <div className={ this.hasBeenLiked() }>
+                    <div className="top-half horizontal-split">
+                        <i className="far fa-heart"></i>
+                    </div>
+                    <div className="bottom-half horizontal-split">
+                        <i className="far fa-heart"></i>
+                    </div>
+                </div>
             </div>
         );
     }

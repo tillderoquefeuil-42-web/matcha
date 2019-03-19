@@ -21,7 +21,6 @@ export class TagsInput extends Component {
             collection  : null,
             selected    : props.tags || []
         };
-
     }
 
     componentDidMount() {
