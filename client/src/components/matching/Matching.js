@@ -331,11 +331,21 @@ class Filters extends Component {
         return data;
     }
 
+    parseAges(data) {
+        data.age_min = time.ageToDatetime(data.age_min);
+
+        let max = time.getDateFromAge(data.age_max);
+        max.setDate(1);
+        max.setMonth(0);
+        data.age_max = time.toDatetime(max);
+
+        return data;
+    }
+
     save = e => {
         let data = this.parseInputData();
 
-        data.age_min = time.ageToDatetime(data.age_min);
-        data.age_max = time.ageToDatetime(data.age_max);
+        this.parseAges(data);
 
         this.props.onFilter(data);
         this.close();

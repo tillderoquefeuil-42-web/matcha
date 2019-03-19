@@ -17,6 +17,8 @@ defaultParams.AGE._min = function(){
 defaultParams.AGE._max = function(){
     var n = new Date()
     n.setFullYear(n.getUTCFullYear() - defaultParams.AGE.MAX);
+    n.setDate(1);
+    n.setMonth(0);
 
     return time.toDatetime(n);
 };
