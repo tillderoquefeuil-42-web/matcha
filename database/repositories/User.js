@@ -6,7 +6,7 @@ const defaultParams = require('../../config/config').MATCHING;
 const time = require('../../controllers/utils/time');
 
 const type = 'user';
-
+let userId = null;
 
 defaultParams.AGE._min = function(){
     let n = new Date()
@@ -27,9 +27,14 @@ parser.setSingle(type, function(record){
 
 parser.setMerges(type, ['tags', 'pictures']);
 
+function setUserId(id){
+    userId = id;
+}
+
 function parseOneRecord(record){
 
     let params = {
+        user_id     : userId,
         profile_pic : null,
         others      : [],
         tags        : []
@@ -141,6 +146,7 @@ let UserRepository = {
     },
 
     updateOne   : function(data, _id){
+        setUserId(_id);
 
         let id = _id || data._id;
         delete data._id;
@@ -173,6 +179,8 @@ let UserRepository = {
     },
 
     findOne     : function(params){
+        setUserId(params._id);
+
         return new Promise((resolve, reject) => {
 
             let request = `
@@ -200,6 +208,8 @@ let UserRepository = {
     },
 
     findAnd     : function(params){
+        setUserId(params._id);
+
         return new Promise((resolve, reject) => {
 
             let request = "MATCH (u:User) WHERE $AND RETURN u";
@@ -220,6 +230,7 @@ let UserRepository = {
     },
 
     findOr      : function(params){
+        setUserId(params._id);
 
         return new Promise((resolve, reject) => {
 
@@ -240,6 +251,8 @@ let UserRepository = {
     },
 
     updateProfilePicture            : function(file, user){
+        setUserId(user._id);
+
         return new Promise((resolve, reject) => {
 
             let query = `
@@ -262,6 +275,8 @@ let UserRepository = {
     },
 
     updateOtherPictures             : function(filesId, user){
+        setUserId(user._id);
+
         return new Promise((resolve, reject) => {
 
             let query = `
@@ -284,6 +299,8 @@ let UserRepository = {
     },
 
     findLocalByUsernameOrEmail      : function(username){
+        setUserId(true);
+
         return new Promise((resolve, reject) => {
 
             let params = {email:username, username:username};
@@ -305,6 +322,8 @@ let UserRepository = {
     },
 
     findAllFriends  : function(user){
+        setUserId(user._id);
+
         return new Promise((resolve, reject) => {
 
             let query = `
@@ -329,6 +348,7 @@ let UserRepository = {
     },
 
     matching        : function(user, options){
+        setUserId(user._id);
 
         options = options || {};
 
@@ -345,71 +365,68 @@ let UserRepository = {
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
-                WITH u, m, sp, ml, ul, count(ct) AS common_tags
-                SET u.common_tags = common_tags
-
-                WITH u, m, sp, ml, ul
                 OPTIONAL MATCH (m)-[mi:INTEREST_IN]->(mt:Tag)
-                WITH u, m, sp, ml, ul, count(mt) AS user_tags
 
-                SET sp.c_distance = CASE
+                WITH u, m, sp,
+                count(DISTINCT mt) AS user_tags,
+                count(DISTINCT ct) AS common_tags,
+                round(distance(point({ longitude: ml.lng, latitude: ml.lat }), point({ longitude: ul.lng, latitude: ul.lat }))) AS distance
+
+                WITH u, m, sp, distance, common_tags, user_tags,
+                CASE
                     WHEN ${options.distance} > 0 THEN ${options.distance}
                     WHEN sp.distance > 0 THEN sp.distance
                     ELSE ${defaultParams.DISTANCE}
-                END
+                END AS c_distance,
 
-                SET sp.c_age_min = CASE
+                CASE
                     WHEN ${options.age_min} > 0 THEN ${options.age_min}
                     WHEN exists(sp.age_min) THEN sp.age_min
                     ELSE ${defaultParams.AGE._min()}
-                END
+                END AS c_age_min,
 
-                SET sp.c_age_max = CASE
+                CASE
                     WHEN ${options.age_max} > 0 THEN ${options.age_max}
                     WHEN exists(sp.age_max) THEN sp.age_max
                     ELSE ${defaultParams.AGE._max()}
-                END
+                END AS c_age_max,
 
-                SET u.g_matched = CASE
+                CASE
                     WHEN m.see_m=TRUE AND u.gender='male' THEN TRUE
                     WHEN m.see_f=TRUE AND u.gender='female' THEN TRUE
                     WHEN m.see_nb=TRUE AND u.gender='nb' THEN TRUE
                     ELSE NULL
-                END
+                END AS g_matched,
 
-                SET u.o_matched = CASE
+                CASE
                     WHEN u.see_m=TRUE AND m.gender='male' THEN TRUE
                     WHEN u.see_f=TRUE AND m.gender='female' THEN TRUE
                     WHEN u.see_nb=TRUE AND m.gender='nb' THEN TRUE
                     ELSE NULL
-                END
+                END AS o_matched,
 
-                SET ml.point = point({ longitude: ml.lng, latitude: ml.lat })
-                SET ul.point = point({ longitude: ul.lng, latitude: ul.lat })
-                SET u.distance = round(distance(ml.point, ul.point))
-
-                SET u.p_tags = CASE
-                    WHEN user_tags > 0 THEN (toFloat(u.common_tags) / user_tags)
+                CASE
+                    WHEN user_tags > 0 THEN (toFloat(common_tags) / user_tags)
                     ELSE 1
-                END
+                END AS p_tags,
 
-                SET u.p_location = CASE
-                    WHEN sp.distance > 0 THEN (1 - (toFloat(u.distance) / (sp.distance*1000)))
+                CASE
+                    WHEN sp.distance > 0 THEN (1 - (toFloat(distance) / (sp.distance*1000)))
                     ELSE 0
-                END
+                END AS p_location
 
-                WITH u
-                WHERE u.g_matched IS NOT NULL
-                AND u.o_matched IS NOT NULL
-                AND u.distance <= (sp.c_distance*1000)
-                AND toInteger(u.birthday) <= toInteger(sp.c_age_min)
-                AND toInteger(u.birthday) >= toInteger(sp.c_age_max)
+                WHERE g_matched IS NOT NULL
+                AND o_matched IS NOT NULL
+                AND distance <= (c_distance*1000)
+                AND toInteger(u.birthday) <= toInteger(c_age_min)
+                AND toInteger(u.birthday) >= toInteger(c_age_max)
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
-                RETURN u, f, t, l, of
+
+                RETURN u{.*, common_tags:common_tags, distance:distance, p_tags:p_tags, p_location:p_location, _id:ID(u)}, f, t, l, of
             `;
 
             // console.log(query);

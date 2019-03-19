@@ -33,8 +33,13 @@ function transform(object) {
 class User {
 
     constructor (node, params){
-        this._id = node.identity.low;
         let data = node.properties;
+        if (data){
+            this._id = node.identity.low;
+        } else {
+            data = node;
+            this._id = node._id.low;
+        }
 
         params = params || {};
         transform(data);
@@ -47,6 +52,10 @@ class User {
             this.password = data.password;
         } else if (data.password) {
             this.password = passwordHash.generate(data.password);
+        }
+
+        if (params.user_id !== true && params.user_id !== this._id){
+            delete this.password;
         }
 
         if (data.distance){
