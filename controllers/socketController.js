@@ -325,11 +325,27 @@ module.exports = function (app, server) {
             });
         });
 
+
         //MATCH
+        socket.on('UPDATE_MATCH_RELATION', function(data){
+            let user = getUserBySocket(socket);
+            let userRoom = rooms.getOnlineRoom(user._id);
+
+            account.mergeMatchRelation(user, data)
+            .then(partner => {
+                io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:partner});
+            });
+
+        });
+
         socket.on('UPDATE_LIKE_STATE', function(data){
             let user = getUserBySocket(socket);
+            let userRoom = rooms.getOnlineRoom(user._id);
 
             account.updateLike(user, data)
+            .then(partner => {
+                io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:partner});
+            });
         });
 
 

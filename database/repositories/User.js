@@ -1,6 +1,6 @@
 const parser = require('../parser');
 const queryEx = require('../query');
-const User = require('../models/user.js');
+const User = require('../models/User');
 
 const defaultParams = require('../../config/config').MATCHING;
 const time = require('../../controllers/utils/time');
@@ -27,7 +27,7 @@ parser.setSingle(type, function(record){
     return parseOneRecord(record);
 })
 
-parser.setMerges(type, ['tags', 'pictures']);
+parser.setMerges(type, ['tags', 'pictures', {label:'match_relation', single:true}]);
 
 function setUserId(id){
     userId = id;
@@ -46,6 +46,16 @@ function parseOneRecord(record){
 
     if (record.has('f')){
         params.profile_pic = record.get('f');
+    }
+
+    if (record.has('r') && record.has('ru') && record.has('rp')){
+        params.match_relation = {
+            match       : record.get('r'),
+            params      : {
+                rel_user    : record.get('ru'),
+                rel_partner : record.get('rp')
+            }
+        }
     }
 
     if (record.has('of')){
@@ -368,13 +378,14 @@ let UserRepository = {
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
                 OPTIONAL MATCH (m)-[mi:INTEREST_IN]->(mt:Tag)
+                OPTIONAL MATCH (u)-[ru:RELATION]->(r:Match)<-[rp:RELATION]-(m)
 
-                WITH u, m, sp,
+                WITH u, m, sp, r, ru, rp,
                 count(DISTINCT mt) AS user_tags,
                 count(DISTINCT ct) AS common_tags,
                 round(distance(point({ longitude: ml.lng, latitude: ml.lat }), point({ longitude: ul.lng, latitude: ul.lat }))) AS distance
 
-                WITH u, m, sp, distance, common_tags, user_tags,
+                WITH u, m, sp, r, ru, rp, distance, common_tags, user_tags,
                 CASE
                     WHEN ${options.distance} > 0 THEN ${options.distance}
                     WHEN sp.distance > 0 THEN sp.distance
@@ -415,20 +426,27 @@ let UserRepository = {
                 CASE
                     WHEN sp.distance > 0 THEN (1 - (toFloat(distance) / (sp.distance*1000)))
                     ELSE 0
-                END AS p_location
+                END AS p_location,
+
+                CASE
+                    WHEN exists(r.blocked) AND r.blocked = TRUE THEN TRUE
+                    ELSE FALSE
+                END AS r_blocked
 
                 WHERE g_matched IS NOT NULL
                 AND o_matched IS NOT NULL
                 AND distance <= (c_distance*1000)
                 AND toInteger(u.birthday) <= toInteger(c_age_min)
                 AND toInteger(u.birthday) >= toInteger(c_age_max)
+                AND r_blocked = FALSE
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
-                RETURN u{.*, common_tags:common_tags, distance:distance, p_tags:p_tags, p_location:p_location, _id:ID(u)}, f, t, l, of
+                RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, p_tags:p_tags, p_location:p_location, _id:ID(u)},
+                f, t, l, of, r, ru, rp
             `;
 
             // console.log(query);
@@ -441,6 +459,66 @@ let UserRepository = {
                     data = filterByTags(data, options.tags);
                 }
 
+                return resolve(data);
+            }).catch(err => {
+                return reject(err);
+            });
+
+        });
+    },
+
+    getUpdatedPartner   : function(user, partner_id){
+        setUserId(user._id);
+
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (m:User)-[mlr:LIVES {current:true}]->(ml:Location), (u:User)-[ulr:LIVES {current:true}]->(ul:Location)
+                WHERE ID(m)=${user._id} AND ID(u)=${partner_id}
+
+                OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
+                OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
+                OPTIONAL MATCH (m)-[mi:INTEREST_IN]->(mt:Tag)
+                OPTIONAL MATCH (u)-[ru:RELATION]->(r:Match)<-[rp:RELATION]-(m)
+
+                WITH u, m, sp, r, ru, rp,
+                count(DISTINCT mt) AS user_tags,
+                count(DISTINCT ct) AS common_tags,
+                round(distance(point({ longitude: ml.lng, latitude: ml.lat }), point({ longitude: ul.lng, latitude: ul.lat }))) AS distance
+
+                WITH u, m, sp, r, ru, rp, distance, common_tags, user_tags,
+                CASE
+                    WHEN user_tags > 0 THEN (toFloat(common_tags) / user_tags)
+                    ELSE 1
+                END AS p_tags,
+
+                CASE
+                    WHEN sp.distance > 0 THEN (1 - (toFloat(distance) / (sp.distance*1000)))
+                    ELSE 0
+                END AS p_location,
+
+
+                CASE
+                    WHEN exists(r.blocked) AND r.blocked = TRUE THEN TRUE
+                    ELSE FALSE
+                END AS r_blocked
+
+                WHERE r_blocked = FALSE
+
+                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
+                OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
+                OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
+
+                RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, p_tags:p_tags, p_location:p_location, _id:ID(u)},
+                f, t, l, of, r, ru, rp
+            `;
+
+            // console.log(query);
+
+            queryEx.exec(query)
+            .then(results => {
+                let data = parser.records(results, type, true);
                 return resolve(data);
             }).catch(err => {
                 return reject(err);

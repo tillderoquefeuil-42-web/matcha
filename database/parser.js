@@ -61,8 +61,13 @@ parser.merging = function(n, node, properties){
     let tmp;
 
     for (let i in properties){
-        tmp = parser.oneMerging(n, node, properties[i]);
-        data[properties[i]] = tmp[properties[i]];
+        let label = properties[i];
+        if (typeof label === 'object' && label.label){
+            label = label.label;
+        }
+
+        tmp = parser.oneMerging(n, node, label, properties[i]);
+        data[label] = tmp[label];
     }
 
     for (let i in data){
@@ -72,7 +77,12 @@ parser.merging = function(n, node, properties){
     return n;
 }
 
-parser.oneMerging = function(n, node, property){
+parser.oneMerging = function(n, node, property, options){
+
+    if (options.single && node[property]){
+        n[property] = node[property];
+        return n;
+    }
 
     if (!n[property]){
         return node;

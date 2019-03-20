@@ -6,6 +6,7 @@ const User = require('../../database/models/user.js');
 const UserRepo = require('../../database/repositories/user.js');
 
 const TagRepo = require('../../database/repositories/Tag.js');
+const MatchRepo = require('../../database/repositories/Match.js');
 const LocationRepo = require('../../database/repositories/Location.js');
 const SearchParamsRepo = require('../../database/repositories/SearchParams.js');
 
@@ -1028,22 +1029,34 @@ exports.updateSearchParams = function(user, data) {
 
 };
 
+exports.mergeMatchRelation = function(user, data) {
+
+    return new Promise((resolve, reject) => {
+        MatchRepo.mergeMatch(user, data.partner_id)
+        .then(match => {
+            UserRepo.getUpdatedPartner(user, data.partner_id)
+            .then(partner => {
+                return resolve(partner);
+            });
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+}
+
 exports.updateLike = function(user, data) {
 
-    let params = {
-        like    : data.like,
-        match   : data.match
-    }
-    return console.log(data);
-
-    // return new Promise((resolve, reject) => {
-    //     SearchParamsRepo.updateOneWithUser(searchParams, user)
-    //     .then(_sp => {
-    //         return resolve(_sp);
-    //     }).catch(err => {
-    //         console.log(err);
-    //         return reject(err);
-    //     });
-    // });
-
+    return new Promise((resolve, reject) => {
+        MatchRepo.likeMatch(user, data.partner_id, data.like)
+        .then(match => {
+            UserRepo.getUpdatedPartner(user, data.partner_id)
+            .then(partner => {
+                return resolve(partner);
+            });
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
 };

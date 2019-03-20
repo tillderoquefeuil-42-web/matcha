@@ -6,8 +6,9 @@ const jwt = require('jwt-simple');
 const config = require('../../config/config');
 const time = require('../../controllers/utils/time');
 
-const Location = require('../models/Location');
+const Location = require('./Location');
 const File = require('./File');
+const Match = require('./Match');
 
 const fields = [
     'email', 'username', 'firstname', 'lastname',
@@ -99,6 +100,10 @@ class User {
                 this.birthday = this.birthday.slice(0, 8);
             }
             this.age = time.getAgeFromDatetime(this.birthday);
+        }
+
+        if (params.match_relation && params.match_relation.match){
+            this.match_relation = new Match(params.match_relation.match, params.match_relation.params);
         }
 
         // this.birthday = null;

@@ -26,7 +26,7 @@ export class Matching extends Component {
         this.state = {
             index       : 0,
             matches     : null,
-            match       : null,
+            match_id    : null,
             sorted      : null,
             options     : null,
             showFilters : false
@@ -46,15 +46,25 @@ export class Matching extends Component {
             _this.updateMatches(data.matches);
         });
 
+        this.socket.off('LOAD_ONE_MATCH').on('LOAD_ONE_MATCH', function(data){
+            _this.updateOneMatch(data.match);
+        });
+
         this.socket.emit('GET_MATCHES');
     }
 
     selectOneProfile(_id) {
         let matches = this.state.matches;
         if (matches && matches[_id]){
-            console.log(matches[_id]);
-            this.setState({match : matches[_id]});
+            this.setState({match_id : _id});
         }
+    }
+
+    updateOneMatch(match){
+        let matches = this.state.matches;
+
+        matches[match._id] = match;
+        this.updateMatches(matches);
     }
 
     updateMatches(data){
@@ -119,9 +129,9 @@ export class Matching extends Component {
         this.setState({showFilters:showFilters});
     }
 
-    handleSorting = matches => {
+    handleSorting = sorted => {
         this.setState({
-            sorted  : matches,
+            sorted  : sorted,
             index   : 0
         });
     }
@@ -135,27 +145,47 @@ export class Matching extends Component {
         this.socket.emit('GET_MATCHES', {options:options});
     }
 
+    getSortedMatches() {
+        let sorted = this.state.sorted;
+        let matches = this.state.matches;
+
+        let data = [];
+
+        for (let i in sorted){
+            data.push(matches[sorted[i]]);
+        }
+
+        return data;
+    }
+
     buildMatches(){
 
         let elems = [];
         let count = this.state.index;
-        let matches = this.state.sorted;
+        let matches = this.getSortedMatches();
 
         if (!matches || !matches.length){
             return null;
         }
 
-        elems.push(
-            <i
-                key="last"
-                id="last-profiles"
-                className="fas fa-caret-left"
-                onClick={ this.changePageProfiles }
-            ></i>
-        );
+        let length = matches.length;
+
+        if (length > maxProfilesPage){
+            elems.push(
+                <i
+                    key="last"
+                    id="last-profiles"
+                    className="fas fa-caret-left"
+                    onClick={ this.changePageProfiles }
+                ></i>
+            );
+        }
 
         let j = 0;
         while (j++ < maxProfilesPage){
+            if (j > length){
+                break;
+            }
             if (!matches[count]){
                 count = 0;
             }
@@ -164,14 +194,16 @@ export class Matching extends Component {
             count++;
         }
 
-        elems.push(
-            <i
-                key="next"
-                id="next-profiles"
-                className="fas fa-caret-right"
-                onClick={ this.changePageProfiles }
-            ></i>
-        );
+        if (length > maxProfilesPage){
+            elems.push(
+                <i
+                    key="next"
+                    id="next-profiles"
+                    className="fas fa-caret-right"
+                    onClick={ this.changePageProfiles }
+                ></i>
+            );
+        }
 
         return elems;
     }
@@ -217,7 +249,7 @@ export class Matching extends Component {
     }
 
     showExtendedProfile() {
-        if (this.state.match === null){
+        if (this.state.match_id === null){
             return null;
         }
 
@@ -225,7 +257,7 @@ export class Matching extends Component {
     }
 
     closeExtendedProfile() {
-        this.setState({match : null});
+        this.setState({match_id : null});
         utils.resetPicturesDisplay();
     }
 
@@ -253,7 +285,7 @@ export class Matching extends Component {
                 <ExtendedProfile
                     show={ this.showExtendedProfile() }
                     onClose={ () => this.closeExtendedProfile() }
-                    match={ this.state.match }
+                    match={ this.state.matches[this.state.match_id] }
                     keyboard={ false }
                     _g={ this.props._g }
                 />
@@ -434,16 +466,12 @@ class ExtendedProfile extends SuperModal {
         this.footer = false;
 
         this.socket = this.props._g.socket;
-
-        this.setState({
-            hasLiked        : false,
-            hasBeenLiked    : false
-        });
     }
 
     componentDidUpdate() {
         if (this.props.show){
             document.addEventListener("keyup", this.handleExtendedKeyPress);
+            this.updateMatchRelation();
         } else {
             document.removeEventListener("keyup", this.handleExtendedKeyPress);
         }
@@ -459,20 +487,50 @@ class ExtendedProfile extends SuperModal {
         this.props.onClose();
     }
 
-    toggleLike = e => {
-        let liked = (!this.state.hasLiked);
-        this.setState({hasLiked : liked});
+    handleLike = e => {
+        let liked = (!this.hasLiked());
 
-        this.saveLikeState(liked);
-    }
-
-    saveLikeState(liked) {
         let data = {
-            like    : liked,
-            match   : this.props.match
+            like        : liked,
+            partner_id  : this.props.match._id
         }
 
-        this.socket.emit('UPDATE_LIKE_STATE', {data:data});
+        this.socket.emit('UPDATE_LIKE_STATE', data);
+    }
+
+    updateMatchRelation() {
+        let partner = this.props.match;
+        let partner_id = partner._id;
+
+        if (!partner || (partner.match_relation && partner.match_relation.p_has_seen)){
+            return;
+        }
+
+        let data = {
+            partner_id  : partner_id
+        }
+
+        this.socket.emit('UPDATE_MATCH_RELATION', data);
+    }
+
+    hasLiked() {
+        let partner = this.props.match;
+
+        if (partner && partner.match_relation && partner.match_relation.p_has_liked){
+            return true;
+        }
+
+        return false;
+    }
+
+    hasBeenLiked() {
+        let partner = this.props.match;
+
+        if (partner && partner.match_relation && partner.match_relation.u_has_liked){
+            return true;
+        }
+
+        return false;
     }
 
     getDistance(match) {
@@ -530,9 +588,9 @@ class ExtendedProfile extends SuperModal {
 
                     <div>
                         <LikeIcon
-                            hasLiked={ this.state.hasLiked }
-                            hasBeenLiked={ this.state.hasBeenLiked }
-                            onClick={ this.toggleLike }
+                            hasLiked={ this.hasLiked() }
+                            hasBeenLiked={ this.hasBeenLiked() }
+                            onClick={ this.handleLike }
                         />
                     </div>
 
@@ -610,8 +668,8 @@ class LikeIcon extends Component {
 
     render() {
         return (
-            <div className="like-icon" onClick={ this.props.onClick }>
-                <div className={ this.hasLiked() }>
+            <div className="like-icon">
+                <div className={ this.hasLiked() } onClick={ this.props.onClick }>
                     <div className="top-half horizontal-split">
                         <i className="far fa-heart"></i>
                     </div>

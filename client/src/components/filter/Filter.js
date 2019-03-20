@@ -111,12 +111,12 @@ export class Sorting extends Component {
         let collection = Object.values(this.props.collection);
 
         if (!collection.length){
-            this.props.onSort(collection);
+            this.handleSort(collection);
             return;
         }
 
         if (!sort){
-            this.props.onSort(collection);
+            this.handleSort(collection);
             return;
         }
 
@@ -132,8 +132,18 @@ export class Sorting extends Component {
             }
         });
 
-        this.props.onSort(collection);
+        this.handleSort(collection);
         return collection;
+    }
+
+    handleSort(collection) {
+        let c = [];
+
+        for (let i in collection){
+            c.push(collection[i]._id);
+        }
+
+        this.props.onSort(c);
     }
 
 
