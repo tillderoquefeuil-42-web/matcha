@@ -120,6 +120,7 @@ USER:
     DISCLAIMER:
         PRIVATE_LOCATION: You address will never be visible to other users.
         ADDRESS_ESTIMATION: Your exact address is not provided. This is an estimation.
+        REPORT: If you report this profile, you wont be able to see it again and our team will take a look on it.
     FIELDS:
         DELETE_ACCOUNT: By clicking here, you will remove your account, and all data linked to it.
         DELETE_ACCOUNT_CONFIRM: 'Are you sure? You are about to delete all your data. There is no way to come back from this.'
@@ -149,6 +150,10 @@ USER:
         DISTANCE: Distance
         COMMON_INTERESTS: Shared interests
         POPULARITY: Popularity rate
+        REPORT: Report this profile
+        BLOCK: Block this profile
+        LIKE: Like this profile
+        BEEN_LIKE: You have been liked
 CHAT:
     WRITE: Write a message,
     FILE:

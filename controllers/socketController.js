@@ -348,6 +348,26 @@ module.exports = function (app, server) {
             });
         });
 
+        socket.on('BLOCK_MATCH_RELATION', function(data){
+            let user = getUserBySocket(socket);
+            let userRoom = rooms.getOnlineRoom(user._id);
+
+            account.blockMatchRelation(user, data)
+            .then(match => {
+                io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:data.partner_id});
+            });
+        });
+
+        socket.on('REPORT_MATCH_RELATION', function(data){
+            let user = getUserBySocket(socket);
+            let userRoom = rooms.getOnlineRoom(user._id);
+
+            account.reportMatchRelation(user, data)
+            .then(match => {
+                io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:data.partner_id});
+            });
+        });
+
 
 
 

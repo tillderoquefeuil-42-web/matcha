@@ -63,8 +63,29 @@ export class Matching extends Component {
     updateOneMatch(match){
         let matches = this.state.matches;
 
-        matches[match._id] = match;
+        if (typeof match === 'object'){
+            matches[match._id] = match;
+        } else if (typeof match === 'number'){
+            this.reindexSorted(match);
+            delete matches[match];
+        }
+
         this.updateMatches(matches);
+    }
+
+    reindexSorted(match){
+        let sorted = this.state.sorted;
+        let index = sorted.indexOf(match);
+        if (index === -1){
+            return;
+        }
+
+        sorted[index] = null;
+        sorted = sorted.filter(function (el) {
+            return el != null;
+        });
+
+        this.setState({sorted:sorted});
     }
 
     updateMatches(data){
@@ -74,7 +95,10 @@ export class Matching extends Component {
             matches : matches
         });
 
-        console.warn('Globale variable to delete');
+        if (!this.log_warning){
+            console.warn('Globale variable to delete');
+            this.log_warning = true;
+        }
         window.matches = matches;
     }
 
@@ -498,6 +522,26 @@ class ExtendedProfile extends SuperModal {
         this.socket.emit('UPDATE_LIKE_STATE', data);
     }
 
+    handleBlock = e => {
+        let data = {
+            partner_id  : this.props.match._id
+        }
+
+        this.socket.emit('BLOCK_MATCH_RELATION', data);
+        this.props.onClose();
+    }
+
+    handleReport = e => {
+        let data = {
+            partner_id  : this.props.match._id
+        }
+
+        if (window.confirm(trans.get('USER.DISCLAIMER.REPORT'))){
+            this.socket.emit('REPORT_MATCH_RELATION', data);
+            this.props.onClose();
+        }
+    }
+
     updateMatchRelation() {
         let partner = this.props.match;
         let partner_id = partner._id;
@@ -510,6 +554,7 @@ class ExtendedProfile extends SuperModal {
             partner_id  : partner_id
         }
 
+        console.log('UPDATE_MATCH_RELATION', data);
         this.socket.emit('UPDATE_MATCH_RELATION', data);
     }
 
@@ -586,11 +631,17 @@ class ExtendedProfile extends SuperModal {
 
                 <div>
 
-                    <div>
+                    <div className="icons-container">
                         <LikeIcon
                             hasLiked={ this.hasLiked() }
                             hasBeenLiked={ this.hasBeenLiked() }
                             onClick={ this.handleLike }
+                        />
+                        <BlockIcon
+                            onClick={ this.handleBlock }
+                        />
+                        <ReportIcon
+                            onClick={ this.handleReport }
                         />
                     </div>
 
@@ -669,7 +720,7 @@ class LikeIcon extends Component {
     render() {
         return (
             <div className="like-icon">
-                <div className={ this.hasLiked() } onClick={ this.props.onClick }>
+                <div className={ this.hasLiked() } onClick={ this.props.onClick } title={ trans.get('USER.FIELDS.LIKE') }>
                     <div className="top-half horizontal-split">
                         <i className="far fa-heart"></i>
                     </div>
@@ -677,7 +728,7 @@ class LikeIcon extends Component {
                         <i className="far fa-heart"></i>
                     </div>
                 </div>
-                <div className={ this.hasBeenLiked() }>
+                <div className={ this.hasBeenLiked() } title={ trans.get('USER.FIELDS.BEEN_LIKE') }>
                     <div className="top-half horizontal-split">
                         <i className="far fa-heart"></i>
                     </div>
@@ -689,4 +740,26 @@ class LikeIcon extends Component {
         );
     }
 
+}
+
+class BlockIcon extends Component {
+
+    render() {
+        return (
+            <div className="block-icon" onClick={ this.props.onClick } title={ trans.get('USER.FIELDS.BLOCK') }>
+                <i className="fas fa-ban"></i>
+            </div>
+        );
+    }
+}
+
+class ReportIcon extends Component {
+
+    render() {
+        return (
+            <div className="report-icon" onClick={ this.props.onClick } title={ trans.get('USER.FIELDS.REPORT') }>
+                <i className="fas fa-user-slash"></i>
+            </div>
+        );
+    }
 }

@@ -47,6 +47,12 @@
     font-size: 20px;
 }
 
+.icons-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .like-icon {
     height: 50px;
     width: 85px;
@@ -120,6 +126,19 @@
 }
 .like-icon > .right-half.active {
     color: dodgerblue;
+}
+
+.block-icon {
+    color: #cecece;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.report-icon {
+    color: red;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 75px;
 }
 
 
@@ -219,7 +238,6 @@
 #extended-profile > .profile-pic {
     width: 50%;
     height: 100%;
-    min-height: 400px;
     display: flex;
 }
 

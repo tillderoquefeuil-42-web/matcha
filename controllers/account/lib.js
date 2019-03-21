@@ -1060,3 +1060,29 @@ exports.updateLike = function(user, data) {
         });
     });
 };
+
+exports.blockMatchRelation = function(user, data) {
+
+    return new Promise((resolve, reject) => {
+        MatchRepo.blockMatch(user, data.partner_id)
+        .then(match => {
+            return resolve(match);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+};
+
+exports.reportMatchRelation = function(user, data) {
+
+    return new Promise((resolve, reject) => {
+        MatchRepo.reportMatch(user, data.partner_id)
+        .then(match => {
+            return resolve(match);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+};

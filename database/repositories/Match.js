@@ -67,6 +67,44 @@ let MatchRepository = {
         });
     },
 
+    blockMatch  : function(user, partner_id){
+        return new Promise((resolve, reject) => {
+            let query = `
+                MATCH (u:User)-[ru:RELATION]->(m:Match)<-[rp:RELATION]-(p:User)
+                WHERE ID(u)=${user._id} AND ID(p)=${partner_id}
+                SET m.blocked = TRUE
+
+                RETURN m, ru, rp
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
+                return reject(err);
+            });
+        });
+    },
+
+    reportMatch : function(user, partner_id){
+        return new Promise((resolve, reject) => {
+            let query = `
+                MATCH (u:User)-[ru:RELATION]->(m:Match)<-[rp:RELATION]-(p:User)
+                WHERE ID(u)=${user._id} AND ID(p)=${partner_id}
+                SET ru.block = TRUE
+
+                RETURN m, ru, rp
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
+                return reject(err);
+            });
+        });
+    }
+
 
 
 };
