@@ -554,7 +554,6 @@ class ExtendedProfile extends SuperModal {
             partner_id  : partner_id
         }
 
-        console.log('UPDATE_MATCH_RELATION', data);
         this.socket.emit('UPDATE_MATCH_RELATION', data);
     }
 
@@ -588,6 +587,19 @@ class ExtendedProfile extends SuperModal {
         basics += this.getDistance(match) + trans.get('UNITS.KM');
 
         return basics;
+    }
+
+    getDotsList(){
+        return ([
+            {
+                label   : trans.get('USER.FIELDS.BLOCK'),
+                onClick : this.handleBlock
+            },
+            {
+                label   : trans.get('USER.FIELDS.REPORT'),
+                onClick : this.handleReport
+            }
+        ]);
     }
 
     buildFile() {
@@ -637,11 +649,9 @@ class ExtendedProfile extends SuperModal {
                             hasBeenLiked={ this.hasBeenLiked() }
                             onClick={ this.handleLike }
                         />
-                        <BlockIcon
-                            onClick={ this.handleBlock }
-                        />
-                        <ReportIcon
-                            onClick={ this.handleReport }
+
+                        <DotsIcon
+                            list={ this.getDotsList() }
                         />
                     </div>
 
@@ -669,12 +679,7 @@ class ExtendedProfile extends SuperModal {
     }
 
     buildClose() {
-
-        return (
-            <span className="close-extended-profile" onClick={ () => this.props.onClose() }>
-                <i className="fa fa-times"></i>
-            </span>
-        );
+        return null;
     }
 
     buildbody() {
@@ -742,23 +747,81 @@ class LikeIcon extends Component {
 
 }
 
-class BlockIcon extends Component {
+class DotsIcon extends Component {
 
-    render() {
-        return (
-            <div className="block-icon" onClick={ this.props.onClick } title={ trans.get('USER.FIELDS.BLOCK') }>
-                <i className="fas fa-ban"></i>
-            </div>
-        );
+    constructor(props){
+        super(props);
+
+        this.state = {
+            show    : false
+        };
     }
-}
 
-class ReportIcon extends Component {
+    toggleShow = e => {
+        this.setState({show:(!this.state.show)});
+    }
+
+    getClasses() {
+        let classes = 'dots-menu';
+
+        if (!this.state.show){
+            classes += ' no-display';
+        }
+
+        return classes;
+    }
+
+    buildList() {
+        let list = [];
+
+        let elements = this.props.list;
+        for (let i in elements){
+            let elem = elements[i];
+            list.push(
+                <li
+                    key={ i }
+                    onClick={ elem.onClick }
+                >
+                    { elem.label }
+                </li>
+            );
+        }
+
+        return list;
+    }
+
+    upTo(element, oneClass) {
+        while (element && element.parentNode) {
+            if (element.className && element.className.split(' ').indexOf(oneClass) !== -1) {
+                return element;
+            }
+
+            element = element.parentNode;
+        }
+        return null;
+    }
+
+    handleMouseDown = event => {
+        if (this.state.show && !this.upTo(event.toElement, 'dots-menu')){
+            this.toggleShow();
+        }
+    }
 
     render() {
+
+        document.removeEventListener('mousedown', this.handleMouseDown);
+        if (this.state.show){
+            document.addEventListener('mousedown', this.handleMouseDown);
+        }
+
         return (
-            <div className="report-icon" onClick={ this.props.onClick } title={ trans.get('USER.FIELDS.REPORT') }>
-                <i className="fas fa-user-slash"></i>
+            <div className="dots-icon" onClick={ this.toggleShow } >
+                <i className="fas fa-ellipsis-v"></i>
+                <div className={ this.getClasses() }>
+                    <ul>
+                        { this.buildList() }
+                    </ul>
+                </div>
             </div>
         );
     }

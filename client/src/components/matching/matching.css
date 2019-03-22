@@ -128,18 +128,45 @@
     color: dodgerblue;
 }
 
-.block-icon {
+.dots-icon {
     color: #cecece;
-    font-size: 40px;
-    cursor: pointer;
-}
-
-.report-icon {
-    color: red;
     font-size: 20px;
     cursor: pointer;
-    margin-left: 75px;
+    position: relative;
+    padding: 0px 10px;
 }
+
+.dots-icon > .dots-menu {
+    position: absolute;
+    color: #333;
+    background: #fff;
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    border: 1px solid #cecece;
+    border-radius: 5px;
+    padding: 5px 0px;
+    font-size: 14px;
+    top: auto;
+    right: 0px;
+}
+
+.dots-icon > .dots-menu > ul {
+    padding: 0px;
+    margin: 0px;
+}
+
+.dots-icon > .dots-menu > ul > li {
+    white-space: nowrap;
+    list-style-type: none;
+    cursor: pointer;
+    padding: 4px 12px;
+}
+
+.dots-icon > .dots-menu > ul > li:hover {
+    background: #ddd;
+}
+
+
+
 
 
 .matching-profiles {
@@ -202,7 +229,7 @@
 
 #extended-profile > .profile-info {
     width: 50%;
-    padding: 20px 20px 0px 20px;
+    padding: 0px 20px;
 }
 
 #extended-profile > .profile-info .profile-infos-display {
