@@ -339,12 +339,9 @@ let UserRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User), (u2:User)
-                WHERE ID(u) <> ${user._id} AND ID(u2) = ${user._id}
+                MATCH (u:User)-[ru:RELATION {like:TRUE}]->(r:Match {blocked:FALSE})<-[rp:RELATION {like:TRUE}]-(m:User)
+                WHERE ID(u) <> ${user._id} AND ID(m) = ${user._id}
 
-                OPTIONAL MATCH (u)-[f1:FRIEND]->(fs:Friendship)<-[f2:FRIEND]-(u2)
-                WITH u, u2, fs
-                WHERE (fs IS NULL) OR (f1.locked = FALSE AND f2.locked = FALSE)
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
 
                 RETURN DISTINCT u, f

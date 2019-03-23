@@ -233,9 +233,6 @@ export class FooterChat extends Component {
 
         return (
             <div>
-                <span className="close-searchbar" onClick={ this.hideSearchbar }>
-                    <i className="fa fa-times-circle"></i>
-                </span>
                 <SearchBar
                     collection={ this.state.friends }
                     onSelect={(event, item) => this.handleSelect(event, item)}

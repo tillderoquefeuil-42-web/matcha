@@ -45,7 +45,8 @@ export class SearchBar extends Component {
             }
 
             this.setState({
-                matches : matches
+                matches : matches,
+                showlist: true
             });
         }
     }
@@ -343,7 +344,6 @@ export class SearchBar extends Component {
     }
 
     handleMouseDown = event => {
-
         if (!this.upTo(event.toElement, 'searchbar')){
             this.collapse();
         }

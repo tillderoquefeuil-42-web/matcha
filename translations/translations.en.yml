@@ -150,8 +150,8 @@ USER:
         DISTANCE: Distance
         COMMON_INTERESTS: Shared interests
         POPULARITY: Popularity rate
-        REPORT: Report this profile
-        BLOCK: Block this profile
+        REPORT: Report
+        BLOCK: Block
         LIKE: Like this profile
         BEEN_LIKE: You have been liked
 CHAT:
