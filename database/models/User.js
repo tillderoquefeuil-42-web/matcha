@@ -67,6 +67,10 @@ class User {
             this.common_tags = parseInt(data.common_tags);
         }
 
+        if (data.p_rate >= 0){
+            this.rate = data.p_rate;
+        }
+
         if (data.p_tags >= 0 && data.p_location >= 0){
 
             let pertinence = [

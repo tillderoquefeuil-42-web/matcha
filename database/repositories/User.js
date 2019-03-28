@@ -376,10 +376,13 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
                 OPTIONAL MATCH (m)-[mi:INTEREST_IN]->(mt:Tag)
                 OPTIONAL MATCH (u)-[ru:RELATION]->(r:Match)<-[rp:RELATION]-(m)
+                OPTIONAL MATCH (u)-[u_ru:RELATION]->(u_r:Match)
 
                 WITH u, m, sp, r, ru, rp,
                 count(DISTINCT mt) AS user_tags,
                 count(DISTINCT ct) AS common_tags,
+                size([x IN collect(u_ru.see) WHERE x = TRUE]) AS user_see_nbr,
+                size([x IN collect(u_ru.like) WHERE x = TRUE]) AS user_like_nbr,
                 round(distance(point({ longitude: ml.lng, latitude: ml.lat }), point({ longitude: ul.lng, latitude: ul.lat }))) AS distance
 
                 WITH u, m, sp, r, ru, rp, distance, common_tags, user_tags,
@@ -426,6 +429,29 @@ let UserRepository = {
                 END AS p_location,
 
                 CASE
+                    WHEN 0 < user_see_nbr <= 5 THEN 1
+                    WHEN 5 < user_see_nbr <= 10 THEN 2
+                    WHEN 10 < user_see_nbr <= 50 THEN 3
+                    WHEN 50 < user_see_nbr <= 100 THEN 4
+                    WHEN 100 < user_see_nbr THEN 5
+                    ELSE 0
+                END AS p_see_rate,
+
+                    CASE
+                    WHEN 0 < user_like_nbr <= 5 THEN 1
+                    WHEN 5 < user_like_nbr <= 10 THEN 2
+                    WHEN 10 < user_like_nbr <= 50 THEN 3
+                    WHEN 50 < user_like_nbr <= 100 THEN 4
+                    WHEN 100 < user_like_nbr THEN 5
+                    ELSE 0
+                END AS p_like_rate,
+
+                    CASE
+                    WHEN user_see_nbr > 0 THEN (toFloat(user_like_nbr) / toFloat(user_see_nbr))
+                    ELSE 0
+                END AS p_per_rate,
+
+                CASE
                     WHEN exists(r.blocked) AND r.blocked = TRUE THEN TRUE
                     ELSE FALSE
                 END AS r_blocked
@@ -442,7 +468,9 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
-                RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, p_tags:p_tags, p_location:p_location, _id:ID(u)},
+                RETURN DISTINCT u{.*, _id:ID(u), common_tags:common_tags, distance:distance, 
+                    p_tags:p_tags, p_location:p_location, p_rate:(p_like_rate * 3 + p_see_rate * 2 + p_per_rate * 75)
+                },
                 f, t, l, of, r, ru, rp
             `;
 

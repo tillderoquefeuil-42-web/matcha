@@ -87,7 +87,9 @@ const chatHelpers = {
 
 module.exports = function (app, server) {
 
-    let io = socket_io(server);
+    let io = socket_io(server, {
+        pingTimeout : 60000
+    });
 
     io.use((socket, next) => {
         let token = socket.handshake.query._token;

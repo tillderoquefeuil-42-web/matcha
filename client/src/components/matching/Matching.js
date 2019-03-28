@@ -7,6 +7,7 @@ import { SuperModal } from '../modal/CustomModal';
 import { TagsInput } from '../tagsInput/TagsInput';
 import { OneFileView } from '../images/Dropzone';
 import { Sorting } from '../filter/Filter';
+import { ProgressCircle } from '../progressCircle/ProgressCircle';
 import { Distance, Age } from '../matching/Inputs';
 
 import utils from '../../utils/utils.js';
@@ -297,7 +298,6 @@ export class Matching extends Component {
         
         return (
             <div id="matching" className="container">
-
                 <Filters
                     show={ this.state.showFilters }
                     onClose={ (e) => this.toggleFilters(e, false) }
@@ -577,16 +577,49 @@ class ExtendedProfile extends SuperModal {
         return false;
     }
 
+    getAge(match) {
+        return (
+            <span>
+                { match.age + trans.get('UNITS.AGE') }
+            </span>
+        );
+    }
+
     getDistance(match) {
-        return Math.round(match.distance / 1000);
+        let distance = Math.round(match.distance / 1000);
+        if (!distance){
+            distance = '<1'
+        }
+
+        distance += trans.get('UNITS.KM');
+
+        return (
+            <span>
+                | { distance }
+            </span>
+        );
+    }
+
+    getRate(match) {
+        if (!match.rate){
+            return;
+        }
+
+        return (
+            <span title={ trans.get('USER.FIELDS.POPULARITY') + ` (${match.rate}%)` }>
+                | <ProgressCircle value={ match.rate } small/>
+            </span>
+        );
     }
 
     getBasicsInfos(match){
-        let basics = match.age + trans.get('UNITS.AGE');
-        basics += ' | ';
-        basics += this.getDistance(match) + trans.get('UNITS.KM');
-
-        return basics;
+        return (
+            <span>
+                { this.getAge(match) }
+                { this.getDistance(match) }
+                { this.getRate(match) }
+            </span>
+        );
     }
 
     getDotsList(){
@@ -655,10 +688,10 @@ class ExtendedProfile extends SuperModal {
                         />
                     </div>
 
-                    <p className="profile-identity">
+                    <div className="profile-identity">
                         <b>{ match.firstname }</b>
-                        <span>{ this.getBasicsInfos(match) }</span>
-                    </p>
+                        { this.getBasicsInfos(match) }
+                    </div>
 
                     <TagsInput
                         tags={ match.tags }

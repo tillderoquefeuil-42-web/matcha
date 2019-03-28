@@ -249,6 +249,15 @@
     margin-left: 10px;
 }
 
+#extended-profile > .profile-info  .profile-identity > span > span {
+    margin-right: 5px;
+}
+
+#extended-profile > .profile-info  .profile-identity > span i {
+    font-size: 20px;
+    margin-right: 3px;
+}
+
 #extended-profile > .profile-info  .profile-bio {
     font-size: 20px;
     margin-top: 10px;
@@ -274,4 +283,10 @@
     object-fit: cover;
     overflow: hidden;
     margin: auto;
+}
+
+#extended-profile > .profile-info .profile-identity .progress-circle {
+    height: 20px;
+    width: 20px;
+    display: inline-block;
 }
