@@ -33,6 +33,7 @@ class App extends Component {
             <PublicRoute path="/error" component={Error}/>
 
             <PrivateRoute exact path='/home' page={"home"} />
+            <PrivateRoute exact path='/matches' page={"matches"} />
             <PrivateRoute exact path='/account' page={"account"} />
             <PrivateRoute exact path='/chat' page={"chat"} />
             <PrivateRoute exact path='/' page="home" />

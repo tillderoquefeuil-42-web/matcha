@@ -954,6 +954,33 @@ exports.loadMatches = function(user, options){
     });
 };
 
+exports.loadMatchedProfiles = function(user){
+
+    let data = {
+        matched : [],
+        error   : null
+    };
+
+    return new Promise((resolve, reject) => {
+
+        if (!user){
+            data.error = "INVALID_PARAMETERS";
+            return reject(data);
+        }
+
+        UserRepo.matchedProfiles(user)
+        .then(matched => {
+            data.matched = matched;
+            return resolve(data);
+
+        }).catch(err => {
+            console.log(err);
+            data.error = "INTERNAL_ERROR";
+            return reject(data);
+        });
+    });
+};
+
 exports.loadSearchParams = function(user){
 
     return new Promise((resolve, reject) => {

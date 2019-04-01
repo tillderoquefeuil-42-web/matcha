@@ -229,20 +229,10 @@ module.exports = function (app, server) {
             });
         });
 
-        //MATCHES
-
-        socket.on('GET_MATCHES', function(data){
+        socket.on('OPEN_MATCH_CONV', function(data){
             let user = getUserBySocket(socket);
-
-            let userRoom = rooms.getOnlineRoom(user._id);
-            rooms.joinRoom(socket, userRoom);
-
-            //LOAD CONTACTS
-            let options = data? data.options : {};
-            account.loadMatches(user, options)
-            .then(results => {
-                io.sockets.in(userRoom).emit('LOAD_MATCHES', results);
-            });
+            //TO DO
+            console.log('Not done yet')
         });
 
         // FILES
@@ -298,7 +288,6 @@ module.exports = function (app, server) {
             });
         });
 
-
         //SEARCH PARAMS
 
         socket.on('GET_SEARCH_PARAMS', function(data){
@@ -328,7 +317,35 @@ module.exports = function (app, server) {
         });
 
 
-        //MATCH
+        //MATCHES
+
+        socket.on('GET_MATCHES', function(data){
+            let user = getUserBySocket(socket);
+
+            let userRoom = rooms.getOnlineRoom(user._id);
+            rooms.joinRoom(socket, userRoom);
+
+            //LOAD CONTACTS
+            let options = data? data.options : {};
+            account.loadMatches(user, options)
+            .then(results => {
+                io.sockets.in(userRoom).emit('LOAD_MATCHES', results);
+            });
+        });
+
+        socket.on('GET_MATCHED', function(data){
+            let user = getUserBySocket(socket);
+
+            let userRoom = rooms.getOnlineRoom(user._id);
+            rooms.joinRoom(socket, userRoom);
+
+            //LOAD CONTACTS
+            account.loadMatchedProfiles(user)
+            .then(results => {
+                io.sockets.in(userRoom).emit('LOAD_MATCHED', results);
+            });
+        });
+
         socket.on('UPDATE_MATCH_RELATION', function(data){
             let user = getUserBySocket(socket);
             let userRoom = rooms.getOnlineRoom(user._id);
@@ -369,9 +386,6 @@ module.exports = function (app, server) {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:data.partner_id});
             });
         });
-
-
-
 
     });
 }

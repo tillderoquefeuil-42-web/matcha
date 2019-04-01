@@ -9,16 +9,25 @@ export class Component extends React.Component {
     setState = function(params){
         if (this._isMounted){
             this._setState(params);
+            if (this._log){
+                console.log('setState (DONE)');
+            }
+        } else if (this._log){
+            console.log('setState (CANCELED');
         }
     }
 
     componentWillUnmount() {
-        // console.log('unmount');
+        if (this._log){
+            console.log('unmount');
+        }
         this._isMounted = false;
     }
 
     componentDidMount() {
-        // console.log('mount');
+        if (this._log){
+            console.log('mount');
+        }
         this._isMounted = true;
     }
 

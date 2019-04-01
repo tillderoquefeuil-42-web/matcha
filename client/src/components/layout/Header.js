@@ -43,6 +43,7 @@ export class Header extends React.Component {
                 console.warn('functionality isn\'t implemented for now');
                 break;
             case 'home':
+            case 'matches':
             case 'account':
             case 'chat':
                 if (this.props._g.page === eventName){
@@ -92,6 +93,9 @@ export class Header extends React.Component {
                         <Nav className="mr-auto">
                             <NavItem eventKey="home" onSelect={this.handleSelect} className={ this.isActive('home') } >
                                 { trans.get('TABS.HOME') }
+                            </NavItem>
+                            <NavItem eventKey="matches" onSelect={this.handleSelect} className={ this.isActive('matches') } >
+                                { trans.get('TABS.MATCHES') }
                             </NavItem>
                         </Nav>
 
