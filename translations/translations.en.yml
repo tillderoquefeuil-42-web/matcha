@@ -17,6 +17,7 @@ UNITS:
     KM: km
     AGE: yo
 BUTTON:
+    APPLY: Apply
     CONFIRM: Confirm
     SIGN_IN: Sign In
     SIGN_UP: Sign Up

@@ -282,7 +282,18 @@ export class Matching extends Component {
     }
 
     closeExtendedProfile() {
-        this.setState({match_id : null});
+        let matches = this.state.matches;
+        let match = matches[this.state.match_id];
+
+        if (match.match_relation && match.match_relation.p_has_liked && match.match_relation.u_has_liked){
+            delete matches[this.state.match_id];
+        }
+
+        this.setState({
+            matches     : matches,
+            match_id    : null
+        });
+
         utils.resetPicturesDisplay();
     }
 
@@ -473,7 +484,7 @@ class Filters extends Component {
                     block
                     bsSize="large"
                 >
-                    { trans.get('BUTTON.SAVE') }
+                    { trans.get('BUTTON.APPLY') }
                 </Button>
 
             </div>
