@@ -152,6 +152,7 @@ module.exports = function (app, server) {
                 
                 let label = 'CHAT_SELECTED';
                 label += (data.status === 'footer_chat')? '_FOOTER' : '';
+                results.force = data.force;
 
                 io.sockets.in(userChatRoom).emit('CHAT_UPDATE', results);
                 io.sockets.in(userChatRoom).emit(label, results);

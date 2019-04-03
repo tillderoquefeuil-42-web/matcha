@@ -40,8 +40,10 @@ export class FooterChat extends Component {
     componentDidMount() {
         this._isMounted = true;
 
+        this.forceOpen = [];
         this.lastChats = [];
         this.unreadChats = [];
+        this.chats_ref = {};
 
         let _this = this;
 
@@ -56,6 +58,7 @@ export class FooterChat extends Component {
 
                 data.conv.open = _this.setOpenConv(data.conv);
                 data.conv.unread = _this.setUnreadConv(data.conv);
+                _this.setForceOpen(data.conv, data.force);
 
                 let convs = _this.manageConvs(data.conv);
 
@@ -76,7 +79,13 @@ export class FooterChat extends Component {
     }
 
     componentDidUpdate() {
-        this.saveLastPartners()
+        this.saveLastPartners();
+        this.manageOpenForcing();
+    }
+
+    getPartnerId(conv) {
+        let user = utils.getLocalUser();
+        return getPartnerId(conv, user);
     }
 
     manageConvs(conv){
@@ -166,12 +175,25 @@ export class FooterChat extends Component {
 
     }
 
+    setForceOpen(conv, force){
+
+        if (force && this.forceOpen){
+
+            let partnerId = this.getPartnerId(conv);
+
+            if (this.forceOpen.indexOf(partnerId) === -1){
+                this.forceOpen.push(partnerId);
+            }
+        }
+
+        return;
+    }
+
     setOpenConv(conv) {
 
         if (this.lastChats && this.lastChats.length > 0){
 
-            let user = utils.getLocalUser();
-            let partnerId = getPartnerId(conv, user);
+            let partnerId = this.getPartnerId(conv);
 
             let index = this.lastChats.indexOf(partnerId);
             if (index !== -1){
@@ -187,8 +209,7 @@ export class FooterChat extends Component {
 
         if (this.unreadChats && this.unreadChats.length > 0){
 
-            let user = utils.getLocalUser();
-            let partnerId = getPartnerId(conv, user);
+            let partnerId = this.getPartnerId(conv);
 
             let index = this.unreadChats.indexOf(partnerId);
             if (index !== -1){
@@ -198,6 +219,29 @@ export class FooterChat extends Component {
         }
 
         return false;
+    }
+
+    manageOpenForcing() {
+
+        let convs = this.state.convs;
+
+        for (let i in convs){
+            let conv = convs[i];
+
+            if (this.forceOpen && this.forceOpen.length > 0){
+                let partnerId = this.getPartnerId(conv);
+
+                let index = this.forceOpen.indexOf(partnerId);
+                if (index !== -1){
+                    delete this.forceOpen[index];
+                    this.forceOpen = this.forceOpen.filter(function(value){return value});
+
+                    if (this.chats_ref[conv._id]){
+                        this.chats_ref[conv._id].showWindow();
+                    }
+                }
+            }
+        }
     }
 
     closeOneChat(convId){
@@ -271,13 +315,16 @@ export class FooterChat extends Component {
         let convs = this.state.convs;
 
         for (let i in convs){
+            let conv = convs[i];
+
             chats.push(
                 <ChatWindow
                     key={i}
                     socket={ this.socket }
-                    conv={ convs[i] }
+                    conv={ conv }
                     friends={ this.state.friends }
                     closeChat={ convId => this.closeOneChat(convId) }
+                    ref={ $element => this.chats_ref[conv._id] = $element }
                 />
             );
         }

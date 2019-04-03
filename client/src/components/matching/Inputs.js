@@ -160,11 +160,12 @@ export class ExtendedProfile extends SuperModal {
     }
 
     handleChat = e => {
-        let data = {
-            partner_id  : this.props.match._id
-        }
-
-        this.socket.emit('OPEN_MATCH_CONV', data);
+        this.socket.emit('SELECT_ONE_CHAT', {
+            partner_id  : this.props.match._id,
+            status      : 'footer_chat',
+            force       : true
+        });
+        this.props.onClose();
     }
 
     handleBlock = e => {
