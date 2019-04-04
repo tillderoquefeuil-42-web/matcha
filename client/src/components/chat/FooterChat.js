@@ -72,6 +72,9 @@ export class FooterChat extends Component {
             _this.loadUnreadConvs(data.unreads);
         });
 
+        this.socket.on('DELETE_ONE_MATCH', function(data){
+            _this.deleteOneFriend(data.match);
+        });
 
         this.socket.emit('ON_CHAT');
 
@@ -81,11 +84,70 @@ export class FooterChat extends Component {
     componentDidUpdate() {
         this.saveLastPartners();
         this.manageOpenForcing();
+
+        if (this.state.friends && this.searchBar){
+            this.searchBar.updateCollection(this.state.friends);
+        }
     }
+
 
     getPartnerId(conv) {
         let user = utils.getLocalUser();
         return getPartnerId(conv, user);
+    }
+
+    deleteOneFriend(matchId){
+        let friends = this.state.friends;
+
+        if (!matchId || !friends){
+            return;
+        }
+
+        for (let i in friends){
+            if (friends[i]._id === matchId){
+                this.manageDelete(friends, i)
+                break;
+            }
+        }
+    }
+
+    manageDelete(friends, index) {
+        let matchId = friends[index]._id;
+        let conv = this.findConvByMatchId(matchId);
+
+        let convs = this.state.convs;
+
+        if (convs && conv && convs[conv._id]){
+            delete convs[conv._id];
+        }
+
+        delete friends[index];
+        friends = friends.filter(function (el) {
+            return el != null;
+        });
+
+        this.setState({
+            friends : friends,
+            convs   : convs
+        });
+    }
+
+    findConvByMatchId(matchId) {
+
+        let convs = this.state.convs;
+
+        for (let i in convs){
+            let conv = convs[i];
+            if (conv.partners){
+                for (let i in conv.partners){
+                    if (conv.partners[i] === matchId){
+                        return conv;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     manageConvs(conv){
@@ -279,6 +341,7 @@ export class FooterChat extends Component {
             <div>
                 <SearchBar
                     collection={ this.state.friends }
+                    ref={ $element => this.searchBar = $element }
                     onSelect={(event, item) => this.handleSelect(event, item)}
                     getLabel={ function(item){ return (item.firstname + ' ' + item.lastname); } }
                     onClose={ event => this.hideSearchbar(event) }
@@ -381,7 +444,6 @@ class ChatWindow extends Component {
 
     getPartnerId(conv) {
         let user = utils.getLocalUser();
-
         return getPartnerId(conv, user);
     }
 

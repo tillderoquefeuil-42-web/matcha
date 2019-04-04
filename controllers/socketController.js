@@ -348,6 +348,7 @@ module.exports = function (app, server) {
             account.loadOneMatch(user, data.partner_id)
             .then(results => {
                 results.contact = data.contact;
+                results.disabled = data.disabled;
                 io.sockets.in(userRoom).emit('LOAD_EXTENDED_PROFILE', results);
             });
         });
@@ -382,6 +383,7 @@ module.exports = function (app, server) {
             account.blockMatchRelation(user, data)
             .then(match => {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:data.partner_id});
+                io.sockets.in(userRoom).emit('DELETE_ONE_MATCH', {match:data.partner_id});
             });
         });
 
@@ -392,6 +394,7 @@ module.exports = function (app, server) {
             account.reportMatchRelation(user, data)
             .then(match => {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:data.partner_id});
+                io.sockets.in(userRoom).emit('DELETE_ONE_MATCH', {match:data.partner_id});
             });
         });
 

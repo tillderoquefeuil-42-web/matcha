@@ -21,7 +21,8 @@ export class ExtendedProfile extends SuperModal {
         this.state = {
             match   : null,
             show    : false,
-            contact : false
+            contact : false,
+            disabled: false
         };
 
         this.socket = this.props._g.socket;
@@ -37,6 +38,7 @@ export class ExtendedProfile extends SuperModal {
             _this.setState({
                 match   : data.match,
                 contact : data.contact,
+                disabled: data.disabled,
                 show    : true
             });
         });
@@ -275,6 +277,7 @@ export class ExtendedProfile extends SuperModal {
                         <LikeIcon
                             hasLiked={ this.hasLiked() }
                             hasBeenLiked={ this.hasBeenLiked() }
+                            disabled={ this.state.disabled }
                             onClick={ this.handleLike }
                         />
 
@@ -344,8 +347,13 @@ class LikeIcon extends Component {
         let classes = 'left-half vertical-split';
 
         if (this.props.hasLiked){
-            classes += ' active'
+            classes += ' active';
         }
+
+        if (!this.props.disabled){
+            classes += ' c-pointer';
+        }
+
         return classes;
     }
 
@@ -358,10 +366,18 @@ class LikeIcon extends Component {
         return classes;
     }
 
+    handleClick = e => {
+        if (this.props.disabled || !this.props.onClick){
+            return;
+        }
+
+        this.props.onClick(e);
+    }
+
     render() {
         return (
             <div className="like-icon">
-                <div className={ this.hasLiked() } onClick={ this.props.onClick } title={ trans.get('USER.FIELDS.LIKE') }>
+                <div className={ this.hasLiked() } onClick={ this.handleClick } title={ trans.get('USER.FIELDS.LIKE') }>
                     <div className="top-half horizontal-split">
                         <i className="far fa-heart"></i>
                     </div>

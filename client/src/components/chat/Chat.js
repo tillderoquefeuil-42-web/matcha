@@ -60,6 +60,10 @@ export class Chat extends Component {
             _this.updateConv(data);
         });
 
+        this.socket.on('DELETE_ONE_MATCH', function(data){
+            _this.deleteOneFriend(data.match);
+        });
+
         this.socket.emit('ON_CHAT');
     }
 
@@ -79,6 +83,63 @@ export class Chat extends Component {
         } else if (data.ERROR){
             console.warn(data.ERROR);
         }
+    }
+
+    deleteOneFriend(matchId){
+        let friends = this.state.friends;
+
+        if (!matchId || !friends){
+            return;
+        }
+
+        for (let i in friends){
+            if (friends[i]._id === matchId){
+                this.manageDelete(friends, i)
+                break;
+            }
+        }
+    }
+
+    manageDelete(friends, index) {
+        let matchId = friends[index]._id;
+        let conv = this.findConvByMatchId(matchId);
+
+        let convs = this.state.conversations;
+        let selected = this.state.selected;
+
+        if (convs && conv && convs[conv._id]){
+            delete convs[conv._id];
+            selected = null;
+        }
+
+        delete friends[index];
+        friends = friends.filter(function (el) {
+            return el != null;
+        });
+
+        this.setState({
+            friends         : friends,
+            conversations   : convs,
+            selected        : selected
+        });
+    }
+
+    findConvByMatchId(matchId) {
+
+        let convs = this.state.conversations;
+
+        for (let i in convs){
+            let conv = convs[i];
+            if (conv.partners){
+                for (let i in conv.partners){
+                    if (conv.partners[i] === matchId){
+                        return conv;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     updateUrl() {

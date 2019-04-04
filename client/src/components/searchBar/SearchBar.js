@@ -268,6 +268,12 @@ export class SearchBar extends Component {
             if (i > this.state.count){
                 break;
             }
+            
+            let id = this.state.matches[i]._id;
+            if (!this.state.collection[id]){
+                continue;
+            }
+
             matches.push(this.buildOneMatch(this.state.matches[i], i));
         }
 

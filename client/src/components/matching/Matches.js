@@ -35,7 +35,6 @@ export class Matches extends Component {
         });
 
         this.socket.off('LOAD_ONE_MATCH').on('LOAD_ONE_MATCH', function(data){
-            console.log(data);
             _this.updateOneMatch(data.match);
         });
 
@@ -43,7 +42,7 @@ export class Matches extends Component {
     }
 
     componentDidUpdate() {
-        if (this.state.matched){
+        if (this.state.matched !== null){
             this.searchBar.updateCollection(this.state.matched);
         }
     }

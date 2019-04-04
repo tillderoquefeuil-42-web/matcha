@@ -25,6 +25,27 @@ export class UserIcon extends React.Component {
         }
     }
 
+    handleClick = e => {
+        if (!this.props.showProfile || !this.props._socket){
+            return;
+        }
+
+        this.props._socket.emit('GET_EXTENDED_PROFILE', {
+            partner_id  : this.state.user._id,
+            disabled    : true
+        });
+    }
+
+    getClasses() {
+        let classes = 'user-profile-picture';
+
+        if (this.props.showProfile && this.props._socket){
+            classes += ' c-pointer';
+        }
+
+        return classes;
+    }
+
     render(){
         let user = this.state.user;
 
@@ -32,7 +53,12 @@ export class UserIcon extends React.Component {
 
             return (
                 <div className="user-profile-picture">
-                    <img src={ utils.getFileUrl(user.profile_pic) } alt="" />
+                    <img
+                        alt=""
+                        src={ utils.getFileUrl(user.profile_pic) }
+                        className={ this.getClasses() }
+                        onClick={ this.handleClick }
+                    />
                 </div>
             );
         }

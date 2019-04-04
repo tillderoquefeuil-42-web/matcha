@@ -450,7 +450,11 @@ export class Messages extends Component {
             >
                 <div className="contact">
                     <div>
-                        <UserIcon user={ partner } />
+                        <UserIcon
+                            showProfile
+                            user={ partner }
+                            _socket={ this.socket }
+                        />
                     </div>
                     <strong>{ this.getPartnerLabel(partner) }</strong>
                 </div>

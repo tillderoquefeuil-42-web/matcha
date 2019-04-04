@@ -335,6 +335,7 @@ i.notifs > .sup {
     box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
     border-radius: 8px 8px 0 0;
     z-index: 500;
+    padding: 0px;
 }
 
 #footer-chat-container .searchbar-container .close-searchbar {
@@ -362,7 +363,7 @@ i.notifs > .sup {
 
 #footer-chat-container .searchbar-container .search-friends > .fa.fa-users {
     height: 30px;
-    padding-top: 10px;
+    padding: 10px 15px;
 }
 
 #footer-chat-container .searchbar-container .searchbar.form-group {
