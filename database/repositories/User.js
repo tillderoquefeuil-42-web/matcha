@@ -636,7 +636,7 @@ let UserRepository = {
 
                 CASE
                     WHEN exists(r.blocked) AND r.blocked=TRUE THEN TRUE
-                    WHEN exists(ru.like) AND ru.like=TRUE AND rp.like=TRUE THEN TRUE
+//                    WHEN exists(ru.like) AND ru.like=TRUE AND rp.like=TRUE THEN TRUE
                     ELSE FALSE
                 END AS r_blocked
 

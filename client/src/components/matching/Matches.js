@@ -4,7 +4,7 @@ import { Component } from '../Component';
 import { Loader } from '../loader/Loader';
 import { SearchBar } from '../searchBar/SearchBar';
 
-import { ExtendedProfile, OneProfile } from './Inputs';
+import { OneProfile } from './Inputs';
 
 import utils from '../../utils/utils.js';
 import trans from '../../translations/translate';
@@ -17,8 +17,7 @@ export class Matches extends Component {
         super(props);
 
         this.state = {
-            matched     : null,
-            match_id    : null
+            matched : null
         };
 
         this.socket = props._g.socket;
@@ -35,7 +34,18 @@ export class Matches extends Component {
             _this.updateMatched(data.matched);
         });
 
+        this.socket.off('LOAD_ONE_MATCH').on('LOAD_ONE_MATCH', function(data){
+            console.log(data);
+            _this.updateOneMatch(data.match);
+        });
+
         this.socket.emit('GET_MATCHED');
+    }
+
+    componentDidUpdate() {
+        if (this.state.matched){
+            this.searchBar.updateCollection(this.state.matched);
+        }
     }
 
     updateMatched(data){
@@ -52,11 +62,28 @@ export class Matches extends Component {
         window.matched = matched;
     }
 
+    updateOneMatch(match){
+        let matches = this.state.matched;
+
+        if (typeof match === 'object'){
+            if (match.match_relation && match.match_relation.p_has_liked && match.match_relation.u_has_liked){
+                matches[match._id] = match;
+            } else {
+                delete matches[match._id];
+            }
+        } else if (typeof match === 'number'){
+            delete matches[match];
+        }
+
+        this.updateMatched(matches);
+    }
+
     createSearchBar() {
 
         return (
             <div className="matched-searchbar-container">
                 <SearchBar
+                    ref={ $element => this.searchBar = $element }
                     collection={ this.state.matched }
                     onSelect={(event, item) => this.handleSelect(event, item)}
                     getLabel={ function(item){ return (item.firstname + ' ' + item.lastname); } }
@@ -79,23 +106,14 @@ export class Matches extends Component {
     }
 
     handleSelect = (e, item) => {
-        this.setState({match_id : item._id});
-    }
-
-    showExtendedProfile() {
-        if (this.state.match_id === null){
-            return null;
+        if (!item || !utils.isDefine(item._id)){
+            return;
         }
 
-        return true;
-    }
-
-    closeExtendedProfile() {
-        this.setState({
-            match_id    : null
+        this.socket.emit('GET_EXTENDED_PROFILE', {
+            partner_id  : item._id,
+            contact     : true
         });
-
-        utils.resetPicturesDisplay();
     }
 
     render() {
@@ -110,16 +128,6 @@ export class Matches extends Component {
 
         return (
             <div id="matched" className="container">
-
-                <ExtendedProfile
-                    show={ this.showExtendedProfile() }
-                    onClose={ () => this.closeExtendedProfile() }
-                    match={ this.state.matched[this.state.match_id] }
-                    keyboard={ false }
-                    _g={ this.props._g }
-                    contact
-                />
-
                 { this.createSearchBar() }
             </div>
         );

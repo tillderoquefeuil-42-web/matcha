@@ -230,12 +230,6 @@ module.exports = function (app, server) {
             });
         });
 
-        socket.on('OPEN_MATCH_CONV', function(data){
-            let user = getUserBySocket(socket);
-            //TO DO
-            console.log('Not done yet')
-        });
-
         // FILES
 
         socket.on('FILE_SLICE_UPLOAD', function(data){
@@ -347,6 +341,17 @@ module.exports = function (app, server) {
             });
         });
 
+        socket.on('GET_EXTENDED_PROFILE', function(data){
+            let user = getUserBySocket(socket);
+            let userRoom = rooms.getOnlineRoom(user._id);
+
+            account.loadOneMatch(user, data.partner_id)
+            .then(results => {
+                results.contact = data.contact;
+                io.sockets.in(userRoom).emit('LOAD_EXTENDED_PROFILE', results);
+            });
+        });
+
         socket.on('UPDATE_MATCH_RELATION', function(data){
             let user = getUserBySocket(socket);
             let userRoom = rooms.getOnlineRoom(user._id);
@@ -354,6 +359,7 @@ module.exports = function (app, server) {
             account.mergeMatchRelation(user, data)
             .then(partner => {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:partner});
+                io.sockets.in(userRoom).emit('UPDATE_ONE_MATCH', {match:partner});
             });
 
         });
@@ -365,6 +371,7 @@ module.exports = function (app, server) {
             account.updateLike(user, data)
             .then(partner => {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:partner});
+                io.sockets.in(userRoom).emit('UPDATE_ONE_MATCH', {match:partner});
             });
         });
 
@@ -387,6 +394,8 @@ module.exports = function (app, server) {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:data.partner_id});
             });
         });
+
+
 
     });
 }

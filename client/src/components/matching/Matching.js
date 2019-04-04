@@ -6,7 +6,7 @@ import { Loader } from '../loader/Loader';
 
 import { Sorting } from '../filter/Filter';
 import { TagsInput } from '../tagsInput/TagsInput';
-import { Distance, Age, ExtendedProfile, OneProfile } from './Inputs';
+import { Distance, Age, OneProfile } from './Inputs';
 
 import utils from '../../utils/utils.js';
 import time from '../../utils/time';
@@ -52,18 +52,24 @@ export class Matching extends Component {
         this.socket.emit('GET_MATCHES');
     }
 
-    selectOneProfile(_id) {
-        let matches = this.state.matches;
-        if (matches && matches[_id]){
-            this.setState({match_id : _id});
+    selectOneProfile(matchId) {
+        if (matchId === null){
+            return null;
         }
+
+        this.socket.emit('GET_EXTENDED_PROFILE', {partner_id : matchId});
+        return;
     }
 
     updateOneMatch(match){
         let matches = this.state.matches;
 
         if (typeof match === 'object'){
-            matches[match._id] = match;
+            if (match.match_relation && match.match_relation.p_has_liked && match.match_relation.u_has_liked){
+                delete matches[match._id];
+            } else {
+                matches[match._id] = match;
+            }
         } else if (typeof match === 'number'){
             this.reindexSorted(match);
             delete matches[match];
@@ -254,30 +260,6 @@ export class Matching extends Component {
         this.setState({index : index});
     }
 
-    showExtendedProfile() {
-        if (this.state.match_id === null){
-            return null;
-        }
-
-        return true;
-    }
-
-    closeExtendedProfile() {
-        let matches = this.state.matches;
-        let match = matches[this.state.match_id];
-
-        if (match.match_relation && match.match_relation.p_has_liked && match.match_relation.u_has_liked){
-            delete matches[this.state.match_id];
-        }
-
-        this.setState({
-            matches     : matches,
-            match_id    : null
-        });
-
-        utils.resetPicturesDisplay();
-    }
-
     render() {
 
         if (!this.state.matches){
@@ -295,14 +277,6 @@ export class Matching extends Component {
                     onClose={ (e) => this.toggleFilters(e, false) }
                     onFilter={ this.handleFiltering }
                     filters={ this.state.options }
-                    _g={ this.props._g }
-                />
-
-                <ExtendedProfile
-                    show={ this.showExtendedProfile() }
-                    onClose={ () => this.closeExtendedProfile() }
-                    match={ this.state.matches[this.state.match_id] }
-                    keyboard={ false }
                     _g={ this.props._g }
                 />
 

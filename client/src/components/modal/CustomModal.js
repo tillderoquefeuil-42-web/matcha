@@ -72,14 +72,30 @@ export class SuperModal extends React.Component {
         );
     }
 
+    show() {
+        if (this.props.show || (this.state && this.state.show)){
+            return true;
+        }
+
+        return false;
+    }
+
+    close = e => {
+        if (this.props.onClose){
+            this.props.onClose(e);
+        } else if (this.onClose){
+            this.onClose(e);
+        }
+    }
+
     render() {
 
         return (
             <Modal
-                show={ this.props.show }
+                show={ this.show() }
                 bsSize="large"
                 aria-labelledby="contained-modal-title-lg"
-                onHide={ this.props.onClose }
+                onHide={ this.close }
                 keyboard={ this.props.keyboard === false? false : true }
             >
 

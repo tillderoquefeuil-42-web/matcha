@@ -6,6 +6,8 @@ import { Account } from '../user/Account';
 import { Matching } from '../matching/Matching';
 import { Matches } from '../matching/Matches';
 
+import { ExtendedProfile } from '../matching/ExtendedProfile';
+
 import './layout.css';
 
 export class Main extends React.Component {
@@ -28,7 +30,6 @@ export class Main extends React.Component {
                 return (<Account _g={ this.props._g } />);
             case 'chat':
                 return (<Chat _g={ this.props._g } />);
-
         }
 
     }
@@ -36,6 +37,11 @@ export class Main extends React.Component {
     render() {
         return(
             <div id="main">
+                <ExtendedProfile
+                    _g={ this.props._g }
+                    keyboard={ false }
+                />
+
                 { this.loadPage() }
             </div>
         );

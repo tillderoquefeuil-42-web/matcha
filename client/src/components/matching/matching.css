@@ -314,6 +314,11 @@
     overflow: hidden;
 }
 
+.matched-searchbar-container .one-profile > .profile-pic {
+    max-height: 200px;
+    overflow: hidden;
+}
+
 .matched-searchbar-container .one-profile > .profile-pic > img {
     width: 100%;
     height: 100%;
