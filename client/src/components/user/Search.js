@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 
 import { Component } from '../Component';
 // import { Distance, Age, Popularity } from '../matching/Inputs';
-import { Distance, Age } from '../matching/Inputs';
+import { Distance, Age, Popularity } from '../matching/Inputs';
 
 import API from '../../utils/API';
 import time from '../../utils/time';
@@ -15,6 +15,7 @@ export class Search extends Component {
         super(props);
 
         this.state = {
+            rate        : null,
             distance    : null,
             age         : null,
             popularity  : null
@@ -47,6 +48,7 @@ export class Search extends Component {
     updateSearchParams(data) {
         this.setState({
             distance    : data.distance,
+            rate        : [data.rate_min, data.rate_max],
             age         : [time.getAgeFromDatetime(data.age_min), time.getAgeFromDatetime(data.age_max)]
         });
     }
@@ -57,7 +59,7 @@ export class Search extends Component {
 
 
     parseInputData() {
-        let inputs = ['distance', 'age', 'popularity'];
+        let inputs = ['distance', 'age', 'popularity', 'rate'];
 
         let data = {};
 
@@ -115,10 +117,10 @@ export class Search extends Component {
                     onChange={ (param) => this.setParam(param, 'age') }
                 />
 
-                {/*<Popularity
-                    value={ this.state.popularity }
-                    onChange={ (param) => this.setParam(param, 'popularity') }
-                />*/}
+                <Popularity
+                    value={ this.state.rate }
+                    onChange={ (param) => this.setParam(param, 'rate') }
+                />
 
                 <hr />
 

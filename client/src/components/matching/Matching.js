@@ -6,7 +6,7 @@ import { Loader } from '../loader/Loader';
 
 import { Sorting } from '../filter/Filter';
 import { TagsInput } from '../tagsInput/TagsInput';
-import { Distance, Age, OneProfile } from './Inputs';
+import { Distance, Age, Popularity, OneProfile } from './Inputs';
 
 import utils from '../../utils/utils.js';
 import time from '../../utils/time';
@@ -124,6 +124,10 @@ export class Matching extends Component {
                 inverse : true,
                 value   : 'common_tags',
                 label   : trans.get('USER.FIELDS.COMMON_INTERESTS')
+            }, {
+                inverse : true,
+                value   : 'rate',
+                label   : trans.get('USER.FIELDS.POPULARITY')
             }
         ];
 
@@ -299,6 +303,7 @@ class Filters extends Component {
         super(props);
 
         this.state = {
+            rate        : null,
             distance    : null,
             age         : null,
             tags        : null
@@ -330,6 +335,7 @@ class Filters extends Component {
     updateSearchParams(data) {
         this.setState({
             distance    : data.distance,
+            rate        : [data.rate_min, data.rate_max],
             age         : [time.getAgeFromDatetime(data.age_min), time.getAgeFromDatetime(data.age_max)],
             tags        : data.tags
         });
@@ -341,7 +347,7 @@ class Filters extends Component {
 
     // PARSE & SAVE
     parseInputData() {
-        let inputs = ['distance', 'age', 'tags'];
+        let inputs = ['distance', 'age', 'rate', 'tags'];
 
         let data = {};
 
@@ -428,11 +434,15 @@ class Filters extends Component {
                     onChange={ (param) => this.setParam(param, 'age') }
                 />
 
-                <TagsInput
-                    tags={ this.state.tags }
-                    onChange={(value) => this.setParam(value, 'tags')}
+                <Popularity
+                    value={ this.state.rate }
+                    onChange={ (param) => this.setParam(param, 'rate') }
                 />
 
+                <TagsInput
+                    tags={ this.state.tags }
+                    onChange={ (value) => this.setParam(value, 'tags') }
+                />
 
                 <Button
                     onClick={this.save}

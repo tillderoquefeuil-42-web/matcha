@@ -39,14 +39,14 @@ const defaultParams = {
     },
     popularity  : {
         min     : 0,
-        max     : 5,
+        max     : 100,
         marks   : {
-            0   : '0',
-            1   : '1',
-            2   : '2',
-            3   : '3',
-            4   : '4',
-            5   : '5',
+            0   : '0%',
+            20  : '20%',
+            40  : '40%',
+            60  : '60%',
+            80  : '80%',
+            100 : '100%',
         },
     }
 }
@@ -76,7 +76,9 @@ export class Distance extends Component {
 export class Age extends Component {
 
     render() {
-        let value = (this.props.value !== null)? this.props.value : [defaultParams.age.min, defaultParams.age.max];
+
+        let isDefine = (utils.isDefine(this.props.value) && this.props.value !== null)? true : false;
+        let value = isDefine? this.props.value : [defaultParams.age.min, defaultParams.age.max];
 
         return (
             <FormGroup controlId="age">
@@ -97,7 +99,9 @@ export class Age extends Component {
 export class Popularity extends Component {
 
     render() {
-        let value = (this.props.value !== null)? this.props.value : [defaultParams.popularity.min, defaultParams.popularity.max];
+
+        let isDefine = (utils.isDefine(this.props.value) && this.props.value !== null)? true : false;
+        let value = isDefine? this.props.value : [defaultParams.popularity.min, defaultParams.popularity.max];
 
         return (
             <FormGroup controlId="popularity">

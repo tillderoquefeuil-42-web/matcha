@@ -43,8 +43,12 @@ module.exports = {
     MATCHING    : {
         DISTANCE    : 50,
         AGE         : {
-            MIN    : 18,
-            MAX    : 99
+            MIN : 18,
+            MAX : 99
+        },
+        RATE        : {
+            MIN : 0,
+            MAX : 100
         }
     }
 

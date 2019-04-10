@@ -68,7 +68,7 @@ class User {
         }
 
         if (data.p_rate >= 0){
-            this.rate = data.p_rate;
+            this.rate = parseInt(data.p_rate);
         }
 
         if (data.p_tags >= 0 && data.p_location >= 0){

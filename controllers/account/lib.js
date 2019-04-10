@@ -1068,7 +1068,9 @@ exports.updateSearchParams = function(user, data) {
     let searchParams = {
         distance    : data.distance,
         age_min     : data.age_min,
-        age_max     : data.age_max
+        age_max     : data.age_max,
+        rate_min    : data.rate_min,
+        rate_max    : data.rate_max
     }
 
     return new Promise((resolve, reject) => {

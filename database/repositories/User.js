@@ -364,6 +364,8 @@ let UserRepository = {
         options.distance = options.distance || 0;
         options.age_min = options.age_min || 0;
         options.age_max = options.age_max || 0;
+        options.rate_min = options.rate_min || 0;
+        options.rate_max = options.rate_max || 0;
         options.tags = (options.tags && options.tags.length > 0)? options.tags : null;
 
         return new Promise((resolve, reject) => {
@@ -405,6 +407,18 @@ let UserRepository = {
                 END AS c_age_max,
 
                 CASE
+                    WHEN ${options.rate_min} > 0 THEN ${options.rate_min}
+                    WHEN exists(sp.rate_min) THEN sp.rate_min
+                    ELSE ${defaultParams.RATE.MIN}
+                END AS c_rate_min,
+
+                CASE
+                    WHEN ${options.rate_max} > 0 THEN ${options.rate_max}
+                    WHEN exists(sp.rate_max) THEN sp.rate_max
+                    ELSE ${defaultParams.RATE.MAX}
+                END AS c_rate_max,
+
+                CASE
                     WHEN m.see_m=TRUE AND u.gender='male' THEN TRUE
                     WHEN m.see_f=TRUE AND u.gender='female' THEN TRUE
                     WHEN m.see_nb=TRUE AND u.gender='nb' THEN TRUE
@@ -437,7 +451,7 @@ let UserRepository = {
                     ELSE 0
                 END AS p_see_rate,
 
-                    CASE
+                CASE
                     WHEN 0 < user_like_nbr <= 5 THEN 1
                     WHEN 5 < user_like_nbr <= 10 THEN 2
                     WHEN 10 < user_like_nbr <= 50 THEN 3
@@ -446,7 +460,7 @@ let UserRepository = {
                     ELSE 0
                 END AS p_like_rate,
 
-                    CASE
+                CASE
                     WHEN user_see_nbr > 0 THEN (toFloat(user_like_nbr) / toFloat(user_see_nbr))
                     ELSE 0
                 END AS p_per_rate,
@@ -457,11 +471,19 @@ let UserRepository = {
                     ELSE FALSE
                 END AS r_blocked
 
+
+                WITH u, m, sp, r, ru, rp, distance, common_tags, user_tags, c_distance,
+                c_age_min, c_age_max, c_rate_min, c_rate_max, g_matched, o_matched, p_tags,
+                p_location, p_see_rate, p_like_rate, p_per_rate, r_blocked,
+                (p_like_rate * 3 + p_see_rate * 2 + p_per_rate * 75) AS p_rate
+
+
                 WHERE g_matched IS NOT NULL
                 AND o_matched IS NOT NULL
                 AND distance <= (c_distance*1000)
-                AND toInteger(u.birthday) <= toInteger(c_age_min)
-                AND toInteger(u.birthday) >= toInteger(c_age_max)
+                AND toInteger(c_age_min) >= toInteger(u.birthday) >= toInteger(c_age_max)
+                AND toInteger(c_rate_min) <= toInteger(p_rate) <= toInteger(c_rate_max)
+
                 AND r_blocked = FALSE
                 AND NOT(ru.like=TRUE AND rp.like=TRUE)
 
@@ -471,7 +493,7 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
                 RETURN DISTINCT u{.*, _id:ID(u), common_tags:common_tags, distance:distance, 
-                    p_tags:p_tags, p_location:p_location, p_rate:(p_like_rate * 3 + p_see_rate * 2 + p_per_rate * 75)
+                    p_tags:p_tags, p_location:p_location, p_rate:p_rate
                 },
                 f, t, l, of, r, ru, rp
             `;
