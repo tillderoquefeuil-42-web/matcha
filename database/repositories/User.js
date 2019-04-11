@@ -483,9 +483,7 @@ let UserRepository = {
                 AND distance <= (c_distance*1000)
                 AND toInteger(c_age_min) >= toInteger(u.birthday) >= toInteger(c_age_max)
                 AND toInteger(c_rate_min) <= toInteger(p_rate) <= toInteger(c_rate_max)
-
                 AND r_blocked = FALSE
-                AND NOT(ru.like=TRUE AND rp.like=TRUE)
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)

@@ -492,7 +492,9 @@ export class Messages extends Component {
         convId = parseInt(convId);
         if (!convId){
             return (
-                <span>No conversation selected</span>
+                <div className="center">
+                    <span>{ translate.get('CHAT.NO_CONVERSATION') }</span>
+                </div>
             );
         }
 

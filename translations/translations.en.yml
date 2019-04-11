@@ -52,7 +52,6 @@ ERROR:
     FILE_TOO_BIG: Your file is too big (> 25Mo)
     TYPE_NOT_SUPPORTED: This file is not supported
     TOO_MANY_FILES: To many files!
-
 SUCCESS:
     TITLE: Yeah!
     DATA_SAVED: Your informations have been saved!
@@ -161,6 +160,7 @@ USER:
         LIKE: Like this profile
         BEEN_LIKE: You have been liked
 CHAT:
+    NO_CONVERSATION: No conversation selected
     SEND_MESSAGE: Send a message
     WRITE: Write a message,
     FILE:
