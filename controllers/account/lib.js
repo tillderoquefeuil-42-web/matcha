@@ -242,7 +242,10 @@ exports.signUp = function(req, res) {
         email       : req.body.email,
         language    : req.body.language,
         password    : passwordHash.generate(req.body.password),
-        providers   : ['local']
+        providers   : ['local'],
+        see_m       : true,
+        see_f       : true,
+        see_nb      : true
     }
 
     var findUser = new Promise(function (resolve, reject) {

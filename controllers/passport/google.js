@@ -31,7 +31,10 @@ module.exports = function (app) {
                 lastname    : profile.name.familyName,
                 email       : email,
                 username    : email,
-                googleId    : profile.id
+                googleId    : profile.id,
+                see_m       : true,
+                see_f       : true,
+                see_nb      : true
             }
 
             if (app.data && app.data.locale){

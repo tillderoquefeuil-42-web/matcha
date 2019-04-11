@@ -8,6 +8,7 @@ import { ChatIcon } from '../chat/ChatIcon';
 import utils from '../../utils/utils';
 import API from '../../utils/API';
 import trans from '../../translations/translate';
+import alert from '../../utils/alert';
 
 import './layout.css';
 
@@ -35,6 +36,15 @@ export class Header extends React.Component {
 
     handleSelect = (eventName) => {
         if (!utils.isDefine(eventName)){
+            return;
+        }
+
+        let user = utils.getLocalUser();
+        let authorized = ['signout', 'account'];
+        if (!user.gender && authorized.indexOf(eventName) === -1 ){
+            let title = trans.get('WARNING.TITLE');
+            let msg = trans.get('WARNING.UNFILLED_PROFILE');
+            alert.show({title: title, message: msg, type: 'warning'});
             return;
         }
 

@@ -63,6 +63,9 @@ SUCCESS:
 INFO:
     TITLE: Info
     MAIL_SENDING: Sending in progress
+WARNING:
+    TITLE: Warning!
+    UNFILLED_PROFILE: You must fill your profile before continue
 MAIL:
     RESENT: Resend mail
     VALIDATE_ACCOUNT: You'll soon get an email from us to validate your account!

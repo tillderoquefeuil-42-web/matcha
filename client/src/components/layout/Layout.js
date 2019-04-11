@@ -18,6 +18,10 @@ export class Layout extends React.Component {
             page = props.page;
         }
 
+        if (props.user && !props.user.gender){
+            page = 'account';
+        }
+
         let socket = io('http://localhost:8000', {
             query   : {
                 _token  : (localStorage.getItem('token')? localStorage.getItem('token') : "")
