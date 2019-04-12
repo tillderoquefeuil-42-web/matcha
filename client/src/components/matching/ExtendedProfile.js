@@ -8,7 +8,9 @@ import { ProgressCircle } from '../progressCircle/ProgressCircle';
 import { Loader } from '../loader/Loader';
 
 import trans from '../../translations/translate';
-import utils from '../../utils/utils.js';
+import utils from '../../utils/utils';
+import time from '../../utils/time';
+
 
 
 export class ExtendedProfile extends SuperModal {
@@ -190,9 +192,9 @@ export class ExtendedProfile extends SuperModal {
     }
 
     getRate(match) {
-        if (!match.rate){
-            return;
-        }
+        // if (!match.rate){
+        //     return;
+        // }
 
         return (
             <span title={ trans.get('USER.FIELDS.POPULARITY') + ` (${match.rate}%)` }>
@@ -201,12 +203,28 @@ export class ExtendedProfile extends SuperModal {
         );
     }
 
+    getOnlineStatus(match) {
+        console.log(match)
+        if (!match.online){
+            return;
+        }
+
+        return (
+            <span title={ trans.get('USER.FIELDS.ONLINE') }>
+                | <Online value={match.online} />
+            </span>
+        );
+    }
+
+
+
     getBasicsInfos(match){
         return (
             <span>
                 { this.getAge(match) }
                 { this.getDistance(match) }
                 { this.getRate(match) }
+                { this.getOnlineStatus(match) }
             </span>
         );
     }
@@ -477,4 +495,49 @@ class DotsIcon extends Component {
             </div>
         );
     }
+}
+
+class Online extends Component {
+
+    getClasses() {
+        if (this.props.value === true){
+            let classes = 'fas fa-circle c-green';
+            return classes;
+        }
+
+        return;
+    }
+
+    lastTime() {
+        let value = this.props.value;
+
+        if (!value){
+            return;
+        }
+
+        let lastTime = trans.get('USER.FIELDS.ONLINE');
+        //online 12 minutes ago
+
+        if (value !== true){
+            let duration = time.getDurationFrom(value);
+            lastTime += ' ' + duration.humanize();
+            lastTime += ' ' + trans.get('COMMON.AGO');
+        }
+
+        return lastTime;
+    }
+
+    render() {
+        if (!this.props.value){
+            return null;
+        }
+
+        return (
+            <span className="online-info">
+                <i className={ this.getClasses() }></i>
+                { this.lastTime() }
+            </span>
+        );
+    }
+
 }

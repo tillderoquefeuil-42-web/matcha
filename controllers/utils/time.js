@@ -29,7 +29,7 @@ module.exports = {
         return age;
     },
 
-    toDatetime          : function(date){
+    toDatetime          : function(date, time){
         if (!date){
             return '';
         }
@@ -40,13 +40,17 @@ module.exports = {
 
         var d = [
             date.getFullYear(),
-            date.getMonth(),
+            (date.getMonth() + 1),
             date.getDate()
         ];
 
+        if (time){
+            d.push('T', date.getHours(), date.getMinutes());
+        }
+
         var datetime = '';
         for (var i  in d){
-            datetime += (d[i] < 10? '0':'') + d[i];
+            datetime += (typeof d[i] === 'number' && d[i] < 10? '0':'') + d[i];
         }
 
         return datetime;

@@ -333,6 +333,50 @@ let UserRepository = {
         });
     },
 
+    online                          : function(user){
+        setUserId(user._id);
+
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (u:User)
+                WHERE ID(u) = ${user._id}
+                SET u.online = TRUE
+                RETURN u
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
+                return reject(err);
+            });
+
+        });
+    },
+
+    offline                         : function(user, datetime){
+        setUserId(user._id);
+
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (u:User)
+                WHERE ID(u) = ${user._id}
+                SET u.online = '${datetime}'
+                RETURN u
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
+                return reject(err);
+            });
+
+        });
+    },
+
     findAllFriends  : function(user){
         setUserId(user._id);
 
@@ -656,7 +700,6 @@ let UserRepository = {
 
                 CASE
                     WHEN exists(r.blocked) AND r.blocked=TRUE THEN TRUE
-//                    WHEN exists(ru.like) AND ru.like=TRUE AND rp.like=TRUE THEN TRUE
                     ELSE FALSE
                 END AS r_blocked
 

@@ -13,6 +13,7 @@ COMMON:
     PERTINENCE: Pertinence
     SEARCH: Search
     YOU: You
+    AGO: ago
 UNITS:
     KM: km
     AGE: yo
@@ -159,6 +160,7 @@ USER:
         BLOCK: Block
         LIKE: Like this profile
         BEEN_LIKE: You have been liked
+        ONLINE: Online
 CHAT:
     NO_CONVERSATION: No conversation selected
     SEND_MESSAGE: Send a message

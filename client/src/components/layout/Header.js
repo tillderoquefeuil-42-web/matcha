@@ -30,9 +30,7 @@ export class Header extends React.Component {
         this.socket.emit('ONLINE', {
             user_id : user._id
         });
-
     }
-
 
     handleSelect = (eventName) => {
         if (!utils.isDefine(eventName)){

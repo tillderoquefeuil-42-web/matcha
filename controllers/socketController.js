@@ -112,7 +112,16 @@ module.exports = function (app, server) {
     io.sockets.on('connection', function (socket) {
 
         socket.on('ONLINE', function(data){
-            rooms.joinOnlineRoom(socket, data.user_id);
+            let user = getUserBySocket(socket);
+
+            rooms.joinOnlineRoom(socket, user._id);
+            account.setOnlineUser(user);
+        });
+
+        socket.on("disconnect", function(){
+            let user = getUserBySocket(socket);
+
+            account.setOfflineUser(user);
         });
 
         // CHAT

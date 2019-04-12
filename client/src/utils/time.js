@@ -122,5 +122,12 @@ export default {
         }
 
         return date.toDate();
+    },
+
+    getDurationFrom : function(datetime){
+        let x = this.Moment();
+        let y = this.Moment(datetime);
+
+        return this.Moment.duration(x.diff(y));
     }
 }

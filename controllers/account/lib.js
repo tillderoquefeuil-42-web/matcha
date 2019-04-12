@@ -13,7 +13,8 @@ const SearchParamsRepo = require('../../database/repositories/SearchParams.js');
 const Com = require('./communication.js');
 const config = require('../../config/config');
 
-const Files = require('../utils/files.js');
+const Time = require('../utils/time');
+const Files = require('../utils/files');
 const FileRepo = require('../../database/repositories/File.js');
 
 
@@ -1139,6 +1140,35 @@ exports.reportMatchRelation = function(user, data) {
         MatchRepo.reportMatch(user, data.partner_id)
         .then(match => {
             return resolve(match);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+};
+
+exports.setOnlineUser = function(user) {
+
+    return new Promise((resolve, reject) => {
+        UserRepo.online(user)
+        .then(user => {
+            return resolve(user);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+};
+
+exports.setOfflineUser = function(user) {
+
+    return new Promise((resolve, reject) => {
+        var d = new Date();
+        let datetime = Time.toDatetime(d, true);
+
+        UserRepo.offline(user, datetime)
+        .then(user => {
+            return resolve(user);
         }).catch(err => {
             console.log(err);
             return reject(err);

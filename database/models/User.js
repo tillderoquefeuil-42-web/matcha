@@ -15,7 +15,7 @@ const fields = [
     'valid', 'locked', 'connection_try',
     'providers', 'googleId', 'birthday',
     'gender', 'see_m', 'see_f', 'see_nb',
-    'bio', 'profile_picture', 'language'
+    'bio', 'profile_picture', 'language', 'online'
 ];
 
 function transform(object) {

@@ -255,6 +255,9 @@ export default {
     },
 
     getFileUrl          : function(file) {
+        if (!file){
+            return;
+        }
         let token = (localStorage.getItem('token')? localStorage.getItem('token') : "");
         let url = `http://localhost:8000/file/private?_t=${token}&filename=${file.filename}`;
 
