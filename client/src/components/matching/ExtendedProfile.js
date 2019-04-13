@@ -6,11 +6,10 @@ import { SuperModal } from '../modal/CustomModal';
 import { TagsInput } from '../tagsInput/TagsInput';
 import { ProgressCircle } from '../progressCircle/ProgressCircle';
 import { Loader } from '../loader/Loader';
+import { Online } from '../online/Online';
 
 import trans from '../../translations/translate';
 import utils from '../../utils/utils';
-import time from '../../utils/time';
-
 
 
 export class ExtendedProfile extends SuperModal {
@@ -131,15 +130,11 @@ export class ExtendedProfile extends SuperModal {
     }
 
     updateMatchRelation(partner) {
-        if (partner){
+        if (!partner || (partner.match_relation && partner.match_relation.p_has_seen)){
             return;
         }
 
         let partner_id = partner._id;
-
-        if (!partner || (partner.match_relation && partner.match_relation.p_has_seen)){
-            return;
-        }
 
         let data = {
             partner_id  : partner_id
@@ -192,9 +187,9 @@ export class ExtendedProfile extends SuperModal {
     }
 
     getRate(match) {
-        // if (!match.rate){
-        //     return;
-        // }
+        if (!match.rate){
+            return;
+        }
 
         return (
             <span title={ trans.get('USER.FIELDS.POPULARITY') + ` (${match.rate}%)` }>
@@ -204,7 +199,6 @@ export class ExtendedProfile extends SuperModal {
     }
 
     getOnlineStatus(match) {
-        console.log(match)
         if (!match.online){
             return;
         }
@@ -215,8 +209,6 @@ export class ExtendedProfile extends SuperModal {
             </span>
         );
     }
-
-
 
     getBasicsInfos(match){
         return (
@@ -495,49 +487,4 @@ class DotsIcon extends Component {
             </div>
         );
     }
-}
-
-class Online extends Component {
-
-    getClasses() {
-        if (this.props.value === true){
-            let classes = 'fas fa-circle c-green';
-            return classes;
-        }
-
-        return;
-    }
-
-    lastTime() {
-        let value = this.props.value;
-
-        if (!value){
-            return;
-        }
-
-        let lastTime = trans.get('USER.FIELDS.ONLINE');
-        //online 12 minutes ago
-
-        if (value !== true){
-            let duration = time.getDurationFrom(value);
-            lastTime += ' ' + duration.humanize();
-            lastTime += ' ' + trans.get('COMMON.AGO');
-        }
-
-        return lastTime;
-    }
-
-    render() {
-        if (!this.props.value){
-            return null;
-        }
-
-        return (
-            <span className="online-info">
-                <i className={ this.getClasses() }></i>
-                { this.lastTime() }
-            </span>
-        );
-    }
-
 }

@@ -6,6 +6,7 @@ import { Picker } from 'emoji-mart';
 import { Component } from '../Component';
 import { UserIcon } from '../layout/UserIcon';
 import { Loader } from '../loader/Loader';
+import { Online } from '../online/Online';
 import { Dropzone, FileContainer, OneFileView, FileInput } from '../images/Dropzone';
 
 import utils from '../../utils/utils';
@@ -449,14 +450,17 @@ export class Messages extends Component {
                 onMouseEnter={ this.handleMouseEnter }
             >
                 <div className="contact">
-                    <div>
+                    <div className="contact-identity">
                         <UserIcon
                             showProfile
                             user={ partner }
                             _socket={ this.socket }
                         />
+
+                        <strong>{ this.getPartnerLabel(partner) }</strong>
                     </div>
-                    <strong>{ this.getPartnerLabel(partner) }</strong>
+
+                    { (!this.props.miniChat)? <Online value={partner.online} chat/> : null }
                 </div>
 
                 <Dropzone

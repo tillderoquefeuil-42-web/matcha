@@ -111,11 +111,16 @@
 
 .open-conversation > .contact {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
 }
 
-.open-conversation > .contact > strong {
+.open-conversation > .contact > .contact-identity {
+    display: flex;
+    align-items: center;
+}
+
+.open-conversation > .contact > .contact-identity > strong {
     margin-left: 10px;
 }
 

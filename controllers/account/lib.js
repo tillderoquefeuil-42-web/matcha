@@ -1112,6 +1112,7 @@ exports.updateLike = function(user, data) {
         .then(match => {
             UserRepo.getUpdatedPartner(user, data.partner_id)
             .then(partner => {
+                console.log(partner);
                 return resolve(partner);
             });
         }).catch(err => {
