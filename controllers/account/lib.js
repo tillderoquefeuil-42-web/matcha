@@ -3,9 +3,11 @@ const jwt = require('jwt-simple');
 const moment = require('moment');
 
 const User = require('../../database/models/user.js');
-const UserRepo = require('../../database/repositories/user.js');
 
 const TagRepo = require('../../database/repositories/Tag.js');
+const UserRepo = require('../../database/repositories/User.js');
+const FileRepo = require('../../database/repositories/File.js');
+const VisitRepo = require('../../database/repositories/Visit.js');
 const MatchRepo = require('../../database/repositories/Match.js');
 const LocationRepo = require('../../database/repositories/Location.js');
 const SearchParamsRepo = require('../../database/repositories/SearchParams.js');
@@ -15,7 +17,6 @@ const config = require('../../config/config');
 
 const Time = require('../utils/time');
 const Files = require('../utils/files');
-const FileRepo = require('../../database/repositories/File.js');
 
 
 // UTILS
@@ -1025,6 +1026,32 @@ exports.loadSearchParams = function(user){
     });
 };
 
+exports.getAllVisits = function(user){
+    let data = {};
+
+    return new Promise((resolve, reject) => {
+        VisitRepo.findByUser(user._id)
+        .then(visits => {
+            data.visits = visits;
+
+            let ids = [];
+            for (let i in visits){
+                ids.push(visits[i].host_id);
+            }
+
+            UserRepo.getUsersById(ids)
+            .then(hosts => {
+                data.hosts = hosts;
+                return resolve(data);
+            });
+
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+};
+
 
 // SET
 
@@ -1098,6 +1125,19 @@ exports.mergeMatchRelation = function(user, data) {
             .then(partner => {
                 return resolve(partner);
             });
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+}
+
+exports.addVisit = function(user, data) {
+
+    return new Promise((resolve, reject) => {
+        VisitRepo.add(user._id, data.partner_id)
+        .then(visit => {
+            return resolve(visit);
         }).catch(err => {
             console.log(err);
             return reject(err);

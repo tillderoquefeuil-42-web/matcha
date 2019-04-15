@@ -92,6 +92,7 @@ MODAL:
     CLOSE: Close
 TABS:
     ACCOUNT: Account
+    HISTORY: History
     HOME: Home
     MATCHES: Matches
     SIGN_OUT: Sign out
@@ -101,6 +102,7 @@ PAGE_TITLE:
     ACCOUNT_LOCKED: Account Locked
     ACCOUNT_VALIDATION: Validate Account
     CHAT: Chat
+    HISTORY: History
     MATCH: Match
     MATCHED: Matched profile
     RESET_PASSWORD: Reset Password

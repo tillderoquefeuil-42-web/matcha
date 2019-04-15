@@ -362,6 +362,23 @@ module.exports = function (app, server) {
             });
         });
 
+        socket.on('ADD_MATCH_VISIT', function(data){
+            let user = getUserBySocket(socket);
+            let userRoom = rooms.getOnlineRoom(user._id);
+
+            account.addVisit(user, data);
+        });
+
+        socket.on('GET_USER_VISITS', function(data){
+            let user = getUserBySocket(socket);
+            let userRoom = rooms.getOnlineRoom(user._id);
+
+            account.getAllVisits(user)
+            .then(resutls => {
+                io.sockets.in(userRoom).emit('LOAD_USER_VISITS', resutls);
+            });
+        });
+
         socket.on('UPDATE_MATCH_RELATION', function(data){
             let user = getUserBySocket(socket);
             let userRoom = rooms.getOnlineRoom(user._id);
@@ -371,7 +388,6 @@ module.exports = function (app, server) {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:partner});
                 io.sockets.in(userRoom).emit('UPDATE_ONE_MATCH', {match:partner});
             });
-
         });
 
         socket.on('UPDATE_LIKE_STATE', function(data){

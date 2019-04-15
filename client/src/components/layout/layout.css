@@ -40,6 +40,11 @@
 
 .nav-user-account > a > i.fa-user {
     padding: 13px !important;
+    font-size: 16px;
+}
+
+.nav-history > a > i.fa-history {
+    font-size: 21px;
 }
 
 .user-profile-picture {
@@ -55,4 +60,8 @@
     height:100%;
     object-fit: cover;
     overflow: hidden;
+}
+
+ul.nav.navbar-nav.navbar-right > li > a {
+    padding-bottom: 0px !important;
 }

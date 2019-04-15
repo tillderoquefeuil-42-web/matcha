@@ -119,7 +119,7 @@ function filterByTags(results, tags){
 
 let UserRepository = {
 
-    createOne   : function(data){
+    createOne                   : function(data){
 
         return new Promise((resolve, reject) => {
 
@@ -137,7 +137,7 @@ let UserRepository = {
         });
     },
 
-    deleteOne   : function(user){
+    deleteOne                   : function(user){
         return new Promise((resolve, reject) => {
 
             let query = `
@@ -157,7 +157,7 @@ let UserRepository = {
 
     },
 
-    updateOne   : function(data, _id){
+    updateOne                   : function(data, _id){
         setUserId(_id);
 
         let id = _id || data._id;
@@ -190,7 +190,7 @@ let UserRepository = {
         });
     },
 
-    findOne     : function(params){
+    findOne                     : function(params){
         setUserId(params._id);
 
         return new Promise((resolve, reject) => {
@@ -219,7 +219,7 @@ let UserRepository = {
         });
     },
 
-    findAnd     : function(params){
+    findAnd                     : function(params){
         setUserId(params._id);
 
         return new Promise((resolve, reject) => {
@@ -241,7 +241,7 @@ let UserRepository = {
         });
     },
 
-    findOr      : function(params){
+    findOr                      : function(params){
         setUserId(params._id);
 
         return new Promise((resolve, reject) => {
@@ -262,7 +262,7 @@ let UserRepository = {
         });
     },
 
-    updateProfilePicture            : function(file, user){
+    updateProfilePicture        : function(file, user){
         setUserId(user._id);
 
         return new Promise((resolve, reject) => {
@@ -286,7 +286,7 @@ let UserRepository = {
         });
     },
 
-    updateOtherPictures             : function(filesId, user){
+    updateOtherPictures         : function(filesId, user){
         setUserId(user._id);
 
         return new Promise((resolve, reject) => {
@@ -310,7 +310,7 @@ let UserRepository = {
         });
     },
 
-    findLocalByUsernameOrEmail      : function(username){
+    findLocalByUsernameOrEmail  : function(username){
         setUserId(true);
 
         return new Promise((resolve, reject) => {
@@ -333,7 +333,7 @@ let UserRepository = {
         });
     },
 
-    online                          : function(user){
+    online                      : function(user){
         setUserId(user._id);
 
         return new Promise((resolve, reject) => {
@@ -355,7 +355,7 @@ let UserRepository = {
         });
     },
 
-    offline                         : function(user, datetime){
+    offline                     : function(user, datetime){
         setUserId(user._id);
 
         return new Promise((resolve, reject) => {
@@ -377,7 +377,7 @@ let UserRepository = {
         });
     },
 
-    findAllFriends  : function(user){
+    findAllFriends              : function(user){
         setUserId(user._id);
 
         return new Promise((resolve, reject) => {
@@ -400,7 +400,7 @@ let UserRepository = {
         });
     },
 
-    matching        : function(user, options){
+    matching                    : function(user, options){
         setUserId(user._id);
 
         options = options || {};
@@ -558,7 +558,7 @@ let UserRepository = {
         });
     },
 
-    matchedProfiles : function(user){
+    matchedProfiles             : function(user){
         setUserId(user._id);
 
         return new Promise((resolve, reject) => {
@@ -642,7 +642,31 @@ let UserRepository = {
         });
     },
 
-    getUpdatedPartner   : function(user, partner_id){
+    getUsersById                : function(ids){
+        setUserId(false);
+
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (u:User)
+                WHERE ID(u) IN [${ids.join(', ')}]
+                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+
+                RETURN DISTINCT u, f
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                let data = parser.records(results, type);
+                return resolve(data);
+            }).catch(err => {
+                return reject(err);
+            });
+
+        });
+    },
+
+    getUpdatedPartner           : function(user, partner_id){
         setUserId(user._id);
 
         return new Promise((resolve, reject) => {

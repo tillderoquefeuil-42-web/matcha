@@ -35,6 +35,10 @@ export class ExtendedProfile extends SuperModal {
                 return;
             }
 
+            _this.socket.emit('ADD_MATCH_VISIT', {
+                partner_id  : data.match._id
+            });
+
             _this.updateMatchRelation(data.match)
             _this.setState({
                 match   : data.match,

@@ -54,6 +54,7 @@ export class Header extends React.Component {
             case 'matches':
             case 'account':
             case 'chat':
+            case 'history':
                 if (this.props._g.page === eventName){
                     return;
                 }
@@ -111,6 +112,10 @@ export class Header extends React.Component {
                             {/* <NavItem eventKey={3} onSelect={this.handleSelect}>
                                 <i className="far fa-bell" title="Notifications"></i>
                             </NavItem> */}
+
+                            <NavItem eventKey="history" onSelect={this.handleSelect} className="nav-history">
+                                <i className="fas fa-history" title={ trans.get('TABS.HISTORY') }></i>
+                            </NavItem>
                             <NavItem eventKey="chat" onSelect={this.handleSelect} className="nav-chat">
                                 <ChatIcon _g={ this.props._g } />
                             </NavItem>

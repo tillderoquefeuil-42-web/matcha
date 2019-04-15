@@ -5,6 +5,7 @@ import { Chat } from '../chat/Chat';
 import { Account } from '../user/Account';
 import { Matching } from '../matching/Matching';
 import { Matches } from '../matching/Matches';
+import { History } from '../history/History';
 
 import { ExtendedProfile } from '../matching/ExtendedProfile';
 
@@ -30,6 +31,8 @@ export class Main extends React.Component {
                 return (<Account _g={ this.props._g } />);
             case 'chat':
                 return (<Chat _g={ this.props._g } />);
+            case 'history':
+                return (<History _g={ this.props._g } />);
         }
 
     }
