@@ -24,6 +24,11 @@ export default {
 
     Moment  : Moment,
 
+    formats : {
+        big     : 'MM DD YYYY HH:mm',
+        short   : 'MM DD YYYY'
+    },
+
     isSameDay   : function(date){
         let now = this.Moment();
 
@@ -112,7 +117,7 @@ export default {
         return datetime;
     },
 
-    datetimeToDate  : function(datetime){
+    datetimeToMoment  : function(datetime){
         var date;
 
         if (typeof datetime === 'number'){
@@ -121,7 +126,17 @@ export default {
             date = this.Moment(datetime);
         }
 
-        return date.toDate();
+        return date;
+    },
+
+    datetimeToDate  : function(datetime){
+        var date = this.datetimeToMoment(datetime);
+
+        if (date){
+            return date.toDate();
+        }
+
+        return null;
     },
 
     getDurationFrom : function(datetime){

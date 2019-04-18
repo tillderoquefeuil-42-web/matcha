@@ -45,7 +45,7 @@ module.exports = {
         ];
 
         if (time){
-            d.push('T', date.getHours(), date.getMinutes());
+            d.push('T', date.getHours(), date.getMinutes(), date.getSeconds());
         }
 
         var datetime = '';

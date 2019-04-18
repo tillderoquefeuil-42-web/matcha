@@ -366,7 +366,10 @@ module.exports = function (app, server) {
             let user = getUserBySocket(socket);
             let userRoom = rooms.getOnlineRoom(user._id);
 
-            account.addVisit(user, data);
+            account.addVisit(user, data)
+            .then(visit => {
+                io.sockets.in(userRoom).emit('LOAD_ONE_VISIT', {visit : visit});
+            });
         });
 
         socket.on('GET_USER_VISITS', function(data){
