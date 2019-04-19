@@ -170,7 +170,7 @@ export class Contacts extends Component {
     render() {
 
         return (
-            <div id="contacts-container" className="col-md-3">
+            <div id="contacts-container" className="col-xs-1 col-sm-3 col-md-3">
                 { this.createSearchBar() }
                 { this.generateContacts() }
             </div>

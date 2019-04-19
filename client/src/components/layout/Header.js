@@ -109,7 +109,7 @@ export class Header extends React.Component {
                             </NavItem>
 
                             <NavItem eventKey="matches" onSelect={this.handleSelect} className="nav-matches">
-                                <i className="far fa-heart" title={ trans.get('TABS.MATCHES') }></i>
+                                <i className="fas fa-heart" title={ trans.get('TABS.MATCHES') }></i>
                                 <span className="nav-item-name">{ trans.get('TABS.MATCHES') }</span>
                             </NavItem>
 
@@ -119,10 +119,6 @@ export class Header extends React.Component {
                             </NavItem>
 
                             <NavItem className="vertical-separation" />
-
-                            {/* <NavItem eventKey={3} onSelect={this.handleSelect}>
-                                <i className="far fa-bell" title="Notifications"></i>
-                            </NavItem> */}
 
                             <NavItem eventKey="chat" onSelect={this.handleSelect} className="nav-chat">
                                 <ChatIcon _g={ this.props._g } />

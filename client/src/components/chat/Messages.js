@@ -520,7 +520,7 @@ export class Messages extends Component {
         this.updatePageTitle()
 
         return (
-            <div id="messages-container" className="col-md-9">
+            <div id="messages-container" className="col-xs-auto col-sm-auto col-md-auto">
                 { this.buildContent(this.props.selected) }
             </div>
         );

@@ -5,7 +5,6 @@ import { Component } from '../Component';
 import { SearchBar } from '../searchBar/SearchBar';
 import { Loader } from '../loader/Loader';
 
-import API from '../../utils/API';
 import utils from '../../utils/utils';
 import trans from '../../translations/translate';
 
@@ -28,12 +27,9 @@ export class TagsInput extends Component {
 
         let _this = this;
 
-        API.getTags()
-        .then(function(response){
-            let tags = response.data.tags;
+        utils.getTags()
+        .then(function(tags){
             _this.setState({collection : tags});
-        }, function(error){
-            console.log(error);
         });
     }
 

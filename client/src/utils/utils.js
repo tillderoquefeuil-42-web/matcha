@@ -98,6 +98,7 @@ export default {
                 localStorage.setItem('user_request', 1);
                 let _this = this;
                 console.log('user to update');
+
                 
                 API.isAuth()
                 .then(function(data){
@@ -129,6 +130,31 @@ export default {
         }
 
         return [];
+    },
+
+    setTags             : function(tags){
+        localStorage.setItem('tags', JSON.stringify(tags));
+    },
+
+    getTags             : function(){
+        let tags = localStorage.getItem('tags');
+        let _this = this;
+
+        return new Promise((resolve, reject) => {
+
+            if (tags){
+                return resolve(JSON.parse(tags));
+            }
+
+            API.getTags()
+            .then(function(response){
+                tags = response.data.tags;
+                _this.setTags(tags);
+                return resolve(tags);
+            }, function(error){
+                console.log(error);
+            });
+        });
     },
 
     indexCollection     : function(c, index){
