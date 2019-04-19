@@ -99,31 +99,42 @@ export class Header extends React.Component {
                     </Navbar.Header>
 
                     <Navbar.Collapse>
-                        <Nav className="mr-auto">
-                            <NavItem eventKey="home" onSelect={this.handleSelect} className={ this.isActive('home') } >
-                                { trans.get('TABS.HOME') }
-                            </NavItem>
-                            <NavItem eventKey="matches" onSelect={this.handleSelect} className={ this.isActive('matches') } >
-                                { trans.get('TABS.MATCHES') }
-                            </NavItem>
-                        </Nav>
+                        {/*<Nav className="mr-auto">
+                        </Nav>*/}
 
                         <Nav pullRight>
+                            <NavItem eventKey="home" onSelect={this.handleSelect} className="nav-home">
+                                <i className="fas fa-home" title={ trans.get('TABS.HOME') }></i>
+                                <span className="nav-item-name">{ trans.get('TABS.HOME') }</span>
+                            </NavItem>
+
+                            <NavItem eventKey="matches" onSelect={this.handleSelect} className="nav-matches">
+                                <i className="far fa-heart" title={ trans.get('TABS.MATCHES') }></i>
+                                <span className="nav-item-name">{ trans.get('TABS.MATCHES') }</span>
+                            </NavItem>
+
+                            <NavItem eventKey="history" onSelect={this.handleSelect} className="nav-history">
+                                <i className="fas fa-history" title={ trans.get('TABS.HISTORY') }></i>
+                                <span className="nav-item-name">{ trans.get('TABS.HISTORY') }</span>
+                            </NavItem>
+
+                            <NavItem className="vertical-separation" />
+
                             {/* <NavItem eventKey={3} onSelect={this.handleSelect}>
                                 <i className="far fa-bell" title="Notifications"></i>
                             </NavItem> */}
 
-                            <NavItem eventKey="history" onSelect={this.handleSelect} className="nav-history">
-                                <i className="fas fa-history" title={ trans.get('TABS.HISTORY') }></i>
-                            </NavItem>
                             <NavItem eventKey="chat" onSelect={this.handleSelect} className="nav-chat">
                                 <ChatIcon _g={ this.props._g } />
+                                <span className="nav-item-name">{ trans.get('PAGE_TITLE.CHAT') }</span>
                             </NavItem>
                             <NavItem eventKey="account" onSelect={this.handleSelect} className="nav-user-account">
                                 <UserIcon _g={ this.props._g } />
+                                <span className="nav-item-name">{ trans.get('TABS.ACCOUNT') }</span>
                             </NavItem>
                             <NavItem eventKey="signout" onSelect={this.handleSelect}>
                                 <i className="fas fa-power-off" title={ trans.get('TABS.SIGN_OUT') }></i>
+                                <span className="nav-item-name">{ trans.get('TABS.SIGN_OUT') }</span>
                             </NavItem>
                         </Nav>
                     </Navbar.Collapse>

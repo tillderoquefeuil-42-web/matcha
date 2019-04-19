@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { Component } from '../Component';
-import { OneFileView } from '../images/Dropzone';
-import { SuperModal } from '../modal/CustomModal';
-import { TagsInput } from '../tagsInput/TagsInput';
 import { ProgressCircle } from '../progressCircle/ProgressCircle';
+import { TagsInput } from '../tagsInput/TagsInput';
+import { SuperModal } from '../modal/CustomModal';
+import { OneFileView } from '../images/Dropzone';
 import { Loader } from '../loader/Loader';
 import { Online } from '../online/Online';
+import { Component } from '../Component';
+import { LikeIcon } from './Match';
 
 import trans from '../../translations/translate';
 import utils from '../../utils/utils';
@@ -349,64 +350,6 @@ export class ExtendedProfile extends SuperModal {
                     { this.buildInfos() }
                 </div>
 
-            </div>
-        );
-    }
-
-}
-
-class LikeIcon extends Component {
-
-    hasLiked() {
-        let classes = 'left-half vertical-split';
-
-        if (this.props.hasLiked){
-            classes += ' active';
-        }
-
-        if (!this.props.disabled){
-            classes += ' c-pointer';
-        }
-
-        return classes;
-    }
-
-    hasBeenLiked() {
-        let classes = 'right-half vertical-split';
-
-        if (this.props.hasBeenLiked){
-            classes += ' active'
-        }
-        return classes;
-    }
-
-    handleClick = e => {
-        if (this.props.disabled || !this.props.onClick){
-            return;
-        }
-
-        this.props.onClick(e);
-    }
-
-    render() {
-        return (
-            <div className="like-icon">
-                <div className={ this.hasLiked() } onClick={ this.handleClick } title={ trans.get('USER.FIELDS.LIKE') }>
-                    <div className="top-half horizontal-split">
-                        <i className="far fa-heart"></i>
-                    </div>
-                    <div className="bottom-half horizontal-split">
-                        <i className="far fa-heart"></i>
-                    </div>
-                </div>
-                <div className={ this.hasBeenLiked() } title={ trans.get('USER.FIELDS.BEEN_LIKE') }>
-                    <div className="top-half horizontal-split">
-                        <i className="far fa-heart"></i>
-                    </div>
-                    <div className="bottom-half horizontal-split">
-                        <i className="far fa-heart"></i>
-                    </div>
-                </div>
             </div>
         );
     }

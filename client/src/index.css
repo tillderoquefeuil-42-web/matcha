@@ -105,3 +105,14 @@ body {
 .c-pointer {
     cursor: pointer;
 }
+
+.vertical-separation {
+    height: 100%;
+    padding: 10px 6px 10px 4.5px;
+    width: 0px !important;
+}
+
+.vertical-separation::after {
+    content: '';
+    border-right: 1px solid #cecece;
+}
