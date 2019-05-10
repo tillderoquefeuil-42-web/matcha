@@ -311,6 +311,7 @@
 
 .matched-searchbar-container .searchbar-items-list > .list-item {
     width: 30%;
+    min-width: 250px;
     overflow: hidden;
 }
 

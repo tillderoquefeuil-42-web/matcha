@@ -14,9 +14,6 @@ import trans from '../../translations/translate';
 
 import './matching.css';
 
-const maxProfilesPage = 3;
-
-
 export class Matching extends Component {
 
     constructor(props) {
@@ -50,6 +47,11 @@ export class Matching extends Component {
         });
 
         this.socket.emit('GET_MATCHES');
+    }
+
+    maxProfilesPage() {
+        let nb = window.innerWidth / 500;
+        return Math.ceil(nb);
     }
 
     selectOneProfile(matchId) {
@@ -203,7 +205,7 @@ export class Matching extends Component {
 
         let length = matches.length;
 
-        if (length > maxProfilesPage){
+        if (length > this.maxProfilesPage()){
             elems.push(
                 <i
                     key="last"
@@ -215,7 +217,7 @@ export class Matching extends Component {
         }
 
         let j = 0;
-        while (j++ < maxProfilesPage){
+        while (j++ < this.maxProfilesPage()){
             if (j > length){
                 break;
             }
@@ -233,7 +235,7 @@ export class Matching extends Component {
             count++;
         }
 
-        if (length > maxProfilesPage){
+        if (length > this.maxProfilesPage()){
             elems.push(
                 <i
                     key="next"
@@ -254,10 +256,10 @@ export class Matching extends Component {
         let length = matches.length;
 
         if (event.target.id === 'last-profiles'){
-            index = index - maxProfilesPage;
+            index = index - this.maxProfilesPage();
             index = (index < 0)? index + length : index;
         } else if (event.target.id === 'next-profiles'){
-            index = index + maxProfilesPage;
+            index = index + this.maxProfilesPage();
             index = (index >= length)? index - length : index;
         }
 

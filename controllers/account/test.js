@@ -90,7 +90,7 @@ exports.getFirstNames = function(){
 exports.getPicturePath = function(j, r){
     let picture = 'fake_data/profiles/profile_' + pictures_path[genders[j]];
 
-    let nbr = r % 50;
+    let nbr = r % (genders[j] === 'female'? 130 : 50);
     picture += nbr + '.jpeg';
 
     return picture;
