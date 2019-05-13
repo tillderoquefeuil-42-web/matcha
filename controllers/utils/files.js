@@ -185,6 +185,9 @@ module.exports = {
     deleteFolder            : function(path){
         fs.readdir(path, function(err, items) {
             for (let i in items){
+                if (items[i] === '.gitingore'){
+                    continue;
+                }
                 removeFile(path + items[i])
             }
         });

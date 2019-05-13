@@ -58,11 +58,12 @@ module.exports = function (app) {
     app.get('/createUsers', function(req, res){
 
         let max = parseInt(req.query.max);
-        max = (!max)? 10 : max;
+        max = (!max)? 100 : max;
         // max = (!max || max < 500)? 500 : max;
 
         let lastNames = account.getLastNames();
         let firstNames = account.getFirstNames();
+        let error = null;
         let count = 0;
 
         for (let i in lastNames){
@@ -87,12 +88,22 @@ module.exports = function (app) {
 
             account.createTestAccount(user)
             .then(user => {
+                if (error){
+                    return;
+                }
+
                 count++;
                 if (count === (max - 1)){
                     return res.redirect('/');
                 }
             }).catch(err => {
-                return res.status(500).json({result:'ERROR'});
+                if (error){
+                    return;
+                }
+
+                error = true;
+                console.log(err);
+                return res.status(500).json({result:'ERROR', err:err});
             });
         }
     });

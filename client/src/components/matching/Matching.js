@@ -51,7 +51,9 @@ export class Matching extends Component {
 
     maxProfilesPage() {
         let nb = window.innerWidth / 500;
-        return Math.ceil(nb);
+        nb = Math.ceil(nb);
+
+        return (nb > 4? 4 : nb);
     }
 
     selectOneProfile(matchId) {

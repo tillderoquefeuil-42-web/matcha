@@ -1,7 +1,7 @@
 NAME = abs
 
-NEO4J = neo4j
-#NEO4J = ~/Desktop/Applications/neo4j/bin/neo4j
+#NEO4J = neo4j
+NEO4J = ~/Desktop/Applications/neo4j/bin/neo4j
 
 all: $(NAME)
 

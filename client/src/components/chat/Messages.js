@@ -497,7 +497,7 @@ export class Messages extends Component {
         if (!convId){
             return (
                 <div className="center">
-                    <span>{ translate.get('CHAT.NO_CONVERSATION') }</span>
+                    <i className="fa-10x fa-comment-dots far no-chat-selected"></i>
                 </div>
             );
         }

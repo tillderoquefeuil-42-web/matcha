@@ -33,6 +33,10 @@
     margin-bottom: unset;
 }
 
+.no-chat-selected {
+    color: #ccc;
+}
+
 @media (min-width: 768px) {
 
     #chat-container > div {
