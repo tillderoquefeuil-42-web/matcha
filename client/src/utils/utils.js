@@ -148,11 +148,12 @@ export default {
         let _this = this;
 
         return new Promise((resolve, reject) => {
-
             if (tags && datetime){
+
+                tags = JSON.parse(tags)
                 let duration = Time.getDurationFrom(datetime);
-                if (duration._data.days < 2){
-                    return resolve(JSON.parse(tags));
+                if (duration._data.days < 2 && tags.length > 0){
+                    return resolve(tags);
                 }
             }
 
