@@ -201,7 +201,11 @@ export class Messages extends Component {
     }
 
     getPartnerLabel(partner) {
-        return partner.firstname + ' ' + partner.lastname;
+        if (partner){
+            return partner.firstname + ' ' + partner.lastname;
+        }
+
+        return 'HEY';
     }
 
 

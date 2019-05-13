@@ -152,6 +152,19 @@ module.exports = function (app, server) {
             });
         });
 
+        socket.on('GET_CONTACTS', function(data){
+            let user = getUserBySocket(socket);
+            
+            let userRoom = rooms.getOnchatRoom(user._id);
+            
+            //LOAD CONTACTS
+            account.loadContacts(user)
+            .then(results => {
+                io.sockets.in(userRoom).emit('LOAD_CONTACTS', results);
+            });
+
+        });
+
         socket.on('SELECT_ONE_CHAT', function(data){
             let user = getUserBySocket(socket);
 

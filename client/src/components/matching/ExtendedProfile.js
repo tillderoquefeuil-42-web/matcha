@@ -32,6 +32,8 @@ export class ExtendedProfile extends SuperModal {
         let _this = this;
 
         this.socket.off('LOAD_EXTENDED_PROFILE').on('LOAD_EXTENDED_PROFILE', function(data){
+            console.log(data);
+
             if (!data.match){
                 return;
             }
@@ -39,6 +41,7 @@ export class ExtendedProfile extends SuperModal {
             _this.socket.emit('ADD_MATCH_VISIT', {
                 partner_id  : data.match._id
             });
+
 
             _this.updateMatchRelation(data.match)
             _this.setState({

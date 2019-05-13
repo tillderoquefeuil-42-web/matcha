@@ -96,6 +96,22 @@ export class FooterChat extends Component {
         return getPartnerId(conv, user);
     }
 
+    getPartner(conv) {
+        let partner = null;
+
+        let id = this.getPartnerId(conv);
+        let partners = this.state.friends;
+
+        for (let i in partners){
+            if (partners[i]._id === id){
+                partner = partners[i];
+                break;
+            }
+        }
+
+        return partner;
+    }
+
     deleteOneFriend(matchId){
         let friends = this.state.friends;
 
@@ -380,16 +396,24 @@ export class FooterChat extends Component {
         for (let i in convs){
             let conv = convs[i];
 
+            let partner = this.getPartner(conv);
+
+            if (!partner){
+                continue;
+            }
+
             chats.push(
                 <ChatWindow
                     key={i}
                     socket={ this.socket }
                     conv={ conv }
+                    partner={ partner }
                     friends={ this.state.friends }
                     closeChat={ convId => this.closeOneChat(convId) }
                     ref={ $element => this.chats_ref[conv._id] = $element }
                 />
             );
+
         }
 
         return chats;
@@ -500,11 +524,11 @@ class ChatWindow extends Component {
     }
 
     render() {
-        if (!this.props.conv){
+        if (!this.props.conv || !this.props.partner){
             return null;
         }
 
-        let partner = this.getPartner();
+        let partner = this.props.partner;
 
         return (
             <div className={ this.getClasses('container') } onClick={ this.showWindow }>

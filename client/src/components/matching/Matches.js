@@ -39,6 +39,7 @@ export class Matches extends Component {
         });
 
         this.socket.emit('GET_MATCHED');
+        this.socket.emit('GET_CONTACTS');
     }
 
     componentDidUpdate() {

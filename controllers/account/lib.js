@@ -393,15 +393,14 @@ exports.signIn = function(req, res) {
                     Com.lockedAccount.send(user);
                     return errorRedirect(res, 'POST', {status:401, link:lockedLink});
                 }
-                
+
                 res.status(401).json({
                     text: "INVALID_PASSWORD"
                 });
                 return;
             });
         }
-    })
-    .catch(err => {
+    }).catch(err => {
         console.log(err);
         res.status(500).json({
             text    : "INTERNAL_ERROR",
@@ -1152,7 +1151,6 @@ exports.updateLike = function(user, data) {
         .then(match => {
             UserRepo.getUpdatedPartner(user, data.partner_id)
             .then(partner => {
-                console.log(partner);
                 return resolve(partner);
             });
         }).catch(err => {

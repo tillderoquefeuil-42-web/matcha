@@ -55,9 +55,9 @@ class User {
             this.password = passwordHash.generate(data.password);
         }
 
-        if (params.user_id !== true && params.user_id !== this._id){
-            delete this.password;
-        }
+        // if (params.user_id !== true && params.user_id !== this._id){
+        //     delete this.password;
+        // }
 
         if (data.distance){
             this.distance = data.distance;

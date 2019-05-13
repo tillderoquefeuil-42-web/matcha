@@ -1,5 +1,6 @@
 import trans from "../translations/translate";
-import API from '../utils/API.js';
+import API from './API.js';
+import Time from './time.js';
 
 const slugify = require('slugify');
 
@@ -133,21 +134,31 @@ export default {
     },
 
     setTags             : function(tags){
+        let date = new Date();
+        let datetime = Time.toDatetime(date);
+        
         localStorage.setItem('tags', JSON.stringify(tags));
+        localStorage.setItem('tags_datetime', datetime);
     },
 
     getTags             : function(){
         let tags = localStorage.getItem('tags');
+        let datetime = localStorage.getItem('tags_datetime');
+
         let _this = this;
 
         return new Promise((resolve, reject) => {
 
-            if (tags){
-                return resolve(JSON.parse(tags));
+            if (tags && datetime){
+                let duration = Time.getDurationFrom(datetime);
+                if (duration._data.days < 2){
+                    return resolve(JSON.parse(tags));
+                }
             }
 
             API.getTags()
             .then(function(response){
+                console.log('load tags')
                 tags = response.data.tags;
                 _this.setTags(tags);
                 return resolve(tags);
