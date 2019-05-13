@@ -39,7 +39,6 @@ export class Chat extends Component {
         this.socket.on('LOAD_CONVERSATIONS', function(data){
 
             let c = utils.indexCollection(data.conversations);
-
             let state = {conversations : c};
 
             let convId = _this.props._g.params.get('convId');

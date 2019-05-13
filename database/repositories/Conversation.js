@@ -131,8 +131,9 @@ let ConversationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User)
-                WHERE ID(u)=${userId}
+                MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User), (u)-[ru:RELATION]->(r:Match)<-[rp:RELATION]-(p)
+                WHERE ID(u)=${userId} AND ru.like = TRUE AND rp.like = TRUE AND r.blocked = FALSE
+
                 RETURN c, p, u, ma, mb
             `;
 

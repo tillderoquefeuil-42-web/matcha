@@ -160,7 +160,7 @@ export class Messages extends Component {
     getPartnerId(conv) {
         let user = utils.getLocalUser();
 
-        if (conv.partners){
+        if (conv && conv.partners){
             for (let i in conv.partners){
                 if (conv.partners[i] !== user._id){
                     return parseInt(conv.partners[i]);
