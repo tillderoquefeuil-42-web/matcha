@@ -8,6 +8,7 @@ const TagRepo = require('../../database/repositories/Tag.js');
 const UserRepo = require('../../database/repositories/User.js');
 const FileRepo = require('../../database/repositories/File.js');
 const VisitRepo = require('../../database/repositories/Visit.js');
+const EventRepo = require('../../database/repositories/Event.js');
 const MatchRepo = require('../../database/repositories/Match.js');
 const LocationRepo = require('../../database/repositories/Location.js');
 const SearchParamsRepo = require('../../database/repositories/SearchParams.js');
@@ -1051,6 +1052,19 @@ exports.getAllVisits = function(user){
     });
 };
 
+exports.loadUserEvents = function(user){
+
+    return new Promise((resolve, reject) => {
+        EventRepo.findByUser(user._id)
+        .then(events => {
+            return resolve(events);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+}
+
 
 // SET
 
@@ -1136,7 +1150,13 @@ exports.addVisit = function(user, data) {
     return new Promise((resolve, reject) => {
         VisitRepo.add(user._id, data.partner_id)
         .then(visit => {
-            return resolve(visit);
+            EventRepo.add(user._id, data.partner_id, 2)
+            .then(event => {
+                return resolve({
+                    visit   : visit,
+                    event   : event
+                });
+            });
         }).catch(err => {
             console.log(err);
             return reject(err);
@@ -1151,7 +1171,17 @@ exports.updateLike = function(user, data) {
         .then(match => {
             UserRepo.getUpdatedPartner(user, data.partner_id)
             .then(partner => {
-                return resolve(partner);
+                let eventType = data.like? 1 : 4;
+                if (match.u_has_liked && match.p_has_liked){
+                    eventType = 3;
+                }
+                EventRepo.add(user._id, data.partner_id, eventType)
+                .then(event => {
+                    return resolve({
+                        partner : partner,
+                        event   : event
+                    });
+                });
             });
         }).catch(err => {
             console.log(err);
@@ -1165,7 +1195,18 @@ exports.blockMatchRelation = function(user, data) {
     return new Promise((resolve, reject) => {
         MatchRepo.blockMatch(user, data.partner_id)
         .then(match => {
-            return resolve(match);
+            if (match.u_has_liked && match.p_has_liked){
+                EventRepo.add(user._id, data.partner_id, 4)
+                .then(event => {
+                    return resolve({
+                        match   : match,
+                        event   : event
+                    });
+                });
+            } else {
+                return resolve({match : match});
+            }
+
         }).catch(err => {
             console.log(err);
             return reject(err);
@@ -1178,7 +1219,18 @@ exports.reportMatchRelation = function(user, data) {
     return new Promise((resolve, reject) => {
         MatchRepo.reportMatch(user, data.partner_id)
         .then(match => {
-            return resolve(match);
+            if (match.u_has_liked && match.p_has_liked){
+                EventRepo.add(user._id, data.partner_id, 4)
+                .then(event => {
+                    return resolve({
+                        match   : match,
+                        event   : event
+                    });
+                });
+            } else {
+                return resolve({match : match});
+            }
+
         }).catch(err => {
             console.log(err);
             return reject(err);

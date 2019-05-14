@@ -333,26 +333,6 @@ span.emoji-picker {
     bottom: 40px;
 }
 
-i.notifs {
-    position: relative;
-}
-
-i.notifs > .sup {
-    background: #db4c3f;
-    position: absolute;
-    color: white;
-    width: 25px;
-    height: 25px;
-    text-align: center;
-    border-radius: 50%;
-    padding: 4px 0px;
-    top: -9px;
-    right: -9px;
-    font-size: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-    -webkit-font-smoothing: antialiased;
-}
-
 .file-processing {
     padding: 50px;
     font-size: 5px;

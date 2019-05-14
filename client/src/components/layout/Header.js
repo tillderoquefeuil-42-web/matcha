@@ -3,6 +3,7 @@ import { Navbar, Nav, NavItem } from "react-bootstrap";
 
 import { Logo } from '../images/Logo';
 import { UserIcon } from './UserIcon';
+import { NotifIcon } from './NotifIcon';
 import { ChatIcon } from '../chat/ChatIcon';
 
 import utils from '../../utils/utils';
@@ -124,6 +125,13 @@ export class Header extends React.Component {
                                 <ChatIcon _g={ this.props._g } />
                                 <span className="nav-item-name">{ trans.get('PAGE_TITLE.CHAT') }</span>
                             </NavItem>
+
+                            <NavItem eventKey="notif" onSelect={this.handleSelect} className="nav-notif">
+                                <NotifIcon _g={ this.props._g } />
+                                <span className="nav-item-name">{ trans.get('PAGE_TITLE.NOTIF') }</span>
+                            </NavItem>
+
+                            <NavItem className="vertical-separation" />
 
                             <NavItem eventKey="account" onSelect={this.handleSelect} className="nav-user-account">
                                 <UserIcon _g={ this.props._g } />

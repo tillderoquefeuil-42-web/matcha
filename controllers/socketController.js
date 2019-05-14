@@ -377,15 +377,18 @@ module.exports = function (app, server) {
 
         socket.on('ADD_MATCH_VISIT', function(data){
             let user = getUserBySocket(socket);
-            let userRoom = rooms.getOnlineRoom(user._id);
 
             if (data.partner_id === user._id){
                 return;
             }
 
+            let userRoom = rooms.getOnlineRoom(user._id);
+            let partnerRoom = rooms.getOnlineRoom(data.partner_id);
+
             account.addVisit(user, data)
-            .then(visit => {
-                io.sockets.in(userRoom).emit('LOAD_ONE_VISIT', {visit : visit});
+            .then(results => {
+                io.sockets.in(userRoom).emit('LOAD_ONE_VISIT', {visit : results.visit});
+                io.sockets.in(partnerRoom).emit('NEW_EVENT', {event : results.event});
             });
         });
 
@@ -416,37 +419,58 @@ module.exports = function (app, server) {
 
         socket.on('UPDATE_LIKE_STATE', function(data){
             let user = getUserBySocket(socket);
+
             let userRoom = rooms.getOnlineRoom(user._id);
+            let partnerRoom = rooms.getOnlineRoom(data.partner_id);
 
             account.updateLike(user, data)
-            .then(partner => {
-                io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:partner});
-                io.sockets.in(userRoom).emit('UPDATE_ONE_MATCH', {match:partner});
+            .then(results => {
+                io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:results.partner});
+                io.sockets.in(userRoom).emit('UPDATE_ONE_MATCH', {match:results.partner});
+                io.sockets.in(partnerRoom).emit('NEW_EVENT', {event : results.event});
             });
         });
 
         socket.on('BLOCK_MATCH_RELATION', function(data){
             let user = getUserBySocket(socket);
+
             let userRoom = rooms.getOnlineRoom(user._id);
+            let partnerRoom = rooms.getOnlineRoom(data.partner_id);
 
             account.blockMatchRelation(user, data)
-            .then(match => {
+            .then(results => {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:data.partner_id});
                 io.sockets.in(userRoom).emit('DELETE_ONE_MATCH', {match:data.partner_id});
+                io.sockets.in(partnerRoom).emit('NEW_EVENT', {event : results.event});
             });
         });
 
         socket.on('REPORT_MATCH_RELATION', function(data){
             let user = getUserBySocket(socket);
+
             let userRoom = rooms.getOnlineRoom(user._id);
+            let partnerRoom = rooms.getOnlineRoom(data.partner_id);
 
             account.reportMatchRelation(user, data)
-            .then(match => {
+            .then(results => {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:data.partner_id});
                 io.sockets.in(userRoom).emit('DELETE_ONE_MATCH', {match:data.partner_id});
+                io.sockets.in(partnerRoom).emit('NEW_EVENT', {event : results.event});
             });
         });
 
+        //NOTIFICATIONS
+
+        socket.on('GET_USER_EVENTS', function(data){
+            let user = getUserBySocket(socket);
+            let userRoom = rooms.getOnlineRoom(user._id);
+
+            //LOAD EVENTS
+            account.loadUserEvents(user)
+            .then(events => {
+                io.sockets.in(userRoom).emit('LOAD_USER_EVENTS', {events:events});
+            });
+        });
 
 
     });

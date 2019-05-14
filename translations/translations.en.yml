@@ -104,6 +104,7 @@ PAGE_TITLE:
     ACCOUNT_LOCKED: Account Locked
     ACCOUNT_VALIDATION: Validate Account
     CHAT: Chat
+    NOTIF: Notifications
     HISTORY: History
     MATCH: Match
     MATCHED: Matched profile
