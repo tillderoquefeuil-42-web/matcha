@@ -24,6 +24,7 @@ export class Account extends Component {
         this.state = {
             user    : null,
         };
+
     }
 
     componentDidMount() {
@@ -58,6 +59,11 @@ export class Account extends Component {
         return (
             <div id="account" className="container">
 
+                <Overview
+                    _g={ this.props._g }
+                    user={ this.state.user }
+                />
+
                 <div className="col-md-6">
                     <Profile />
                     <Search _g={ this.props._g } />
@@ -73,4 +79,29 @@ export class Account extends Component {
             </div>
         );
     }
+}
+
+class Overview extends Component {
+
+    handleClick = e => {
+
+        console.log(this.props.user._id);
+
+        this.props._g.socket.emit('GET_EXTENDED_PROFILE', {
+            partner_id  : this.props.user._id,
+            disabled    : true
+        });
+    }
+
+    render() {
+
+        return (
+            <div className="profile-overview" onClick={ e => this.handleClick(e) } >
+                <i className="far fa-eye fa-2x" title={ trans.get('MATCHING.OVERVIEW') } ></i>
+            </div>
+        );
+
+    }
+
+
 }

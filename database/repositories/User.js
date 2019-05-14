@@ -669,6 +669,10 @@ let UserRepository = {
     getUpdatedPartner           : function(user, partner_id){
         setUserId(user._id);
 
+        if (user._id === partner_id){
+            return this.getOwnProfile(user);
+        }
+
         return new Promise((resolve, reject) => {
 
             let query = `
@@ -741,6 +745,35 @@ let UserRepository = {
             `;
 
             // console.log(query);
+
+            queryEx.exec(query)
+            .then(results => {
+                let data = parser.records(results, type, true);
+                return resolve(data);
+            }).catch(err => {
+                return reject(err);
+            });
+
+        });
+    },
+
+    getOwnProfile               : function(user){
+        setUserId(user._id);
+
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (u:User)
+                WHERE ID(u)=${user._id}
+
+                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
+                OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
+                OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
+
+                RETURN DISTINCT u{.*, _id:ID(u), distance:0, rate:75},
+                f, of, l, t
+            `;
 
             queryEx.exec(query)
             .then(results => {

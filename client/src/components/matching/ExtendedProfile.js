@@ -24,23 +24,24 @@ export class ExtendedProfile extends SuperModal {
             match   : null,
             show    : false,
             contact : false,
-            disabled: false
+            disabled: false,
         };
-
+        
         this.socket = this.props._g.socket;
+        let user = utils.getLocalUser();
 
         let _this = this;
 
         this.socket.off('LOAD_EXTENDED_PROFILE').on('LOAD_EXTENDED_PROFILE', function(data){
-            console.log(data);
-
             if (!data.match){
                 return;
             }
 
-            _this.socket.emit('ADD_MATCH_VISIT', {
-                partner_id  : data.match._id
-            });
+            if (user._id !== data.match._id){
+                _this.socket.emit('ADD_MATCH_VISIT', {
+                    partner_id  : data.match._id
+                });
+            }
 
 
             _this.updateMatchRelation(data.match)
@@ -48,7 +49,8 @@ export class ExtendedProfile extends SuperModal {
                 match   : data.match,
                 contact : data.contact,
                 disabled: data.disabled,
-                show    : true
+                show    : true,
+                user    : user
             });
         });
 
@@ -98,6 +100,10 @@ export class ExtendedProfile extends SuperModal {
     }
 
     handleLike = e => {
+        if (this.state.user._id === this.state.match._id){
+            return;
+        }
+
         let liked = (!this.hasLiked());
 
         let data = {
@@ -109,6 +115,10 @@ export class ExtendedProfile extends SuperModal {
     }
 
     handleChat = e => {
+        if (this.state.user._id === this.state.match._id){
+            return;
+        }
+
         this.socket.emit('SELECT_ONE_CHAT', {
             partner_id  : this.state.match._id,
             status      : 'footer_chat',
@@ -118,6 +128,10 @@ export class ExtendedProfile extends SuperModal {
     }
 
     handleBlock = e => {
+        if (this.state.user._id === this.state.match._id){
+            return;
+        }
+
         let data = {
             partner_id  : this.state.match._id
         }
@@ -127,6 +141,10 @@ export class ExtendedProfile extends SuperModal {
     }
 
     handleReport = e => {
+        if (this.state.user._id === this.state.match._id){
+            return;
+        }
+
         let data = {
             partner_id  : this.state.match._id
         }
