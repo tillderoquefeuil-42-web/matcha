@@ -43,7 +43,6 @@ export class ExtendedProfile extends SuperModal {
                 });
             }
 
-
             _this.updateMatchRelation(data.match)
             _this.setState({
                 match   : data.match,
@@ -363,13 +362,15 @@ export class ExtendedProfile extends SuperModal {
             <div id="extended-profile">
                 { this.buildClose() }
 
-                <div className="profile-pic">
+                <div className="profile-pic col-md-6 col-sm-12">
                     { this.buildFile() }
                 </div>
 
-                <div className="profile-info">
+                <div className="profile-info col-md-6 col-sm-12">
                     { this.buildInfos() }
                 </div>
+
+                <div className="clearfix"></div>
 
             </div>
         );

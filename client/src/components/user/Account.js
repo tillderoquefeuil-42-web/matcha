@@ -59,11 +59,6 @@ export class Account extends Component {
         return (
             <div id="account" className="container">
 
-                <Overview
-                    _g={ this.props._g }
-                    user={ this.state.user }
-                />
-
                 <div className="col-md-6">
                     <Profile />
                     <Search _g={ this.props._g } />
@@ -76,6 +71,8 @@ export class Account extends Component {
                     <Delete />
                 </div>
 
+                <Overview _g={ this.props._g } />
+
             </div>
         );
     }
@@ -84,16 +81,19 @@ export class Account extends Component {
 class Overview extends Component {
 
     handleClick = e => {
-
-        console.log(this.props.user._id);
-
         this.props._g.socket.emit('GET_EXTENDED_PROFILE', {
-            partner_id  : this.props.user._id,
+            partner_id  : this.props._g.user._id,
             disabled    : true
         });
     }
 
     render() {
+
+        let user = utils.getLocalUser();
+
+        if (!user || !user.profile_pic || !user.birthday){
+            return null;
+        }
 
         return (
             <div className="profile-overview" onClick={ e => this.handleClick(e) } >

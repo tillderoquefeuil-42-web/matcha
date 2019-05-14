@@ -159,7 +159,6 @@ export default {
 
             API.getTags()
             .then(function(response){
-                console.log('load tags')
                 tags = response.data.tags;
                 _this.setTags(tags);
                 return resolve(tags);

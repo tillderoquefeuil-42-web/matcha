@@ -124,10 +124,13 @@ export class Header extends React.Component {
                                 <ChatIcon _g={ this.props._g } />
                                 <span className="nav-item-name">{ trans.get('PAGE_TITLE.CHAT') }</span>
                             </NavItem>
+
                             <NavItem eventKey="account" onSelect={this.handleSelect} className="nav-user-account">
                                 <UserIcon _g={ this.props._g } />
+                                <i className="far fa-user" title={ trans.get('TABS.ACCOUNT') }></i>
                                 <span className="nav-item-name">{ trans.get('TABS.ACCOUNT') }</span>
                             </NavItem>
+
                             <NavItem eventKey="signout" onSelect={this.handleSelect}>
                                 <i className="fas fa-power-off" title={ trans.get('TABS.SIGN_OUT') }></i>
                                 <span className="nav-item-name">{ trans.get('TABS.SIGN_OUT') }</span>

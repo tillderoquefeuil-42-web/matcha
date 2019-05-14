@@ -110,7 +110,7 @@ exports.generateUser = function(firstname, lastname, j){
         lastname    : lastname,
         username    : username,
         email       : 'tillderoquefeuil+' + username + '@gmail.com',
-        password    : 'MyWebSite42!',
+        password    : 'Matcha42!',
         language    : 'en',
         gender      : gender,
         birthday    : time.toDatetime(moment().subtract(age, 'years')),

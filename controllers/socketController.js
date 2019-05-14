@@ -379,6 +379,10 @@ module.exports = function (app, server) {
             let user = getUserBySocket(socket);
             let userRoom = rooms.getOnlineRoom(user._id);
 
+            if (data.partner_id === user._id){
+                return;
+            }
+
             account.addVisit(user, data)
             .then(visit => {
                 io.sockets.in(userRoom).emit('LOAD_ONE_VISIT', {visit : visit});
@@ -398,6 +402,10 @@ module.exports = function (app, server) {
         socket.on('UPDATE_MATCH_RELATION', function(data){
             let user = getUserBySocket(socket);
             let userRoom = rooms.getOnlineRoom(user._id);
+
+            if (data.partner_id === user._id){
+                return;
+            }
 
             account.mergeMatchRelation(user, data)
             .then(partner => {

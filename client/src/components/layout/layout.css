@@ -9,54 +9,72 @@
     width: auto;
 }
 
-#header > .navbar .navbar-collapse.collapse .navbar-nav.navbar-right li[role="presentation"] {
-    display: flex;
-    width: 45px;
-    height: 50px;
-}
-
-#header > .navbar .navbar-collapse.collapse.in .navbar-nav.navbar-right li[role="presentation"] {
+#header > .navbar .navbar-collapse .navbar-nav.navbar-right li[role="presentation"] {
     display: block;
-    width: unset !important;
-    height: unset !important;
 }
-
-#header > .navbar .navbar-nav.navbar-right li[role="presentation"] > a {
-    margin: auto;
-    padding: 0px !important;
-    font-size: 25px !important;
-}
-
-#header > .navbar .navbar-collapse.collapse.in .navbar-nav.navbar-right li[role="presentation"] i {
+#header > .navbar .navbar-collapse .navbar-nav.navbar-right li[role="presentation"] i {
     width: 50px;
     padding: 3px 10px;
     text-align: center;
 }
 
-#header > .navbar > .container .fa-power-off {
-    color: red;
-    font-size: 15px !important;
+#header > .navbar .navbar-collapse .nav-user-account > a > .fa-user {
+    display: inline-block;
 }
 
-#header > .navbar .navbar-collapse.collapse.in .fa-power-off {
-    font-size: 22px !important;
-}
-
-#header > .navbar .navbar-collapse.collapse .navbar-nav.navbar-right li[role="presentation"] > a > .nav-item-name {
+#header > .navbar .navbar-collapse .nav-user-account > a > .user-profile-picture,
+#header > .navbar .navbar-collapse .nav-user-account > a > .user-default-icon {
     display: none;
 }
 
-#header > .navbar .navbar-collapse.collapse.in .navbar-nav.navbar-right li[role="presentation"] > a > .nav-item-name {
+#header > .navbar .navbar-collapse .navbar-nav.navbar-right li[role="presentation"] > a > .nav-item-name {
     display: inline;
 }
 
-#header > .navbar .navbar-collapse.collapse .navbar-nav.navbar-right .vertical-separation {
-    display: flex;
-}
-
-#header > .navbar .navbar-collapse.collapse.in .navbar-nav.navbar-right .vertical-separation {
+#header > .navbar .navbar-collapse .navbar-nav.navbar-right .vertical-separation {
     display: none !important;
 }
+
+@media (min-width: 768px) {
+    
+    #header > .navbar .navbar-collapse .navbar-nav.navbar-right li[role="presentation"] {
+        display: flex;
+        width: 45px;
+        height: 50px;
+    }
+
+    #header > .navbar .navbar-nav.navbar-right li[role="presentation"] > a {
+        margin: auto;
+        padding: 0px;
+        font-size: 25px;
+    }
+
+    #header > .navbar > .container .fa-power-off {
+        color: red;
+        font-size: 15px;
+    }
+
+    #header > .navbar .navbar-collapse .navbar-nav.navbar-right li[role="presentation"] > a > .nav-item-name {
+        display: none;
+    }
+
+    #header > .navbar .navbar-collapse .navbar-nav.navbar-right .vertical-separation {
+        display: flex !important;
+    }
+
+    #header > .navbar .navbar-collapse .nav-user-account > a > .fa-user {
+        display: none !important;
+    }
+
+    #header > .navbar .navbar-collapse .nav-user-account > a > .user-profile-picture,
+    #header > .navbar .navbar-collapse .nav-user-account > a > .user-default-icon {
+        display: block !important;
+    }
+
+}
+
+
+
 
 
 /* MAIN */

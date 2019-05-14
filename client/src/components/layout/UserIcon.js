@@ -64,7 +64,7 @@ export class UserIcon extends React.Component {
         }
 
         return (
-            <i className="far fa-user" title={ trans.get('TABS.ACCOUNT') }></i>
+            <i className="far fa-user user-default-icon" title={ trans.get('TABS.ACCOUNT') }></i>
         );
     }
 }

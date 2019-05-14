@@ -215,8 +215,6 @@
 }
 
 #extended-profile {
-    display: flex;
-    justify-content: space-between;
 }
 
 #extended-profile .close-extended-profile {
@@ -228,8 +226,7 @@
 }
 
 #extended-profile > .profile-info {
-    width: 50%;
-    padding: 0px 20px;
+    padding-top: 20px;
 }
 
 #extended-profile > .profile-info .profile-infos-display {
@@ -272,7 +269,6 @@
 }
 
 #extended-profile > .profile-pic {
-    width: 50%;
     height: 100%;
     display: flex;
 }
