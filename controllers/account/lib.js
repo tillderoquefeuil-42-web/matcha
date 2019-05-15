@@ -1052,10 +1052,10 @@ exports.getAllVisits = function(user){
     });
 };
 
-exports.loadUserEvents = function(user){
+exports.loadUserEvents = function(user, all){
 
     return new Promise((resolve, reject) => {
-        EventRepo.findByUser(user._id)
+        EventRepo.findByUser(user._id, all)
         .then(events => {
             return resolve(events);
         }).catch(err => {
@@ -1176,11 +1176,22 @@ exports.updateLike = function(user, data) {
                     eventType = 3;
                 }
                 EventRepo.add(user._id, data.partner_id, eventType)
-                .then(event => {
-                    return resolve({
-                        partner : partner,
-                        event   : event
-                    });
+                .then(p_event => {
+                    if (eventType === 3){
+                        EventRepo.add(data.partner_id, user._id, eventType)
+                        .then(u_event => {
+                            return resolve({
+                                partner : partner,
+                                p_event : p_event,
+                                u_event : u_event
+                            });
+                        });
+                    } else {
+                        return resolve({
+                            partner : partner,
+                            p_event : p_event
+                        });
+                    }
                 });
             });
         }).catch(err => {
@@ -1266,3 +1277,16 @@ exports.setOfflineUser = function(user) {
         });
     });
 };
+
+exports.userEventsRead = function(user, all){
+
+    return new Promise((resolve, reject) => {
+        EventRepo.setReadEventsByUser(user._id, all)
+        .then(events => {
+            return resolve(events);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+}

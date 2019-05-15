@@ -56,10 +56,11 @@ export class Header extends React.Component {
             case 'account':
             case 'chat':
             case 'history':
+            case 'notifications':
                 if (this.props._g.page === eventName){
                     return;
                 }
-                
+
                 this.props.pageChange(eventName);
                 break;
 
@@ -103,8 +104,6 @@ export class Header extends React.Component {
                     </Navbar.Header>
 
                     <Navbar.Collapse>
-                        {/*<Nav className="mr-auto">
-                        </Nav>*/}
 
                         <Nav pullRight>
                             <NavItem eventKey="home" onSelect={this.handleSelect} className="nav-home">
@@ -130,7 +129,17 @@ export class Header extends React.Component {
                             </NavItem>
 
                             <NavItem eventKey="notif" onSelect={this.handleSelect} className="nav-notif">
-                                <NotifIcon _g={ this.props._g } />
+                                <NotifIcon
+                                    _g={ this.props._g }
+                                    pageChange={ (eventName) => this.handleSelect(eventName) }
+                                />
+                            </NavItem>
+
+                            <NavItem eventKey="notifications" onSelect={this.handleSelect} className="nav-notif-sm">
+                                <NotifIcon
+                                    _g={ this.props._g }
+                                    small
+                                />
                                 <span className="nav-item-name">{ trans.get('PAGE_TITLE.NOTIF') }</span>
                             </NavItem>
 

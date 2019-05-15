@@ -4,8 +4,7 @@
 }
 
 #history > .list {
-    width: 50%;
-    min-width: 400px;
+    max-width: 300px;
     margin: auto;
     overflow: auto;
     height: 100%;

@@ -33,7 +33,7 @@ function parseOneRecord(record){
 
 let EventRepository = {
 
-    add         : function(userId, partnerId, eventType){
+    add                 : function(userId, partnerId, eventType){
 
         return new Promise((resolve, reject) => {
 
@@ -66,8 +66,8 @@ let EventRepository = {
             });
         });
     },
-    
-    findByUser  : function(userId){
+
+    findByUser          : function(userId, all){
         return new Promise((resolve, reject) => {
 
             let query = `
@@ -80,7 +80,36 @@ let EventRepository = {
                 }
 
                 ORDER BY e.date DESC
-                LIMIT 25
+                ${ all? '' : 'LIMIT 25' }
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                return resolve(parser.records(results, type));
+            }).catch(err => {
+                return reject(err);
+            });
+        });
+    },
+
+    setReadEventsByUser : function(userId, all){
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (u:User)<-[e:EVENT]-(p:User)
+                WHERE ID(u)=${userId}
+
+                SET e.read = TRUE
+
+                WITH u, e, p
+                OPTIONAL MATCH (p)-[pp:PROFILE_PIC {current:true}]->(f:File)
+
+                RETURN u, f, e{
+                    .*, _id:ID(e), partner_id:ID(p), partner_label:p.firstname
+                }
+
+                ORDER BY e.date DESC
+                ${ all? '' : 'LIMIT 25' }
             `;
 
             queryEx.exec(query)

@@ -176,7 +176,9 @@ MATCHING:
     PARAMS: Search parameters
     OVERVIEW: Overview
 NOTIFICATIONS:
-    1: liked you!
-    2: visited your profile
-    3: and you have a match!
-    4: unliked you
+    ALL: See all notifications
+    LABELS:
+        1: liked you!
+        2: visited your profile
+        3: and you have a match!
+        4: unliked you

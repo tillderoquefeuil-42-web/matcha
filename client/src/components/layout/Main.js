@@ -6,6 +6,7 @@ import { Account } from '../user/Account';
 import { Matching } from '../matching/Matching';
 import { Matches } from '../matching/Matches';
 import { History } from '../history/History';
+import { Notif } from '../notif/Notif';
 
 import { ExtendedProfile } from '../matching/ExtendedProfile';
 
@@ -16,7 +17,6 @@ export class Main extends React.Component {
     loadPage() {
 
         let page = this.props._g.page
-
         window.history.replaceState({'/' : page}, null, page)
 
         switch (page){
@@ -33,6 +33,8 @@ export class Main extends React.Component {
                 return (<Chat _g={ this.props._g } />);
             case 'history':
                 return (<History _g={ this.props._g } />);
+            case 'notifications':
+                return (<Notif _g={ this.props._g } />);
         }
 
     }

@@ -1,15 +1,10 @@
 import React from 'react';
 import { Dropdown, Button } from 'react-bootstrap';
 import { Component } from '../Component';
-import { UserIcon } from './UserIcon';
+import { OneNotif } from '../notif/Notif';
 
-
-import trans from '../../translations/translate';
 import utils from '../../utils/utils.js';
-import time from '../../utils/time';
-
-const labels = trans.get('NOTIFICATIONS');
-const transAgo = trans.get('COMMON.AGO');
+import trans from '../../translations/translate';
 
 export class NotifIcon extends Component {
 
@@ -29,16 +24,12 @@ export class NotifIcon extends Component {
         let _this = this;
 
         this.socket.on('LOAD_USER_EVENTS', function(data){
-            console.log(data);
-
             _this.setState({
                 events  : utils.indexCollection(data.events)
             });
         });
 
         this.socket.on('NEW_EVENT', function(data){
-            console.log(data);
-
             let events = _this.state.events;
             events[data.event._id] = data.event;
             _this.setState({events : events})
@@ -73,13 +64,21 @@ export class NotifIcon extends Component {
 
         let events = Object.values(this.state.events);
 
-        console.log(events);
-
         events.sort(function(a, b){
             return (parseInt(b.date.replace('T', '')) - parseInt(a.date.replace('T', '')))
         })
 
         let options = [];
+
+        options.push(
+            <Button
+                key="go-to-notif-center"
+                className="go-to-notif-center"
+                onClick={ (e) => this.openNotifCenter(e) }
+            >
+                { trans.get('NOTIFICATIONS.ALL') }
+            </Button>
+        );
 
         for (let i in events){
             let event = events[i];
@@ -91,7 +90,7 @@ export class NotifIcon extends Component {
                     key={ event.key }
                     onClick={ (e) => this.handleClick(event) }
                 >
-                    { this.buildOneNotif(event) }
+                    <OneNotif event={ event } />
                 </Button>
             );
         }
@@ -99,43 +98,13 @@ export class NotifIcon extends Component {
         return options;
     }
 
-    buildOneNotif(event) {
-
-        let duration = time.getDurationFrom(event.date);
-        let lastTime = duration.humanize() + ' ' + transAgo;
-
-        return (
-            <div className={ this.getNotifClasses(event) }>
-                <UserIcon
-                    user={ {profile_pic : event.partner_picture} }
-                />
-
-                <div className="one-notif-info">
-                    <span className="one-notif-label">{ event.partner_label } { labels[event.type] }</span>
-                    <span className="one-notif-date">{ lastTime }</span>
-                </div>
-            </div>
-        );
-    }
-
-    getNotifClasses(event) {
-
-        let classes = "one-notif";
-
-        if (!event.read){
-            classes += " unread";
+    openNotifCenter = e => {
+        if (this.props.pageChange){
+            this.props.pageChange('notifications');
         }
-
-        if (!event.link){
-            classes += " unlinkable";
-        }
-
-        return classes;
     }
 
     handleClick = event => {
-        console.log(event);
-
         if (!event.link){
             return;
         }
@@ -145,35 +114,41 @@ export class NotifIcon extends Component {
         });
     }
 
+    handleToggle = show => {
+        if (!show){
+            return;
+        }
+
+        this.socket.emit('USER_READ_EVENTS');
+    }
 
     render() {
 
-        if (false !== true){
+        if (this.props.small){
             return (
-                <Dropdown id="notif-dropdown" className="notif-dropdown">
-                    <Dropdown.Toggle id="dropdown-basic">
-                        <i className="far fa-bell notifs" title="Notifications">
-                            { this.buildUnreads() }
-                        </i>
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu>
-                        { this.buildOptions() }
-                    </Dropdown.Menu>
-                </Dropdown>
+                <i className="far fa-bell notifs sm-icon" title="Notifications">
+                    { this.buildUnreads() }
+                </i>
             );
         }
 
         return (
-            <i className="far fa-bell notifs" title="Notifications">
-                { this.buildUnreads() }
-            </i>
+            <Dropdown
+                id="notif-dropdown"
+                className="notif-dropdown"
+                onToggle={ (e) => this.handleToggle(e) }
+            >
+                <Dropdown.Toggle id="dropdown-basic">
+                    <i className="far fa-bell notifs def-icon" title="Notifications">
+                        { this.buildUnreads() }
+                    </i>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                    { this.buildOptions() }
+                </Dropdown.Menu>
+            </Dropdown>
         );
-
-
-
     }
-
-    
 
 }

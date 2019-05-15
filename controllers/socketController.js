@@ -85,6 +85,7 @@ const chatHelpers = {
 
 };
 
+
 module.exports = function (app, server) {
 
     let io = socket_io(server, {
@@ -427,7 +428,11 @@ module.exports = function (app, server) {
             .then(results => {
                 io.sockets.in(userRoom).emit('LOAD_ONE_MATCH', {match:results.partner});
                 io.sockets.in(userRoom).emit('UPDATE_ONE_MATCH', {match:results.partner});
-                io.sockets.in(partnerRoom).emit('NEW_EVENT', {event : results.event});
+
+                io.sockets.in(partnerRoom).emit('NEW_EVENT', {event : results.p_event});
+                if (results.u_event){
+                    io.sockets.in(userRoom).emit('NEW_EVENT', {event : results.u_event});
+                }
             });
         });
 
@@ -464,9 +469,23 @@ module.exports = function (app, server) {
         socket.on('GET_USER_EVENTS', function(data){
             let user = getUserBySocket(socket);
             let userRoom = rooms.getOnlineRoom(user._id);
+            let all = data? data.all : false;
 
             //LOAD EVENTS
-            account.loadUserEvents(user)
+            account.loadUserEvents(user, all)
+            .then(events => {
+                io.sockets.in(userRoom).emit('LOAD_USER_EVENTS', {events:events});
+            });
+        });
+
+
+        socket.on('USER_READ_EVENTS', function(data){
+            let user = getUserBySocket(socket);
+            let userRoom = rooms.getOnlineRoom(user._id);
+            let all = data? data.all : false;
+
+            //LOAD EVENTS
+            account.userEventsRead(user, all)
             .then(events => {
                 io.sockets.in(userRoom).emit('LOAD_USER_EVENTS', {events:events});
             });

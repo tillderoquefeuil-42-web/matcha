@@ -62,6 +62,11 @@
     .one-contact {
         padding: 10px 15px !important;
     }
+
+    #layout #footer-chat-container {
+        display: flex;
+    }
+
 }
 
 
@@ -345,9 +350,8 @@ span.emoji-picker {
     display: none !important;
 }
 
-
 #footer-chat-container {
-    display: flex;
+    display: none;
     justify-content: flex-start;
     height: 45px;
     position: fixed;
