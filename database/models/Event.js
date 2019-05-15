@@ -1,5 +1,8 @@
 const neo4j = require('neo4j-driver').v1;
 
+const File = require('./File');
+
+
 const fields = [
     'date', 'type',
     'read',
@@ -49,6 +52,11 @@ class Event {
             this.label = events[this.type].label;
             this.link = events[this.type].link;
         }
+
+        if (params.partner_picture){
+            this.partner_picture = new File(params.partner_picture);
+        }
+
 
         if (params.user){
             this.user_id = params.user.identity.low

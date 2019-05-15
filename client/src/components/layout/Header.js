@@ -59,8 +59,11 @@ export class Header extends React.Component {
                 if (this.props._g.page === eventName){
                     return;
                 }
-
+                
                 this.props.pageChange(eventName);
+                break;
+
+            case 'notif':
                 break;
 
             case 'signout':

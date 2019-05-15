@@ -73,7 +73,6 @@
 
 }
 
-
 i.notifs {
     position: relative;
 }
@@ -93,6 +92,57 @@ i.notifs > .sup {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
 }
+
+.notif-dropdown ul.dropdown-menu {
+    max-height: 300px;
+    overflow: auto;
+}
+
+.notif-dropdown ul.dropdown-menu > .dropdown-item {
+    display: block;
+    border: none;
+    margin-left: 0px !important;
+    width: 100%;
+    text-align: left;
+    border-radius: 0px;
+}
+
+#notif-dropdown {
+    border: none;
+    background: inherit;
+    color: inherit;
+    float: none;
+    font-size: inherit;
+    padding: inherit;
+    box-shadow: none !important;
+}
+
+#notif-dropdown > .caret {
+    display: none;
+}
+
+.one-notif {
+    display: flex;
+}
+
+.one-notif.unread {
+    font-weight: bold;
+}
+
+.one-notif.unlinkable {
+    cursor: initial;
+}
+
+.one-notif > .one-notif-info {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+}
+
+.one-notif > .one-notif-info .one-notif-date {
+    color: #aaa;
+}
+
 
 /* MAIN */
 
