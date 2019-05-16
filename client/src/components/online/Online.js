@@ -27,7 +27,7 @@ export class Online extends Component {
 
         if (value !== true){
             let duration = time.getDurationFrom(value);
-            lastTime = duration.humanize() + ' ' + trans.get('COMMON.AGO');
+            lastTime = duration.humanize(true);
         } else if (!this.props.chat){
             lastTime = trans.get('USER.FIELDS.ONLINE');
         }

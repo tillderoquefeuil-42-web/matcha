@@ -13,7 +13,6 @@ COMMON:
     PERTINENCE: Pertinence
     SEARCH: Search
     YOU: You
-    AGO: ago
     THE: The
     AT: At
 UNITS:
@@ -43,14 +42,19 @@ ERROR:
     NO_EMAIL_MATCH: Email addresses don't match
     NO_PASSWORD_MATCH: Passwords doesn't match
     OLD_EMAIL_MATCH: The new email address and the current one are the same
-    PASSWORD_STRENGTH: Your password must have at least <ul><li>8 characters</li><li>One upper case letters</li><li>One lower case letter</li><li>One number</li><li>One special character</li></ul>
+    PASSWORD_STRENGTH: >-
+        Your password must have at least <ul><li>8 characters</li><li>One upper case
+        letters</li><li>One lower case letter</li><li>One number</li><li>One special
+        character</li></ul>
     USER_ACCOUNT_EXIST: Account already exists
     USER_ALREADY_EXIST: Email already exists
-    USER_LOCKED: You tried to connect too many times. We sent you an email to verify your identity.
-    USER_NAME_EXIST: Username already exists, please change
+    USER_LOCKED: >-
+        You tried to connect too many times. We sent you an email to verify your
+        identity.
+    USER_NAME_EXIST: 'Username already exists, please change'
     USER_NOT_EXIST: Wrong email address
     USER_NOT_FOUND: User not found
-    USER_TOO_YOUNG: Sorry, it seems you're too young to use this service
+    USER_TOO_YOUNG: 'Sorry, it seems you''re too young to use this service'
     NOT_A_FILE: You must drag a file
     FILE_TOO_BIG: Your file is too big (> 25Mo)
     TYPE_NOT_SUPPORTED: This file is not supported
@@ -71,24 +75,28 @@ WARNING:
 MAIL:
     RESENT: Resend mail
     VALIDATE_ACCOUNT: You'll soon get an email from us to validate your account!
-    VALIDATE_EMAIL: Email address saved! You'll soon get an email to validate this email address!
-    HELLO: Hello {{name}}!
+    VALIDATE_EMAIL: >-
+        Email address saved! You'll soon get an email to validate this email
+        address!
+    HELLO: 'Hello {{name}}!'
     CONTENT:
         LOCKED:
-            DESCRIPTION: Someone tried to connect too many times on your account, so we locked it.
+            DESCRIPTION: >-
+                Someone tried to connect too many times on your account, so we locked
+                it.
             LINK: Your account will stay locked as long as you don't click the link below
             BUTTON: Unlock Your Account
         FORGET:
             DESCRIPTION: We received a request to reset your password.
-            LINK: If you forget your password, you can reset it here
+            LINK: 'If you forget your password, you can reset it here'
             BUTTON: Reset Your Password
         VALIDATE:
-            DESCRIPTION_NEW: You just sign up to 
+            DESCRIPTION_NEW: You just sign up to
             DESCRIPTION_CHANGE: You just change your email address.
             LINK: Click the link below to validate this email address
             BUTTON: Validate Your Account
 DROPZONE:
-    PLACEHOLDER: Try dropping some files here, or click to select files to upload.
+    PLACEHOLDER: 'Try dropping some files here, or click to select files to upload.'
     PREVIEW: Select a picture for preview
 MODAL:
     CLOSE: Close
@@ -115,7 +123,9 @@ USER:
     ACCOUNT_ALREADY_VALID: Your account has already been validate!
     ACCOUNT_VALIDATE: Your account has been validate!
     RESET_PASSWORD_FIELD: Enter your email address and we will send you a link to reset your password
-    RESET_PASSWORD_INFO: Check your email for a link to reset your password. If it doesn't appear within a few minutes,  check your spam folder
+    RESET_PASSWORD_INFO: >-
+        Check your email for a link to reset your password. If it doesn't appear
+        within a few minutes,    check your spam folder
     SET_NEW_PASSWORD: Enter your new password to continue
     NEW_PASSWORD: New Password
     EDIT_EMAIL: You'll be able to edit email address after creating a password
@@ -131,10 +141,14 @@ USER:
     DISCLAIMER:
         PRIVATE_LOCATION: You address will never be visible to other users.
         ADDRESS_ESTIMATION: Your exact address is not provided. This is an estimation.
-        REPORT: If you report this profile, you wont be able to see it again and our team will take a look on it.
+        REPORT: >-
+            If you report this profile, you wont be able to see it again and our team
+            will take a look on it.
     FIELDS:
-        DELETE_ACCOUNT: By clicking here, you will remove your account, and all data linked to it.
-        DELETE_ACCOUNT_CONFIRM: 'Are you sure? You are about to delete all your data. There is no way to come back from this.'
+        DELETE_ACCOUNT: 'By clicking here, you will remove your account, and all data linked to it.'
+        DELETE_ACCOUNT_CONFIRM: >-
+            Are you sure? You are about to delete all your data. There is no way to
+            come back from this.
         LOGIN: Email or Username
         PASSWORD: Password
         OLD_PASSWORD: Old Password
@@ -166,10 +180,12 @@ USER:
         LIKE: Like this profile
         BEEN_LIKE: You have been liked
         ONLINE: Online
+        BOTH: ''
+        OTHER: ''
 CHAT:
     NO_CONVERSATION: No conversation selected
     SEND_MESSAGE: Send a message
-    WRITE: Write a message,
+    WRITE: 'Write a message,'
     FILE:
         SENT: A file was sent
 MATCHING:
@@ -178,7 +194,7 @@ MATCHING:
 NOTIFICATIONS:
     ALL: See all notifications
     LABELS:
-        1: liked you!
-        2: visited your profile
-        3: and you have a match!
-        4: unliked you
+        '1': liked you!
+        '2': visited your profile
+        '3': and you have a match!
+        '4': unliked you

@@ -14,7 +14,6 @@ import './notif.css';
 const minItems = 10;
 
 const labels = trans.get('NOTIFICATIONS.LABELS');
-const transAgo = trans.get('COMMON.AGO');
 
 export class Notif extends Component {
 
@@ -176,7 +175,7 @@ export class OneNotif extends Component {
         }
 
         let duration = time.getDurationFrom(event.date);
-        let lastTime = duration.humanize() + ' ' + transAgo;
+        let lastTime = duration.humanize(true);
 
         return (
             <div className={ this.getNotifClasses(event) }>
