@@ -205,7 +205,7 @@ export class Messages extends Component {
             return partner.firstname + ' ' + partner.lastname;
         }
 
-        return 'HEY';
+        return '';
     }
 
 
@@ -613,7 +613,8 @@ export class MessageInput extends Component {
 
     handleMouseDown = event => {
 
-        if (!this.upTo(event.toElement, 'emoji-picker')){
+        let element = event.toElement? event.toElement : event.srcElement;
+        if (!this.upTo(element, 'emoji-picker')){
             this.collapse();
         }
     }

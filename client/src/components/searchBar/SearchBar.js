@@ -27,6 +27,8 @@ export class SearchBar extends Component {
             placeholder : props.placeholder || trans.get('COMMON.SEARCH')
         };
 
+        this.handleSelect.bind(this);
+        this.handleMouseDown.bind(this);
         this.collapse.bind(this);
         this.expand.bind(this);
     }
@@ -101,6 +103,8 @@ export class SearchBar extends Component {
 
         this.collapse();
         this.props.onSelect(event, item);
+
+        return false;
     }
 
     validateMultiSelection = event => {
@@ -350,7 +354,8 @@ export class SearchBar extends Component {
     }
 
     handleMouseDown = event => {
-        if (!this.upTo(event.toElement, 'searchbar')){
+        let element = event.toElement? event.toElement : event.srcElement;
+        if (!this.upTo(element, 'searchbar')){
             this.collapse();
         }
     }

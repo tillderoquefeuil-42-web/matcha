@@ -433,7 +433,8 @@ class DotsIcon extends Component {
     }
 
     handleMouseDown = event => {
-        if (this.state.show && !this.upTo(event.toElement, 'dots-menu')){
+        let element = event.toElement? event.toElement : event.srcElement;
+        if (this.state.show && !this.upTo(element, 'dots-menu')){
             this.toggleShow();
         }
     }

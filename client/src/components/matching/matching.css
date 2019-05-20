@@ -214,9 +214,6 @@
     overflow: hidden;
 }
 
-#extended-profile {
-}
-
 #extended-profile .close-extended-profile {
     position: absolute;
     top: 5px;
@@ -243,8 +240,17 @@
 #extended-profile > .profile-info  .profile-identity > span {
     font-size: 25px;
     color: #bfbfbf;
-    margin-left: 10px;
+    display: block;
 }
+
+@media (min-width: 768px) {
+
+    #extended-profile > .profile-info  .profile-identity > span {
+        margin-left: 10px;
+        display: initial;
+    }
+}
+
 
 #extended-profile > .profile-info  .profile-identity > span > span {
     margin-right: 5px;

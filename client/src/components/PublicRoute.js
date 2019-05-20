@@ -2,13 +2,14 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
+import { Component } from './Component';
 import { BigLoader } from './loader/BigLoader';
 
 import API from '../utils/API.js';
 import utils from '../utils/utils';
 import trans from '../translations/translate';
 
-export class PublicRoute extends React.Component {
+export class PublicRoute extends Component {
 
     constructor(props) {
         super(props);
@@ -20,6 +21,7 @@ export class PublicRoute extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         let _this = this;
 
         if (!this.state.trans){

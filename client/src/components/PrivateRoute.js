@@ -2,6 +2,7 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
+import { Component } from './Component';
 import { Layout } from './layout/Layout';
 import { BigLoader } from './loader/BigLoader';
 
@@ -9,7 +10,7 @@ import API from '../utils/API.js';
 import utils from '../utils/utils';
 import trans from '../translations/translate';
 
-export class PrivateRoute extends React.Component {
+export class PrivateRoute extends Component {
 
     constructor(props) {
         super(props);
@@ -29,6 +30,7 @@ export class PrivateRoute extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         let _this = this;
 
         if (this.state.token){
