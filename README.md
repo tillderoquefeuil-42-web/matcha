@@ -1,6 +1,3 @@
-# account-based-site
-Base to any web-project that need account management
-
 # launch
 
 - Make init
