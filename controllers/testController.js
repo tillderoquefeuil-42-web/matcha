@@ -82,9 +82,6 @@ module.exports = function (app) {
             firstNames[j] = reindexArray(firstNames[j]);
 
             let user = account.generateUser(firstname, lastname, j);
-            account.manageOrientation(user);
-            account.getRandomTags(user);
-            account.getRandomCoords(user);
 
             account.createTestAccount(user)
             .then(user => {

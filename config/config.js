@@ -4,7 +4,7 @@ module.exports = {
 
     params      : {
         MAX_SIGN_IN_TRY : 3,
-        MIN_AGED_USERS  : 16
+        MIN_AGED_USERS  : 18
     },
 
     server      : {

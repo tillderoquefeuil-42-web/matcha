@@ -2,6 +2,8 @@ module.exports = {
 
     password : 'Matcha42!',
 
+    language : 'en',
+
     coords : {
         lat : 48.85340440403773,
         lng : 2.3487839388235443,

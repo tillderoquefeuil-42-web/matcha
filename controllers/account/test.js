@@ -2,9 +2,9 @@ const passwordHash = require("password-hash");
 const moment = require('moment');
 
 const config = require('../../config/config');
-const time = require('../utils/time');
+const fakeData = require('../../fake_data/data');
+const Time = require('../utils/time');
 
-const User = require('../../database/models/user.js');
 const UserRepo = require('../../database/repositories/user.js');
 
 const TagRepo = require('../../database/repositories/tag.js');
@@ -13,12 +13,11 @@ const LocationRepo = require('../../database/repositories/location.js');
 const Files = require('../utils/files.js');
 const FileRepo = require('../../database/repositories/File.js');
 
-const fakeData = require('../../fake_data/data');
 
 
 const required = [
-    'firstname', 'lastname', 'username', 'email', 'password', 
-    'gender', 'birthday', 'language'
+    'firstname', 'lastname', 'username', 'email', 'language', 'gender', 'birthday',
+    'see_f', 'see_m', 'see_nb', 'bio', 'online', 'password', 'valide', 'providers'
 ];
 
 
@@ -26,15 +25,40 @@ function random() {
     return Math.round((Math.random())*100);
 }
 
-exports.getLastNames = function(){
-    return fakeData.lastnames;
+function getUsername(firstname, lastname){
+    return (firstname + '.' + lastname).toLowerCase();
 }
 
-exports.getFirstNames = function(){
-    return [fakeData.firstnames.m, fakeData.firstnames.f];
+function getAge(r) {
+    return config.params.MIN_AGED_USERS + r % 12;
 }
 
-exports.getPicturePath = function(j, r){
+function getGender(r, j) {
+    return (r%3>0)? fakeData.genders[j] : fakeData.genders[2];
+}
+
+function getEmail(username) {
+    return 'tillderoquefeuil+' + username + '@gmail.com';
+}
+
+function getBio(r) {
+    let index = r % (fakeData.bios.length + 5);
+    if (index >= fakeData.bios.length){
+        return null;
+    }
+
+    return fakeData.bios[index];
+}
+
+function getOnline(r) {
+    return Time.toDatetime(moment().subtract(r, 'hours'));
+}
+
+function getBirthday(age) {
+    return Time.toDatetime(moment().subtract(age, 'years'));
+}
+
+function getPicturePath(j, r){
     let picture = 'fake_data/pictures/profile_' + fakeData.pictures_path[fakeData.genders[j]];
 
     let nbr = r % (fakeData.genders[j] === 'female'? 130 : 50);
@@ -43,33 +67,8 @@ exports.getPicturePath = function(j, r){
     return picture;
 }
 
-exports.generateUser = function(firstname, lastname, j){
 
-    let r = random();
-    let username = (firstname + '.' + lastname).toLowerCase();
-
-    let age = config.params.MIN_AGED_USERS + 2 + r % 15;
-
-    let gender = (r%3>0)? fakeData.genders[j] : fakeData.genders[2];
-
-    let user = {
-        firstname   : firstname,
-        lastname    : lastname,
-        username    : username,
-        email       : 'tillderoquefeuil+' + username + '@gmail.com',
-        password    : fakeData.password,
-        language    : 'en',
-        gender      : gender,
-        bio         : fakeData.bios[r % (fakeData.bios.length + 5)],
-        online      : time.toDatetime(moment().subtract(r, 'hours')),
-        birthday    : time.toDatetime(moment().subtract(age, 'years')),
-        picture_url : exports.getPicturePath(j, r)
-    };
-
-    return user;
-}
-
-exports.manageOrientation = function(user){
+function manageOrientation(user){
     let r = random();
     let orientations = [1];
 
@@ -83,7 +82,7 @@ exports.manageOrientation = function(user){
     return user;
 }
 
-exports.getRandomTags = function(user){
+function getRandomTags(user){
     let tagIndex;
     let r = random();
     user.tags = [];
@@ -98,7 +97,7 @@ exports.getRandomTags = function(user){
     return user;
 }
 
-exports.getRandomCoords = function(user){
+function getRandomCoords(user){
     let r = [
         random(), random(), random()
     ];
@@ -127,33 +126,64 @@ exports.getRandomCoords = function(user){
     return user;
 }
 
+
+exports.getLastNames = function(){
+    return fakeData.lastnames;
+}
+
+exports.getFirstNames = function(){
+    return [fakeData.firstnames.m, fakeData.firstnames.f];
+}
+
+exports.generateUser = function(firstname, lastname, j){
+
+    let r = random();
+
+    let username = getUsername(firstname, lastname);
+    let age = getAge(r);
+
+    let user = {
+        //CONST
+        valide      : true,
+        providers   : ['local', 'test'],
+        language    : fakeData.language,
+        password    : passwordHash.generate(fakeData.password),
+
+        firstname   : firstname,
+        lastname    : lastname,
+        username    : username,
+
+        gender      : getGender(r, j),
+        email       : getEmail(username),
+        bio         : getBio(r),
+        online      : getOnline(r),
+        birthday    : getBirthday(age),
+        picture_url : getPicturePath(j, r)
+    };
+
+    manageOrientation(user);
+    getRandomTags(user);
+    getRandomCoords(user);
+
+    return user;
+}
+
+
 exports.createTestAccount = function(data) {
 
     return new Promise((resolve, reject) => {
 
+        var user = {};
+
         for (var i in required) {
-            if (!data[required[i]]) {
-                return reject("data missging : " + required[i]);
+            let label = required[i];
+            if (typeof data[label] === 'undefined') {
+                return reject("data missging : " + label);
             }
+
+            user[label] = data[label]
         }
-        
-        var user = {
-            firstname   : data.firstname,
-            lastname    : data.lastname,
-            username    : data.username,
-            email       : data.email,
-            language    : data.language,
-            gender      : data.gender,
-            birthday    : data.birthday,
-            see_f       : data.see_f,
-            see_m       : data.see_m,
-            see_nb      : data.see_nb,
-            bio         : data.bio,
-            online      : data.online,
-            password    : passwordHash.generate(data.password),
-            valide      : true,
-            providers   : ['local', 'test']
-        }
+
 
         UserRepo.createOne(user)
         .then(_user => {
