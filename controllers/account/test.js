@@ -54,6 +54,49 @@ const tags = [
     'sunset', 'dog', 'makeup', 'hair', 'pretty', 'swag', 'cat', 'model', 'motivation',
 ];
 
+const bios = [
+    'All you need to lure me into your car is wine and pizza.',
+    'Funny, handsome, and stupid.',
+    'Your mom loves me.',
+    'Cats love me.',
+    'Dogs love me.',
+    'Looking at my phone searching for a reason to stop looking at my phone.',
+    'You can’t play hard and work hard. If you say that, you’re not doing either hard enough. (I don’t work very hard.)',
+    'Last vacation was to see the basement of the Alamo. Wasn’t what I thought it was going to be but I had a big adventure.',
+    'I’m just a human, standing in front of a bunch of people on an app, and asking them to love me.',
+    'The last person who swiped left on me aged so quickly he shriveled up into an old man skeleton thing before he turned into dust and died a swift yet horrifying death. He chose poorly.',
+    'I’m pretty great but don’t listen to me.',
+    '9th grade history teacher by day. Semi-pretentious craft beer aficionado by night.',
+    'Product designer by day, cyberpunk and avant garde enthusiast by night.',
+    'Management/marketing consultant by day, amature mixologist and professional cat cuddler by night.',
+    'Software engineer by day, even bigger nerd by night.',
+    'Love anime, board games, and obscure music nobody else seems to listen to.',
+    'Dinners with friends that end in late nights talking and laughing over a table strewn with the dirty dishes none of us are getting up to wash.',
+    'Making fun of people who do crossfit, net-back hats, first runs, the first sip of beer after a long day, and coming home to my dog every night.',
+    '“This one’s got real potential.” – My 90+ next door neighbor',
+    '“Excellent incisors. And he flosses.” – Dr. Dan, my dentist',
+    '“Better than a hallelujah” – Amy Grant',
+    '“Hard working, conscientious student.” – my 10th grade English teacher',
+    '“I’d highly recommend her for any position.” – my first boss',
+    '“I laughed until I cried.” – my ex (sorry)',
+    'tacos < burritos',
+    'Friday nights out > Thursday nights out',
+    'National league > American league',
+    'Radiolab > Serial',
+    'I’m just sayin’',
+    'breakfast for dinner < pizza for breakfast',
+    'the movie > the book (so sue me)',
+    'sunrise < sunset',
+    'coffee > life',
+    'Sunday fundays > lazy Sundays',
+    'Electric guitar < acoustic guitar (but I play both)',
+    'Guilty pleasures: neighborhood drama, fancy cupcakes, and binge watching Dr House.',
+    'I hate flowers. You’ll never have to buy me flowers. Potatoes chips however ...',
+    'I love roller coasters but the pirate ship ride completely terrifies me.',
+    "About Me: Likes fishing, gives great speeches at weddings, and plays a mean harmonica. \nAbout You: Eats adventurously, likes road trips, can talk about books for hours.",
+    "About Me: Likes poop jokes, can stay out late on a school night, and isn’t afraid to talk politics on a first date. \nAbout You: Tolerate my poop jokes, doesn’t take yourself too seriously, and like a healthy debate."
+];
+
 const genders = ['male', 'female', 'nb'];
 
 const coords = {
@@ -113,6 +156,8 @@ exports.generateUser = function(firstname, lastname, j){
         password    : 'Matcha42!',
         language    : 'en',
         gender      : gender,
+        bio         : bios[r % (bios.length + 5)],
+        online      : time.toDatetime(moment().subtract(r, 'hours')),
         birthday    : time.toDatetime(moment().subtract(age, 'years')),
         picture_url : exports.getPicturePath(j, r)
     };
@@ -199,6 +244,8 @@ exports.createTestAccount = function(data) {
             see_f       : data.see_f,
             see_m       : data.see_m,
             see_nb      : data.see_nb,
+            bio         : data.bio,
+            online      : data.online,
             password    : passwordHash.generate(data.password),
             valide      : true,
             providers   : ['local', 'test']

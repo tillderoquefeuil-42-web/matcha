@@ -164,6 +164,42 @@ function findGoogleProfile(profile, callback) {
     });
 }
 
+function anonymizeProfiles(profiles){
+    let data = [];
+    let single = false;
+
+    if (!profiles){
+        return null;
+    }
+
+    if (profiles && profiles._id){
+        profiles = [profiles];
+        single = true;
+    }
+
+    for (let i in profiles){
+        data.push(anonymizeOneProfile(profiles[i]));
+    }
+    
+    if (single && data.length === 1){
+        return data[0];
+    }
+    return data;
+}
+
+function anonymizeOneProfile(profile){
+    let toDelete = ['birthday', 'email', 'gender', 'language', 'location', 'password', 'providers', 'see_f', 'see_m', 'see_nb', 'username']
+
+    for (let i in toDelete){
+        delete profile[toDelete[i]];
+    }
+
+    profile.anonymized = true;
+    profile.lastname = profile.lastname[0] + '.';
+
+    return profile;
+}
+
 exports.getUserFromToken = function(token) {
 
     return new Promise((resolve, reject) => {
@@ -921,7 +957,7 @@ exports.loadContacts = function(user){
 
         UserRepo.findAllFriends(user)
         .then(friends => {
-            data.friends = friends;
+            data.friends = anonymizeProfiles(friends);
             return resolve(data);
 
         }).catch(err => {
@@ -948,7 +984,7 @@ exports.loadMatches = function(user, options){
 
         UserRepo.matching(user, options)
         .then(matches => {
-            data.matches = matches;
+            data.matches = anonymizeProfiles(matches);
             return resolve(data);
 
         }).catch(err => {
@@ -975,7 +1011,7 @@ exports.loadOneMatch = function(user, partnerId){
 
         UserRepo.getUpdatedPartner(user, partnerId)
         .then(match => {
-            data.match = match;
+            data.match = anonymizeProfiles(match);
             return resolve(data);
 
         }).catch(err => {
@@ -1002,7 +1038,7 @@ exports.loadMatchedProfiles = function(user){
 
         UserRepo.matchedProfiles(user)
         .then(matched => {
-            data.matched = matched;
+            data.matched = anonymizeProfiles(matched);
             return resolve(data);
 
         }).catch(err => {
@@ -1041,7 +1077,7 @@ exports.getAllVisits = function(user){
 
             UserRepo.getUsersById(ids)
             .then(hosts => {
-                data.hosts = hosts;
+                data.hosts = anonymizeProfiles(hosts);
                 return resolve(data);
             });
 
@@ -1136,7 +1172,7 @@ exports.mergeMatchRelation = function(user, data) {
         .then(match => {
             UserRepo.getUpdatedPartner(user, data.partner_id)
             .then(partner => {
-                return resolve(partner);
+                return resolve(anonymizeProfiles(partner));
             });
         }).catch(err => {
             console.log(err);
@@ -1181,14 +1217,14 @@ exports.updateLike = function(user, data) {
                         EventRepo.add(data.partner_id, user._id, eventType)
                         .then(u_event => {
                             return resolve({
-                                partner : partner,
+                                partner : anonymizeProfiles(partner),
                                 p_event : p_event,
                                 u_event : u_event
                             });
                         });
                     } else {
                         return resolve({
-                            partner : partner,
+                            partner : anonymizeProfiles(partner),
                             p_event : p_event
                         });
                     }

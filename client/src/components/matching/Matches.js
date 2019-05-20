@@ -54,12 +54,6 @@ export class Matches extends Component {
         this.setState({
             matched : matched
         });
-
-        if (!this.log_warning){
-            console.warn('Globale variable to delete');
-            this.log_warning = true;
-        }
-        window.matched = matched;
     }
 
     updateOneMatch(match){

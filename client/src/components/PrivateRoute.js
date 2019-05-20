@@ -17,9 +17,7 @@ export class PrivateRoute extends React.Component {
         let params = utils.getQueryParameters(props);
         let token = params.get('token');
 
-        // let file = trans.getFile();
-        let file = null;
-        console.warn('translations always load');
+        let file = trans.getFile();
         let user = utils.getLocalUser();
 
         this.state = {
