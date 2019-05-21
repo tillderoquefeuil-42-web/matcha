@@ -79,6 +79,7 @@
 }
 
 .one-file-view > a > img {
+    height: 100%;
     max-height: 100%;
 }
 

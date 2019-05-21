@@ -5,6 +5,10 @@ NEO4J = neo4j
 
 all: $(NAME)
 
+init:
+	@npm install --silent
+	@npm install --silent --prefix ./client
+
 run_database:
 	$(NEO4J) start
 	mongod --dbpath ./data &>/dev/null
@@ -22,10 +26,7 @@ stop_database:
 stop_node:
 	@killall node
 
-$(NAME): 
-	@npm install --silent
-	@npm install --silent --prefix ./client
-
+$(NAME):
 	@ttab -t DATABASE "make run_database"
 	@ttab -t SERVER "make run_server"
 	@ttab -t CLIENT "make run_client"
