@@ -53,6 +53,18 @@ export class Layout extends React.Component {
         return classes;
     }
 
+    footerChat() {
+        if (this.state.page === 'chat'){
+            return null;
+        }
+
+        return (
+            <FooterChat
+                _g={ this.state }
+            />
+        );
+    }
+
     render() {
         return(
             <div id="layout" className={ this.getClasses() }>
@@ -65,9 +77,7 @@ export class Layout extends React.Component {
                     _g={ this.state }
                 />
 
-                <FooterChat
-                    _g={ this.state }
-                />
+                { this.footerChat() }
 
             </div>
         );

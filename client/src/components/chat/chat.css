@@ -218,6 +218,7 @@
 
 .one-message.from-partner > .one-message-container {
     background: #eee;
+    overflow-wrap: break-word;
 }
 
 .one-message.from-user > .one-message-container {

@@ -74,7 +74,7 @@ let MessageRepository = {
                             if (i > 0){
                                 filesQuery += ', '; 
                             }
-                            filesQuery += `(m)-[tf${i}:TMP]->(_f${i}:TmpFile {id:${filesId[i]}})`
+                            filesQuery += `(m)-[tf${i}:TMP]->(_f${i}:TmpFile {id:"${filesId[i]}"})`
                         }
 
                         queryEx.exec(filesQuery)
@@ -168,7 +168,7 @@ let MessageRepository = {
 
             let query = `
                 MATCH (c)-[o:OWN]->(m:Message)-->(f:TmpFile), (m)-->(u:User), (_f:File)
-                WHERE ID(_f)=${file._id} AND ID(c)=${convId} AND f.id=${file.id}
+                WHERE ID(_f)=${file._id} AND ID(c)=${convId} AND f.id="${file.id}"
                 CREATE (_f)-[b:BELONG_TO]->(m)
                 DETACH DELETE f
                 RETURN m, c, o, u, _f;

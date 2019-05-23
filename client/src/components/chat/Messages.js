@@ -95,7 +95,7 @@ export class Messages extends Component {
             _this.readChat(true);
         });
 
-        this.socket.on('NEW_MESSAGE', function(data){
+        this.socket.off('NEW_MESSAGE').on('NEW_MESSAGE', function(data){
             if (data.message && data.message.conv_id === _this.state.conv_id){
                 _this.addMessage(data.message);
                 _this.scrollToBottom();
