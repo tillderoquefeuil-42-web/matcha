@@ -48,6 +48,12 @@ export class SignIn extends React.Component {
         });
     }
 
+    handleKeyPress = event => {
+        if (event.key === 'Enter'){
+            this.send(event);
+        }
+    }
+
     render() {
         return(
             <div>
@@ -58,7 +64,7 @@ export class SignIn extends React.Component {
 
                 <FormGroup controlId="password" bsSize="large">
                     <ControlLabel>{ trans.get('USER.FIELDS.PASSWORD') }</ControlLabel>
-                    <FormControl value={this.state.password} onChange={this.handleChange} type="password"/>
+                    <FormControl value={this.state.password} onChange={this.handleChange} onKeyPress={this.handleKeyPress} type="password"/>
                     <a href="/user/resetPassword">{ trans.get('USER.FIELDS.PASSWORD_FORGOTTEN') }</a>
                 </FormGroup>
 

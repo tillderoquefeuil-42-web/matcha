@@ -1,7 +1,4 @@
-
 const account = require('./account/lib.js');
-var multer  = require('multer');
-var upload = multer({ dest: 'client/public/uploads/' });
 
 module.exports = function (app) {
 
@@ -23,8 +20,6 @@ module.exports = function (app) {
     app.post('/saveNewEmail', account.saveNewEmail);
     app.post('/saveNewPassword', account.saveNewPassword);
     app.post('/saveLocation', account.saveLocation);
-
-    app.post('/savePicture', upload.single('profile_picture'), account.savePicture);
 
     app.post('/deleteAccount', account.deleteAccount);
 

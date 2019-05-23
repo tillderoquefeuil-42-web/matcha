@@ -22,6 +22,37 @@ const Files = require('../utils/files');
 
 // UTILS
 
+function manageResSuccess(res, params){
+
+    params = params || {};
+
+    params.status = 200;
+    params.text = 'SUCCESS';
+
+    res.status(200).json(params);
+    return res;
+}
+
+function manageResError(res, params, status){
+
+    let text;
+    if (typeof params === 'string'){
+        text = params;
+        params = null;
+    }
+    params = params || {};
+
+    status = status || params.status || 500;
+    text =  text || params.text || 'INTERNAL_ERROR'
+
+    params.status = status;
+    params.text = text;
+    params.error = true;
+
+    res.status(200).json(params);
+    return res;
+}
+
 function errorRedirect(res, method, params) {
 
     method = method || 'POST';
@@ -31,9 +62,8 @@ function errorRedirect(res, method, params) {
         params = params || {};
         params.status = params.status || 400;
         params.redirect = params.link || link;
-        
-        res.status(params.status).json(params);
-        
+
+        manageResError(res, params);
     } else {
         res.redirect(link);
     }
@@ -82,43 +112,33 @@ function connectionTry(user, valid, callback) {
 
 exports.getUserByToken = function(req, res, callback, errorCallback) {
     if (!req.body._token) {
-        return res.status(401).json({
-            text  : "NO_TOKEN"
-        });
+        manageResError(res, 'NO_TOKEN', 401);
     }
-
+    
     if (req.user){
         return callback(req.user);
     }
-
+    
     return this.getUserFromToken(req.body._token)
     .then(user => {
         if (user == null) {
             if (errorCallback) {
                 errorCallback(err, user);
             } else {
-                res.status(404).json({
-                    text  : 'USER_NOT_FOUND'
-                });
+                manageResError(res, 'USER_NOT_FOUND', 404);
             }
-
+            
         } else if (callback) {
             callback(user);
-
+            
         } else {
-            res.status(200).json({
-                text    : "SUCCESS",
-                user    : user
-            });
+            manageResSuccess(res, {user : user});
         }
     }).catch(err => {
         if (errorCallback) {
             errorCallback(err, user);
         } else {
-            res.status(400).json({
-                text    : 'DATABASE_CRASHED',
-                error   : err
-            });
+            manageResError(res, 'DATABASE_CRASHED', 400);
         }
     });
 }
@@ -267,9 +287,7 @@ exports.signUp = function(req, res) {
 
     for (var i in required) {
         if (!req.body[required[i]]) {
-            res.status(400).json({
-                text    : "INVALID_PARAMETERS"
-            });
+            manageResError(res, 'INVALID_PARAMETERS', 400);
             return;
         }
     }
@@ -310,28 +328,19 @@ exports.signUp = function(req, res) {
         .then(_user => {
 
             Com.signUp.send(_user);
-            res.status(200).json({
-                text    : "SUCCESS",
-                token   : _user.getToken()
-            });
+            manageResSuccess(res, {token : _user.getToken()});
         }).catch(err => {
-            res.status(500).json({
-                text    : "INTERNAL_ERROR"
-            });
+            manageResError(res);
         });
 
     }, function (error) {
         switch (error) {
             default:
             case 500:
-                res.status(500).json({
-                    text    : "INTERNAL_ERROR"
-                });
+                manageResError(res);
                 break;
             case 403:
-                res.status(403).json({
-                    text    : "USER_ALREADY_EXIST",
-                });
+                manageResError(res, 'USER_ALREADY_EXIST', 403);
                 break;
         }
         return;
@@ -341,9 +350,7 @@ exports.signUp = function(req, res) {
 exports.checkUsernames = function(req, res) {
 
     if (typeof req.body.usernames !== 'object' || !req.body.usernames.length) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return;
     }
 
@@ -354,32 +361,21 @@ exports.checkUsernames = function(req, res) {
 
         if (err) {
             console.log(err);
-            res.status(500).json({
-                text: "INTERNAL_ERROR"
-            });
+            manageResError(res);
         } else if (!users || !users.length) {
-            console.log('');
-            res.status(200).json({
-                text: "SUCCESS"
-            });
+            manageResSuccess(res);
         } else if (users.length === 1 && String(users[0]['_id']) === String(userId)) {
-            res.status(200).json({
-                text: "SUCCESS"
-            });
+            manageResSuccess(res);
         } else if (users && users.length > 0 && length > users.length) {
-            res.status(200).json({
-                text: "SUCCESS",
-                users : users
-            });
+            manageResSuccess(res);
         } else if (users && users.length > 0) {
-            res.status(403).json({
+            manageResError(res, {
+                status: 403,
                 text  : "USER_NAME_EXIST",
                 users : users
             });
         } else {
-            res.status(200).json({
-                text: "SUCCESS"
-            });
+            manageResSuccess(res);
         }
     });
 
@@ -389,18 +385,14 @@ exports.checkUsernames = function(req, res) {
 exports.signIn = function(req, res) {
 
     if (!req.body.username || !req.body.password) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return res;
     }
 
     UserRepo.findLocalByUsernameOrEmail(req.body.username)
     .then(user => {
         if(!user) {
-            res.status(401).json({
-                text: "USER_NOT_EXIST"
-            });
+            manageResError(res, 'USER_NOT_EXIST', 401);
             return;
         }
 
@@ -413,10 +405,7 @@ exports.signIn = function(req, res) {
         if (user.authenticate(req.body.password)) {
             connectionTry(user, true);
 
-            res.status(200).json({
-                "token": user.getToken(),
-                text: "SUCCESS"
-            });
+            manageResSuccess(res, {token : user.getToken()});
             return;
         } else {
             connectionTry(user, false, function (err, user) {
@@ -431,18 +420,13 @@ exports.signIn = function(req, res) {
                     return errorRedirect(res, 'POST', {status:401, link:lockedLink});
                 }
 
-                res.status(401).json({
-                    text: "INVALID_PASSWORD"
-                });
+                manageResError(res, 'INVALID_PASSWORD', 401);
                 return;
             });
         }
     }).catch(err => {
         console.log(err);
-        res.status(500).json({
-            text    : "INTERNAL_ERROR",
-            error   : err
-        });
+        manageResError(res);
     });
 
 };
@@ -450,19 +434,14 @@ exports.signIn = function(req, res) {
 exports.auth = function(req, res) {
 
     return exports.getUserByToken(req, res, function(user) {
-        res.status(200).json({
-            text    : "SUCCESS",
-            user    : user
-        });
+        manageResSuccess(res, {user : user});
     });
 
 };
 
 exports.resetPassword = function(req, res) {
     if (!req.body.email) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return;
     }
 
@@ -470,54 +449,40 @@ exports.resetPassword = function(req, res) {
         email: req.body.email
     }).then(user => {
         if (!user) {
-            res.status(401).json({
-                text: "USER_NOT_EXIST"
-            });
+            manageResError(res, 'USER_NOT_EXIST', 401);
         } else {
             Com.resetPassword.send(user);
-            res.status(200).json({
-                text: "SUCCESS"
-            });
+            manageResSuccess(res);
         }
     }).catch(err => {
-        res.status(500).json({
-            text: "INTERNAL_ERROR"
-        });
+        manageResError(res);
     });
-
+    
 };
 
 exports.savePswdByToken = function(req, res) {
-
+    
     if (!req.body.token || !req.body.password) {
-        res.status(400)
-        .json({
-            text  : "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return;
     }
-
+    
     req.body._token = req.body.token;
-
+    
     return exports.getUserByToken(req, res, function(user) {
-
+        
         user.locked = false;
         user.connection_try = 0;
         user.password = passwordHash.generate(req.body.password);
         if (user.providers.indexOf('local') === -1) {
             user.providers.push('local');
         }
-
+        
         UserRepo.updateOne(user)
         .then(_user => {
-            res.status(200).json({
-                text    : "SUCCESS",
-                user    : _user
-            });
+            manageResSuccess(res, {user : _user});
         }).catch(err => {
-            res.status(500).json({
-                text: "INTERNAL_ERROR"
-            });
+            manageResError(res);
         });
     });
 
@@ -525,37 +490,27 @@ exports.savePswdByToken = function(req, res) {
 
 exports.sendLockedAccount = function(req, res) {
     if (!req.body.email) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return res;
     }
 
     UserRepo.findOne({email : req.body.email})
     .then(user => {
         if (!user) {
-            res.status(401).json({
-                text: "USER_NOT_EXIST"
-            });
+            manageResError(res, 'USER_NOT_EXIST', 401);
         } else if (user.locked === true) {
             Com.lockedAccount.send(user);
-            res.status(200).json({
-                text: "SUCCESS"
-            });
+            manageResSuccess(res);
         }
     }).catch(err => {
-        res.status(500).json({
-            text: "INTERNAL_ERROR"
-        });
+        manageResError(res);
     });
 };
 
 exports.saveUser = function(req, res) {
 
     if (!req.body.user) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return;
     }
 
@@ -589,30 +544,24 @@ exports.saveUser = function(req, res) {
     }
 
     if (error) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return;
     }
 
     // CHECK BIRTHDAY
     let maxDate = moment().subtract(config.params.MIN_AGED_USERS, 'years');
     if (moment(_user.birthday) > maxDate) {
-        res.status(401).json({
-            text: "USER_TOO_YOUNG"
-        });
+        manageResError(res, 'USER_TOO_YOUNG', 401);
         return;
     }
-
+    
     return exports.getUserByToken(req, res, function(user) {
-
+        
         // USERNAME
         findUserByUsernames([_user.username], function(err, users) {
-
+            
             if (err) {
-                res.status(500).json({
-                    text: "INTERNAL_ERROR"
-                });
+                manageResError(res);
                 return;
             }
 
@@ -622,14 +571,14 @@ exports.saveUser = function(req, res) {
             } else if (users && users.length > 1) {
                 error++;
             } if (error > 0) {
-                res.status(401).json({
+                manageResError(res, {
                     text    : "USERNAME_EXIST",
                     users   : users,
                     user    : user
-                });
+                }, 401);
                 return;
             }
-
+            
             // TO UPDATE
             const fields = ['bio', 'firstname', 'lastname', 'username', 'gender', 'birthday', 'language', 'see_f', 'see_m', 'see_nb'];
             const unwanted = ['profile_pic', 'profile_picture', 'tags', 'pictures', 'location'];
@@ -641,20 +590,15 @@ exports.saveUser = function(req, res) {
             }
 
             _user.tags = _user.tags || [];
-
+            
             TagRepo.updateUserTags(user, _user.tags)
             .then(r => {
                 UserRepo.updateOne(user)
                 .then(_u => {
-                    res.status(200).json({
-                        text    : "SUCCESS",
-                        user    : _u
-                    });
+                    manageResSuccess(res, {user : _u});
                 }).catch(err => {
                     console.log(err);
-                    res.status(500).json({
-                        text: "INTERNAL_ERROR"
-                    });
+                    manageResError(res);
                 });
             });
             return;
@@ -664,45 +608,38 @@ exports.saveUser = function(req, res) {
 
 exports.saveNewPassword = function(req, res) {
     if (!req.body.password) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return;
     }
-
+    
     return exports.getUserByToken(req, res, function(user) {
-
+        
         if (user.providers.indexOf('local') === -1 || user.authenticate(req.body.old_password)) {
-
+            
             if (user.providers.indexOf('local') === -1) {
                 user.providers.push('local');
             }
-
+            
             user.password = passwordHash.generate(req.body.password);
-
+            
             // NO UPDATE ON :
             const unwanted = ['profile_pic', 'profile_picture', 'tags', 'pictures', 'location'];
             for (var i in unwanted) {
                 delete user[unwanted[i]];
             }
-
+            
             UserRepo.updateOne(user)
             .then(_user => {
-                res.status(200).json({
-                    text    : "SUCCESS",
+                manageResSuccess(res, {
                     user    : _user,
                     token   : _user.getToken()
                 });
             }).catch(err => {
-                res.status(500).json({
-                    text: "INTERNAL_ERROR"
-                });
+                manageResError(res);
             });
-
+            
         } else {
-            res.status(401).json({
-                text    : "INVALID_PASSWORD"
-            });
+            manageResError(res, 'INVALID_PASSWORD', 401);
             return;
         }
     });
@@ -710,9 +647,7 @@ exports.saveNewPassword = function(req, res) {
 
 exports.saveNewEmail = function(req, res) {
     if (!req.body.email || !req.body.password) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return;
     }
 
@@ -723,135 +658,77 @@ exports.saveNewEmail = function(req, res) {
             findUserByEmails([req.body.email], function(err, users) {
                 if (err) {
                     console.log(err);
-                    res.status(500).json({
-                        text    : "INTERNAL_ERROR"
-                    });
+                    manageResError(res);
                 } else if (users && users.length === 1 && String(users[0]['_id']) === String(user._id)) {
-                    res.status(200).json({
-                        text: "SUCCESS"
-                    });
+                    manageResSuccess(res)
                 } else if (users && users && users.length > 0) {
-                    res.status(403).json({
+                    manageResError(res, {
                         text  : "USER_ALREADY_EXIST",
                         users : users
-                    });
+                    }, 403);
                 } else {
                     user.valid = false;
                     user.email = req.body.email;
-
+                    
                     UserRepo.updateOne(user)
                     .then(result => {
                         Com.validateEmailAddress.send(user);
-                        res.status(200).json({
-                            text    : "SUCCESS",
+                        manageResSuccess(res, {
                             user    : user,
                             token   : user.getToken()
                         });
                     }).catch(err => {
-                        res.status(500).json({
-                            text: "INTERNAL_ERROR"
-                        });
+                        manageResError(res);
                     });
-
                     return;
                 }
             });
-
+            
         } else {
-            res.status(401).json({
-                text: "INVALID_PASSWORD"
-            });
+            manageResError(res, 'INVALID_PASSWORD', 401);
             return;
         }
     });
 };
 
-exports.savePicture = function(req, res) {
-
-    if (!req.file) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
-        return;
-    }
-
-    let file = req.file;
-    console.log(file);
-
-    return exports.getUserByToken(req, res, function(user) {
-
-        // let file = Files.parse(data, files, user);
-        // Files.save(file);
-
-        user.profile_picture = file.filename;
-
-        UserRepo.updateOne(user)
-        .then(_user => {
-            res.status(200).json({
-                text    : "SUCCESS",
-                user    : _user
-            });
-        }).catch(err => {
-            res.status(500).json({
-                text: "INTERNAL_ERROR"
-            });
-        });
-
-    });
-};
-
 exports.saveLocation = function(req, res) {
-
+    
     if (!req.body.location) {
-        res.status(400).json({
-            text: "INVALID_PARAMETERS"
-        });
+        manageResError(res, 'INVALID_PARAMETERS', 400);
         return;
     }
-
+    
     return exports.getUserByToken(req, res, function(user) {
         LocationRepo.createOne(req.body.location)
         .then(result => {
             LocationRepo.userLink(result, user)
             .then(location => {
                 user.location = location;
-
-                res.status(200).json({
-                    text    : "SUCCESS",
-                    user    : user
-                });
+                manageResSuccess(res, {user : user});
             });
         }).catch(err => {
             console.log(err);
-            res.status(500).json({
-                text: "INTERNAL_ERROR"
-            });
+            manageResError(res);
         });
     });
 };
 
 exports.deleteAccount = function(req, res){
-
+    
     return exports.getUserByToken(req, res, function(user) {
-
+        
         if (!user.isLocal() || user.authenticate(req.body.password)) {
             UserRepo.deleteOne(user)
             .then(results => {
-                res.status(200).json({
-                    text    : "SUCCESS"
-                });
+                manageResSuccess(res);
             }).catch(err => {
                 console.log(err);
-                res.status(500).json({
-                    text    : "INTERNAL_ERROR"
-                });
+                manageResError(res);
             });
             return;
         }
-
-        res.status(401).json({
-            text: "INVALID_PASSWORD"
-        });
+        
+        manageResError(res, 'INVALID_PASSWORD', 401);
         return;
     });
 };
@@ -859,15 +736,10 @@ exports.deleteAccount = function(req, res){
 exports.getTags = function(req, res){
     TagRepo.getAll()
     .then(results => {
-        res.status(200).json({
-            text    : "SUCCESS",
-            tags    : results
-        });
+        manageResSuccess(res, {tags : results});
     }).catch(err => {
         console.log(err);
-        res.status(500).json({
-            text    : "INTERNAL_ERROR"
-        });
+        manageResError(res);
     });
 };
 

@@ -103,12 +103,6 @@ export class Matching extends Component {
         this.setState({
             matches : matches
         });
-
-        if (!this.log_warning){
-            console.warn('Globale variable to delete');
-            this.log_warning = true;
-        }
-        window.matches = matches;
     }
 
     buildSort() {

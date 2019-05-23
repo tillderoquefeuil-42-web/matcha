@@ -26,7 +26,16 @@ const API = {
             params[tokenData.name] = tokenData.token;
         }
 
-        return axios.post(burl + url, params, {headers: header||headers});
+        return axios.post(burl + url, params, {headers: header||headers})
+        .then(function(data){
+            if (data.data && data.data.error){
+                var e = new Error(data.data.text);
+                e.response = data.data;
+                throw e;
+            }
+
+            return data;
+        });
     },
 
     catchSuccess        : function(){
@@ -37,12 +46,12 @@ const API = {
     },
 
     catchError          : function(error){
-        if (!error.response || API.redirection(error.response.data)){
+        if (!error.response || API.redirection(error.response)){
             return;
         }
 
         let title = trans.get('ERROR.TITLE');
-        let msg = trans.get('ERROR.' + error.response.data.text);
+        let msg = trans.get('ERROR.' + error.message);
         alert.show({title: title, message: msg, type: 'error'});
     },
 
