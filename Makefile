@@ -1,7 +1,7 @@
 NAME = matcha
 
-NEO4J = neo4j
-#NEO4J = ~/Applications/neo4j/bin/neo4j
+#NEO4J = neo4j
+NEO4J = ~/Applications/neo4j/bin/neo4j
 
 all: $(NAME)
 
@@ -27,9 +27,9 @@ stop_node:
 	@killall node
 
 $(NAME):
-	@ttab -t DATABASE "make run_database"
-	@ttab -t SERVER "make run_server"
-	@ttab -t CLIENT "make run_client"
+	@ttab -a iTerm2 -t DATABASE "make run_database"
+	@ttab -a iTerm2 -t SERVER "make run_server"
+	@ttab -a iTerm2 -t CLIENT "make run_client"
 
 clean: stop_database stop_node
 

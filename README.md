@@ -2,8 +2,5 @@
 
 - Make init
 - Check NEO4J path in Makefile
-- In 3 different terminal :
-    - make run_database
-    - make run_server
-    - make run_client
+- Make
 - On server side (http://localhost:3000/) click on /test/createUsers
