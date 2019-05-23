@@ -90,7 +90,7 @@
 .pictures-display {
     height: 100%;
     width: 100%;
-    background: #000;
+    background: #333;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -120,4 +120,5 @@
     max-width: 85%;
     max-height: 90%;
     padding: 20px;
+    margin: auto;
 }

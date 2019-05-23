@@ -1143,6 +1143,19 @@ exports.updateOtherPictures = function(user, filesId) {
     });
 };
 
+exports.deleteFiles = function(user, filesId) {
+    return new Promise((resolve, reject) => {
+
+        FileRepo.removeFiles(filesId, user)
+        .then(results => {
+            return resolve(results);
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+};
+
 exports.updateSearchParams = function(user, data) {
 
     let searchParams = {

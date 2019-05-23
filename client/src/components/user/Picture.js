@@ -69,6 +69,8 @@ export class Picture extends Component {
         let length = 0;
         let files = this.state.files;
         let data = {};
+        let oldFiles = this.getDefaultFiles(this.state.user);
+        let toDelete = [];
 
         let params = {
             file_case   : 'profile_picture'
@@ -89,10 +91,12 @@ export class Picture extends Component {
                 file.status = 'other_picture';
                 data[file.id] = file;
                 length++;
+            } else if (files[id] === null && oldFiles[id]){
+                toDelete.push(oldFiles[id]._id);
             }
         }
 
-        if (!length){
+        if (!length && !toDelete.length){
             let title = trans.get('ERROR.TITLE');
             let msg = trans.get('ERROR.INVALID_PARAMETERS');
             alert.show({title: title, message: msg, type: 'error'});
@@ -104,7 +108,12 @@ export class Picture extends Component {
         });
 
         filesManager.setSocket(this.socket);
-        filesManager.sendFiles(data, params);
+
+        if (length){
+            filesManager.sendFiles(data, params);
+        } if (toDelete.length){
+            filesManager.deleteFiles(toDelete);
+        }
     }
 
     confirmUpdate(user) {
@@ -163,7 +172,7 @@ export class Picture extends Component {
         if (file){
             files[id] = file;
         } else {
-            delete files[id];
+            files[id] = null;
         }
 
         this.setState({files : files});
@@ -294,6 +303,7 @@ class ProfilePicture extends Component {
                     files={ this.state.files }
                     addFile={ (file) => this.addFile(file) }
                     ref={ el => this.attach_input = el }
+                    imgOnly
                 />
             </i>
         );
@@ -307,6 +317,7 @@ class ProfilePicture extends Component {
                 files={ this.state.files }
                 addFile={ (file) => this.addFile(file) }
                 maxFiles={ 1 }
+                imgOnly
                 replace
             >
                 { this.buildFileContainer() }

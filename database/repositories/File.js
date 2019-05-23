@@ -67,6 +67,25 @@ let FileRepository = {
                 return reject(err);
             });
         });
+    },
+
+    removeFiles     : function(filesId, user){
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (f:File)<--(u:User)
+                WHERE ID(f) IN [${filesId.join(', ')}] AND ID(u)=${user._id}
+
+                DETACH DELETE f
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                return resolve(parser.records(results, type, true));
+            }).catch(err => {
+                return reject(err);
+            });
+        });
     }
 
 };

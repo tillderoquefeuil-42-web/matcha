@@ -306,6 +306,11 @@ module.exports = function (app, server) {
             });
         });
 
+        socket.on('DELETE_FILES', function(data){
+            let user = getUserBySocket(socket);
+            account.deleteFiles(user, data.files_ids);
+        });
+
         //SEARCH PARAMS
 
         socket.on('GET_SEARCH_PARAMS', function(data){
@@ -477,7 +482,6 @@ module.exports = function (app, server) {
                 io.sockets.in(userRoom).emit('LOAD_USER_EVENTS', {events:events});
             });
         });
-
 
         socket.on('USER_READ_EVENTS', function(data){
             let user = getUserBySocket(socket);

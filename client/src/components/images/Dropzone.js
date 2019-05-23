@@ -8,8 +8,9 @@ import './images.css';
 
 const maxFiles = 9;
 const maxSize = 25000000;
+const notSupported = ['image/jp2', 'image/tiff'];
 
-function manageOneFile(file, addOneFile){
+function manageOneFile(file, imgOnly, addOneFile){
     let title = trans.get('ERROR.TITLE');
     let msg;
 
@@ -25,21 +26,25 @@ function manageOneFile(file, addOneFile){
         return;
     }
 
-    file.id = (new Date()).getTime();
-    file = parseOneFile(file, addOneFile);
+    file.id = (new Date()).getTime() + '_' + file.name;
+    file = parseOneFile(file, imgOnly, addOneFile);
 
     if (file){
         addOneFile(file);
     } else if (file === false){
         msg = trans.get('ERROR.TYPE_NOT_SUPPORTED');
         alert.show({title: title, message: msg, type: 'error'});
-        console.warn('bad file');
+        // console.warn('bad file');
     }
 }
 
-function parseOneFile(file, addOneFile){
+function parseOneFile(file, imgOnly, addOneFile){
 
-    if (file && file.type.match('image.*')) {
+    if (!file || notSupported.indexOf(file.type) !== -1){
+        return false
+    }
+
+    if (file.type.match('image.*')) {
         let reader = new FileReader();
 
         reader.onloadend = () => {
@@ -49,12 +54,12 @@ function parseOneFile(file, addOneFile){
 
         reader.readAsDataURL(file);
         return;
-    } else if (file && file.type.match('application/pdf')) {
+    } else if (!imgOnly && file.type.match('application/pdf')) {
         file.preview_icon = "far fa-file-pdf";
-    } else if (file && file.type.match('text.*')) {
+    } else if (!imgOnly && file.type.match('text.*')) {
         file.preview_icon = "far fa-file-alt";
     } else {
-        console.log(file.type);
+        // console.log(file.type);
         return false;
     }
 
@@ -107,7 +112,7 @@ export class Dropzone extends React.Component {
 
             for (let i in files){
                 if (typeof files[i] === 'object'){
-                    manageOneFile(files[i], this.props.addFile);
+                    manageOneFile(files[i], this.props.imgOnly, this.props.addFile);
                 }
             }
         }
@@ -168,7 +173,7 @@ export class FileInput extends React.Component {
 
             for (let i in files){
                 if (typeof files[i] === 'object'){
-                    manageOneFile(files[i], this.props.addFile);
+                    manageOneFile(files[i], this.props.imgOnly, this.props.addFile);
                 }
             }
         }
@@ -239,7 +244,7 @@ export class FileContainer extends React.Component {
             let file = this.props.files[i];
 
             previews.push(
-                <div className="file-preview-container" key={ file.id }>
+                <div className="file-preview-container" key={ file.id } title={ file.name } >
                     <span className="delete-file" onClick={ () => this.handleDelete(file.id) }>
                         <i className="far fa-times-circle"></i>
                     </span>
@@ -288,14 +293,16 @@ export class OneFileView extends React.Component {
 
     componentDidMount() {
 
-        let e = new Event('pictures-display');
+        if (this.state.type === 'view-img'){
+            let e = new Event('pictures-display');
 
-        e.data = {
-            multi       : this.props.multi,
-            url         : this.state.url
-        };
+            e.data = {
+                multi       : this.props.multi,
+                url         : this.state.url
+            };
+            document.dispatchEvent(e);
+        }
 
-        document.dispatchEvent(e);
     }
 
     getFile() {
@@ -366,7 +373,6 @@ export class OneFileView extends React.Component {
     }
 
 }
-
 
 export class PicturesDisplay extends React.Component {
 

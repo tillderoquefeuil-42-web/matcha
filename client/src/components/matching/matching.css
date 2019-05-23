@@ -312,14 +312,13 @@
 }
 
 .matched-searchbar-container .searchbar-items-list > .list-item {
-    width: 30%;
-    min-width: 250px;
+    width: 250px;
+    padding: 0px;
     overflow: hidden;
 }
 
 .matched-searchbar-container .one-profile > .profile-pic {
-    max-height: 200px;
-    overflow: hidden;
+    height: 250px;
 }
 
 .matched-searchbar-container .one-profile > .profile-pic > img {

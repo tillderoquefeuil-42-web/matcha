@@ -36,10 +36,9 @@ export default {
     },
 
     sendFiles       : function(files, params){
-
         for (let i in files){
             if (!files[i].id){
-                files[i].id = (new Date()).getTime();
+                files[i].id = (new Date()).getTime() + '_' + files[i].name;
             }
         }
 
@@ -49,16 +48,22 @@ export default {
 
         this.socket.off('UPLOAD_NEXT_SLICE').on('UPLOAD_NEXT_SLICE', (data) => {
             let file = files[data.id];
-            let place = data.slice * fileSliceSize;
-            let slice = file.slice(place, place + Math.min(fileSliceSize, file.size - place));
+            if (file){
+                let place = data.slice * fileSliceSize;
+                let slice = file.slice(place, place + Math.min(fileSliceSize, file.size - place));
 
-            fileReaders[data.id].readAsArrayBuffer(slice);
+                fileReaders[data.id].readAsArrayBuffer(slice);
+            }
         });
 
         for (let i in files){
             let file = files[i];
             fileReaders[file.id] = this.sendOneFile(file, params);
         }
+    },
+
+    deleteFiles         : function(ids){
+        this.socket.emit('DELETE_FILES', {files_ids:ids});
     }
 
 }
