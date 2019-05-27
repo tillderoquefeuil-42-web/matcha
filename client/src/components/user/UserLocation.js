@@ -189,19 +189,6 @@ export class UserLocation extends Component {
         }, API.catchError);
     }
 
-
-    // FOR DIRECT RENDERING
-
-    getMapWidth() {
-        let width = window.innerWidth;
-
-        if (width > 991){
-            return (Math.round(width/3.15));
-        }
-
-        return (width - 250);
-    }
-
     disclaimer() {
         if (this.state.disclaimer > 0){
             return (
@@ -227,7 +214,6 @@ export class UserLocation extends Component {
 
                 <Gmap
                     ref={ this.setGmap }
-                    width={ this.getMapWidth() }
                     height={ 400 }
                     onLoaded={ () => this.onMapLoaded() }
                 />

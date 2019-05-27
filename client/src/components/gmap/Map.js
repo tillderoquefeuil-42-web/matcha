@@ -85,7 +85,7 @@ export class Map extends Component {
         return (
             <div
                 id={ this.props.map }
-                style={{ width: this.props.width, height: this.props.height }}
+                style={{ height: this.props.height }}
             />
         );
     }

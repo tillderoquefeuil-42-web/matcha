@@ -144,7 +144,7 @@ i.notifs > .sup {
 /* MAIN */
 
 #main {
-    padding-top: 50px;
+    margin-top: 51px;
     position: fixed;
     top: 0;
     left: 0;

@@ -3,3 +3,7 @@
 .gmap .autocomplete-input {
     margin-bottom: 5px;
 }
+
+.gmap {
+    width: 100%;
+}

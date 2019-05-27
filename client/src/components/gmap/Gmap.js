@@ -16,7 +16,6 @@ export class Gmap extends Component {
         super(props);
 
         this.state = {
-            width       : props.width || 500,
             height      : props.height || 500,
             zoom        : props.zoom || 10,
             map         : null,
@@ -153,7 +152,6 @@ export class Gmap extends Component {
                         ref={ el => this.gmap = el }
                         map="gmap-maps"
                         autocomplete="gmap-autocomplete"
-                        width={ this.state.width }
                         height={ this.state.height }
                         options={ this.initOptions() }
                         onLoad={ data => this.onLoaded(data) }
