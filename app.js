@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 
 // CORS
 app.use(function (req, res, next) {
-    let allowedOrigins = ['http://localhost:3000', 'http://10.12.2.16:3000'];
+    let allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://10.12.2.16:3000'];
 
     let origin = req.headers.origin;
     if (allowedOrigins.indexOf(origin) > -1){

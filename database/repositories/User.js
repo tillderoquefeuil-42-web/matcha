@@ -6,7 +6,14 @@ const defaultParams = require('../../config/config').MATCHING;
 const time = require('../../controllers/utils/time');
 
 const type = 'user';
-let userId = null;
+
+const userFields = [
+    '_id', 'email', 'username', 'firstname', 'lastname',
+    'valid', 'locked', 'connection_try',
+    'providers', 'googleId', 'birthday',
+    'gender', 'see_m', 'see_f', 'see_nb',
+    'bio', 'profile_picture', 'language', 'online'
+];
 
 defaultParams.AGE._min = function(){
     let n = new Date()
@@ -29,14 +36,9 @@ parser.setSingle(type, function(record){
 
 parser.setMerges(type, ['tags', 'pictures', {label:'match_relation', single:true}]);
 
-function setUserId(id){
-    userId = id;
-}
-
 function parseOneRecord(record){
 
     let params = {
-        user_id     : userId,
         profile_pic : null,
         others      : [],
         tags        : []
@@ -117,6 +119,18 @@ function filterByTags(results, tags){
     return data;
 }
 
+function parseUserFields(user) {
+    let data = {};
+
+    for (let i in user){
+        if (userFields.indexOf(i) !== -1){
+            data[i] = user[i];
+        }
+    }
+
+    return data;
+}
+
 let UserRepository = {
 
     createOne                   : function(data){
@@ -158,10 +172,11 @@ let UserRepository = {
     },
 
     updateOne                   : function(data, _id){
-        setUserId(_id);
 
         let id = _id || data._id;
+        data = parseUserFields(data);
         delete data._id;
+
         return new Promise((resolve, reject) => {
 
             let query = `
@@ -191,7 +206,6 @@ let UserRepository = {
     },
 
     findOne                     : function(params){
-        setUserId(params._id);
 
         return new Promise((resolve, reject) => {
 
@@ -220,7 +234,6 @@ let UserRepository = {
     },
 
     findAnd                     : function(params){
-        setUserId(params._id);
 
         return new Promise((resolve, reject) => {
 
@@ -242,7 +255,6 @@ let UserRepository = {
     },
 
     findOr                      : function(params){
-        setUserId(params._id);
 
         return new Promise((resolve, reject) => {
 
@@ -263,7 +275,6 @@ let UserRepository = {
     },
 
     updateProfilePicture        : function(file, user){
-        setUserId(user._id);
 
         return new Promise((resolve, reject) => {
 
@@ -287,7 +298,6 @@ let UserRepository = {
     },
 
     updateOtherPictures         : function(filesId, user){
-        setUserId(user._id);
 
         return new Promise((resolve, reject) => {
 
@@ -311,7 +321,6 @@ let UserRepository = {
     },
 
     findLocalByUsernameOrEmail  : function(username){
-        setUserId(true);
 
         return new Promise((resolve, reject) => {
 
@@ -334,7 +343,6 @@ let UserRepository = {
     },
 
     online                      : function(user){
-        setUserId(user._id);
 
         return new Promise((resolve, reject) => {
 
@@ -356,7 +364,6 @@ let UserRepository = {
     },
 
     offline                     : function(user, datetime){
-        setUserId(user._id);
 
         return new Promise((resolve, reject) => {
 
@@ -378,7 +385,6 @@ let UserRepository = {
     },
 
     findAllFriends              : function(user){
-        setUserId(user._id);
 
         return new Promise((resolve, reject) => {
 
@@ -401,7 +407,6 @@ let UserRepository = {
     },
 
     matching                    : function(user, options){
-        setUserId(user._id);
 
         options = options || {};
 
@@ -559,7 +564,6 @@ let UserRepository = {
     },
 
     matchedProfiles             : function(user){
-        setUserId(user._id);
 
         return new Promise((resolve, reject) => {
 
@@ -643,7 +647,6 @@ let UserRepository = {
     },
 
     getUsersById                : function(ids){
-        setUserId(false);
 
         return new Promise((resolve, reject) => {
 
@@ -667,7 +670,6 @@ let UserRepository = {
     },
 
     getUpdatedPartner           : function(user, partner_id){
-        setUserId(user._id);
 
         if (user._id === partner_id){
             return this.getOwnProfile(user);
@@ -758,7 +760,6 @@ let UserRepository = {
     },
 
     getOwnProfile               : function(user){
-        setUserId(user._id);
 
         return new Promise((resolve, reject) => {
 
