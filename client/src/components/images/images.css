@@ -114,6 +114,15 @@
     cursor: pointer;
     font-size: 30px;
     padding: 30px;
+    position: absolute;
+}
+
+.pictures-display > .fas.fa-caret-left {
+    left: 0px;
+}
+
+.pictures-display > .fas.fa-caret-right {
+    right: 0px;
 }
 
 .pictures-display > img {
