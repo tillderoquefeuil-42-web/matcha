@@ -8,12 +8,16 @@ const time = require('../../controllers/utils/time');
 const type = 'user';
 
 const userFields = [
-    '_id', 'email', 'username', 'firstname', 'lastname',
+    '_id', 'password',
+    'email', 'username', 'firstname', 'lastname',
     'valid', 'locked', 'connection_try',
     'providers', 'googleId', 'birthday',
     'gender', 'see_m', 'see_f', 'see_nb',
     'bio', 'profile_picture', 'language', 'online'
 ];
+
+
+
 
 defaultParams.AGE._min = function(){
     let n = new Date()
@@ -784,6 +788,26 @@ let UserRepository = {
                 return reject(err);
             });
 
+        });
+    },
+
+    getFakesProfiles            : function(){
+
+        return new Promise((resolve, reject) => {
+
+            let query = `
+                MATCH (u:User)
+                WHERE single(x IN u.providers WHERE x = "test")
+                RETURN u
+            `;
+
+            queryEx.exec(query)
+            .then(results => {
+                let data = parser.records(results, type);
+                return resolve(data);
+            }).catch(err => {
+                return reject(err);
+            });
         });
     }
 

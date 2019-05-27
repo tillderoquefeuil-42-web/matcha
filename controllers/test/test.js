@@ -6,14 +6,14 @@ const fakeData = require('../../fake_data/data');
 const Time = require('../utils/time');
 
 const UserRepo = require('../../database/repositories/user.js');
+const MatchRepo = require('../../database/repositories/Match.js');
+const VisitRepo = require('../../database/repositories/Visit.js');
 
 const TagRepo = require('../../database/repositories/tag.js');
 const LocationRepo = require('../../database/repositories/location.js');
 
 const Files = require('../utils/files.js');
 const FileRepo = require('../../database/repositories/File.js');
-
-
 
 const required = [
     'firstname', 'lastname', 'username', 'email', 'language', 'gender', 'birthday',
@@ -66,7 +66,6 @@ function getPicturePath(j, r){
 
     return picture;
 }
-
 
 function manageOrientation(user){
     let r = random();
@@ -126,14 +125,13 @@ function getRandomCoords(user){
     return user;
 }
 
-
 exports.getLastNames = function(){
     return fakeData.lastnames;
-}
+};
 
 exports.getFirstNames = function(){
     return [fakeData.firstnames.m, fakeData.firstnames.f];
-}
+};
 
 exports.generateUser = function(firstname, lastname, j){
 
@@ -166,8 +164,7 @@ exports.generateUser = function(firstname, lastname, j){
     getRandomCoords(user);
 
     return user;
-}
-
+};
 
 exports.createTestAccount = function(data) {
 
@@ -178,7 +175,7 @@ exports.createTestAccount = function(data) {
         for (var i in required) {
             let label = required[i];
             if (typeof data[label] === 'undefined') {
-                return reject("data missging : " + label);
+                return reject("data missing : " + label);
             }
 
             user[label] = data[label]
@@ -218,4 +215,53 @@ exports.createTestAccount = function(data) {
         });
 
     });
+};
+
+exports.getFakeProfiles = function() {
+    return UserRepo.getFakesProfiles();
+};
+
+exports.randomMatching = function(fake) {
+
+    return new Promise((resolve, reject) => {
+
+        UserRepo.matching(fake)
+        .then(matches => {
+
+            let length = matches.length;
+            if (!length){
+                return resolve(fake);
+            }
+
+            let r = (random() % 19) + 1;
+            let count = 0;
+            for (var i=0; i<r; i++){
+                let partnerId = matches[i]._id;
+
+                MatchRepo.mergeMatch(fake, partnerId)
+                .then(match => {
+                    VisitRepo.add(fake._id, partnerId)
+                    .then(match => {
+                        if (i % 3 === 0){
+                            count++;
+                            if (count === r){
+                                return resolve(fake);
+                            }
+                        } else {
+                            MatchRepo.likeMatch(fake, partnerId, true)
+                            .then(match => {
+                                count++;
+                                if (count === r){
+                                    return resolve(fake);
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+        }).catch(error => {
+            return reject(error);
+        });
+    });
+
 };

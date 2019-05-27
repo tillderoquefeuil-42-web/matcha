@@ -142,7 +142,8 @@ export class Username extends React.Component {
 
         let suggests = [];
         for (var i in separators){
-            suggests.push(utils.slugify(name, separators[i]));
+            let suggest = utils.slugify(name, separators[i]);
+            suggests.push(suggest);
         }
 
         return suggests;

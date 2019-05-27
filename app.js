@@ -61,6 +61,7 @@ app.get('/', function(req, res){
         <h2>Welcome on server side</h2>
 
         Run <a href="/test/createUsers">/test/createUsers</a> (100 by default)<br />
+        Run <a href="/test/randomMatching">/test/randomMatching</a><br />
         Run <a href="/test/createConv?userA=X&userB=Y">/test/createConv</a><br />
         Run <a href="/test/reset">/test/reset</a><br />
     `);

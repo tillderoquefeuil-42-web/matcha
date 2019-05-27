@@ -189,7 +189,7 @@ UNITS:
     AGE: ans
 WARNING:
     TITLE: Attention!
-    UNFILLED_PROFILE: Vous devez compléter votre profile avant de continuer
+    UNFILLED_PROFILE: Vous devez compléter votre profile avant de continuer (Informations et principale photo de profile min.)
 CHAT:
     NO_CONVERSATION: Aucune conversation sélectionnée
     SEND_MESSAGE: Envoyer un message

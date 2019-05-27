@@ -310,8 +310,7 @@ exports.signUp = function(req, res) {
         UserRepo.findOr({
             email       : req.body.email,
             username    : req.body.username
-        })
-        .then(result => {
+        }).then(result => {
             if (result && result.length > 0) {
                 reject(403);
             } else {

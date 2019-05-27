@@ -24,7 +24,7 @@ export class ValidateAccount extends React.Component {
 
     componentDidMount(){
         document.title = utils.generatePageTitle(trans.get('PAGE_TITLE.ACCOUNT_VALIDATION'));
-    
+
         setTimeout(function(){
             window.location = "/";
         }, 5000);
@@ -49,7 +49,10 @@ export class ValidateAccount extends React.Component {
                     <hr />
 
                     <div>
-                        <ControlLabel>{ this.getLabel() + ' ' + trans.get('COMMON.REDIRECTION') } </ControlLabel>
+                        <ControlLabel>
+                            { this.getLabel() }
+                            { trans.get('COMMON.REDIRECTION') }
+                        </ControlLabel>
                     </div>
 
                 </div>

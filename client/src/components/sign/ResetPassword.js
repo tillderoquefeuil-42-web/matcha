@@ -160,7 +160,7 @@ export class ResetPassword extends React.Component {
                 </FormGroup>
 
                 <FormGroup controlId="cpassword" bsSize="large">
-                    <ControlLabel>{ trans.get('USER.CONFIRM_PASSWORD') }</ControlLabel>
+                    <ControlLabel>{ trans.get('USER.FIELDS.CONFIRM_PASSWORD') }</ControlLabel>
                     <FormControl type="password" value={this.state.cpassword} onChange={this.handleChange} />
                 </FormGroup>
 

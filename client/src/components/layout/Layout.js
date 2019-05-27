@@ -18,7 +18,7 @@ export class Layout extends React.Component {
             page = props.page;
         }
 
-        if (props.user && !props.user.gender){
+        if (props.user && (!props.user.gender || !props.user.profile_pic)){
             page = 'account';
         }
 

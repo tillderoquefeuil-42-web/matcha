@@ -14,9 +14,19 @@ export default {
     },
 
     slugify             : function(txt, separator){
+        let empty = false;
 
         separator = this.isDefine(separator)? separator : '.';
-        return slugify(txt, separator).toLowerCase();
+        if (separator === ''){
+            empty = true;
+            separator = '._-';
+        }
+
+        let slug = slugify(txt, separator).toLowerCase();
+
+        slug = (empty)? slug.replace(new RegExp(separator, 'g'), '') : slug;
+
+        return slug;
     },
 
     pswdStrength        : function(pswd){
@@ -65,7 +75,6 @@ export default {
     setLocalUser        : function(user){
 
         if (user && !(parseInt(user._id) >= 0)){
-            console.warn("CAN'T UPDATE : User returned has no ID");
             return;
         }
 
@@ -98,7 +107,6 @@ export default {
             if (!user_request){
                 localStorage.setItem('user_request', 1);
                 let _this = this;
-                console.log('user to update');
 
                 
                 API.isAuth()
@@ -107,7 +115,6 @@ export default {
                     _this.setLocalUser(user);
                     trans.setLocale(user.language, true);
                     localStorage.setItem('user_request', 0);
-                    console.log('user updated');
                 }, function(error){
                     console.warn(error);
                 });

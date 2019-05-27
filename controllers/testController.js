@@ -1,7 +1,7 @@
 
 const queryEx = require('../database/query');
 const config = require('../config/config');
-const account = require('./account/test');
+const account = require('./test/test');
 const chat = require('./chat/lib.js');
 const Files = require('./utils/files');
 
@@ -103,5 +103,41 @@ module.exports = function (app) {
                 return res.status(500).json({result:'ERROR', err:err});
             });
         }
+    });
+
+    app.get('/randomMatching', function(req, res){
+        let error = null;
+        let count = 0;
+
+        account.getFakeProfiles()
+        .then(fakes => {
+            let length = fakes.length;
+
+            for (let i in fakes){
+                let fake = fakes[i];
+
+                account.randomMatching(fake)
+                .then(fakes => {
+                    if (error){
+                        return;
+                    }
+
+                    count++;
+                    if (count === length){
+                        return res.redirect('/');
+                    }
+                });
+            }
+
+        }).catch(err => {
+            if (error){
+                return;
+            }
+
+            error = true;
+            console.log(err);
+            return res.status(500).json({result:'ERROR', err:err});
+        });
+
     });
 }
