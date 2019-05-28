@@ -19,11 +19,6 @@ html, body, #root, .App, .App-content{
   position: relative;
 }
 
-body {
-  background: url(/images/background.jpg) repeat;
-  background-size: cover;
-}
-
 .App {
   overflow: auto;
 }
