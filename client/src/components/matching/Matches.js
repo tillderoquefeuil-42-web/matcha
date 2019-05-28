@@ -104,7 +104,7 @@ export class Matches extends Component {
             return;
         }
 
-        this.socket.emit('GET_EXTENDED_PROFILE', {
+        utils.getExtendedProfile(this.socket, {
             partner_id  : item._id,
             contact     : true
         });

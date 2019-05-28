@@ -5,6 +5,7 @@ import { Chat } from '../chat/Chat';
 import { Account } from '../user/Account';
 import { Matching } from '../matching/Matching';
 import { Matches } from '../matching/Matches';
+import { Search } from '../search/Search';
 import { History } from '../history/History';
 import { Notif } from '../notif/Notif';
 
@@ -25,6 +26,8 @@ export class Main extends React.Component {
 
             case 'home':
                 return (<Matching _g={ this.props._g } />);
+            case 'search':
+                return (<Search _g={ this.props._g } />);
             case 'matches':
                 return (<Matches _g={ this.props._g } />);
             case 'account':

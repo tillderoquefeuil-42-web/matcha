@@ -18,7 +18,8 @@ export class PrivateRoute extends Component {
         let params = utils.getQueryParameters(props);
         let token = params.get('token');
 
-        let file = trans.getFile();
+        // let file = trans.getFile();
+        let file = null;
         let user = utils.getLocalUser();
 
         this.state = {
@@ -79,7 +80,9 @@ export class PrivateRoute extends Component {
             let translations = response.data.translations;
             trans.setFile(translations);
             _this.setState({trans : true});
-            document.title = utils.generatePageTitle();
+            if (!document.title){
+                document.title = utils.generatePageTitle();
+            }
         }, function(error){
             _this.setState({trans : false});
         });

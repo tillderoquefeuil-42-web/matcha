@@ -1,5 +1,7 @@
 const neo4j = require('neo4j-driver').v1;
 
+const time = require('../../controllers/utils/time');
+
 const defaultParams = require('../../config/config').MATCHING;
 
 const fields = [
@@ -24,13 +26,14 @@ function transform(object) {
 class SearchParams {
 
     constructor (node, params){
-        this._id = node.identity.low;
-        let data = node.properties;
+        if (node){
+            this._id = node.identity.low;
+            let data = node.properties;
 
-        transform(data);
-
-        for (var i in fields){
-            this[fields[i]] = data[fields[i]];
+            transform(data);
+            for (var i in fields){
+                this[fields[i]] = data[fields[i]];
+            }
         }
 
         if (!this.distance){

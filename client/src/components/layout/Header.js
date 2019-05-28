@@ -52,6 +52,7 @@ export class Header extends React.Component {
                 console.warn('functionality isn\'t implemented for now');
                 break;
             case 'home':
+            case 'search':
             case 'matches':
             case 'account':
             case 'chat':
@@ -109,6 +110,11 @@ export class Header extends React.Component {
                             <NavItem eventKey="home" onSelect={this.handleSelect} className="nav-home">
                                 <i className="fas fa-home" title={ trans.get('TABS.HOME') }></i>
                                 <span className="nav-item-name">{ trans.get('TABS.HOME') }</span>
+                            </NavItem>
+
+                            <NavItem eventKey="search" onSelect={this.handleSelect} className="nav-search">
+                                <i className="fas fa-search" title={ trans.get('TABS.SEARCH') }></i>
+                                <span className="nav-item-name">{ trans.get('TABS.SEARCH') }</span>
                             </NavItem>
 
                             <NavItem eventKey="matches" onSelect={this.handleSelect} className="nav-matches">

@@ -109,9 +109,7 @@ export class NotifIcon extends Component {
             return;
         }
 
-        this.socket.emit('GET_EXTENDED_PROFILE', {
-            partner_id  : event.partner_id
-        });
+        utils.getExtendedProfile(this.socket, event.partner_id);
     }
 
     handleToggle = show => {

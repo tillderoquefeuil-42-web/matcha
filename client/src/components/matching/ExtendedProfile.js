@@ -37,6 +37,10 @@ export class ExtendedProfile extends SuperModal {
                 return;
             }
 
+            if (!utils.extendedProfileLoaded(data.match)){
+                return;
+            }
+
             if (user._id !== data.match._id){
                 _this.socket.emit('ADD_MATCH_VISIT', {
                     partner_id  : data.match._id

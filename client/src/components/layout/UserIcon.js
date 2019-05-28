@@ -30,7 +30,7 @@ export class UserIcon extends React.Component {
             return;
         }
 
-        this.props._socket.emit('GET_EXTENDED_PROFILE', {
+        utils.getExtendedProfile(this.props._socket, {
             partner_id  : this.state.user._id,
             disabled    : true
         });

@@ -34,7 +34,8 @@ let SearchParamsRepository = {
 
             queryEx.exec(query)
             .then(results => {
-                return resolve(parser.records(results, type, true));
+                let searchParams = parser.records(results, type, true) || new SearchParams();
+                return resolve(searchParams);
             }).catch(err => {
                 return reject(err);
             });

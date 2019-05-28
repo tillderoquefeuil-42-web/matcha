@@ -36,6 +36,7 @@ class App extends Component {
             <PrivateRoute exact path='/matches' page={"matches"} />
             <PrivateRoute exact path='/account' page={"account"} />
             <PrivateRoute exact path='/history' page={"history"} />
+            <PrivateRoute exact path='/search' page={"search"} />
             <PrivateRoute exact path='/notifications' page={"notifications"} />
             <PrivateRoute exact path='/chat' page={"chat"} />
             <PrivateRoute exact path='/' page="home" />

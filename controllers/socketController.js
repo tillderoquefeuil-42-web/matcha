@@ -332,7 +332,6 @@ module.exports = function (app, server) {
             let userRoom = rooms.getOnlineRoom(user._id);
             rooms.joinRoom(socket, userRoom);
 
-            //LOAD CONTACTS
             account.updateSearchParams(user, data)
             .then(results => {
                 io.sockets.in(userRoom).emit('UPDATE_SEARCH_PARAMS', results);

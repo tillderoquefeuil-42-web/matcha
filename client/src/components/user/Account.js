@@ -81,7 +81,8 @@ export class Account extends Component {
 class Overview extends Component {
 
     handleClick = e => {
-        this.props._g.socket.emit('GET_EXTENDED_PROFILE', {
+
+        utils.getExtendedProfile(this.props._g.socket, {
             partner_id  : this.props._g.user._id,
             disabled    : true
         });

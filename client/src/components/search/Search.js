@@ -6,16 +6,16 @@ import { Loader } from '../loader/Loader';
 
 import { Sorting } from '../filter/Filter';
 import { TagsInput } from '../tagsInput/TagsInput';
-import { List } from './List';
-import { Distance, Age, Popularity } from './Inputs';
+import { Distance, Age, Popularity } from '../matching/Inputs';
+import { List } from '../matching/List';
 
-import utils from '../../utils/utils.js';
+import utils from '../../utils/utils';
 import time from '../../utils/time';
 import trans from '../../translations/translate';
 
-import './matching.css';
+import './search.css';
 
-export class Matching extends Component {
+export class Search extends Component {
 
     constructor(props) {
         super(props);
@@ -26,7 +26,6 @@ export class Matching extends Component {
             match_id    : null,
             sorted      : null,
             options     : null,
-            showFilters : false
         };
 
         this.socket = props._g.socket;
@@ -35,11 +34,12 @@ export class Matching extends Component {
     componentDidMount() {
         this._isMounted = true;
 
-        document.title = utils.generatePageTitle(trans.get('PAGE_TITLE.MATCH'));
-
+        document.title = utils.generatePageTitle(trans.get('PAGE_TITLE.SEARCH'));
+        
         let _this = this;
 
         this.socket.off('LOAD_MATCHES').on('LOAD_MATCHES', function(data){
+            _this.request = false;
             _this.updateMatches(data.matches);
         });
 
@@ -47,16 +47,14 @@ export class Matching extends Component {
             _this.updateOneMatch(data.match);
         });
 
-        this.socket.emit('GET_MATCHES');
     }
 
-    selectOneProfile(matchId) {
-        if (matchId === null){
-            return null;
-        }
+    updateMatches(data){
+        let matches = utils.indexCollection(data);
 
-        utils.getExtendedProfile(this.socket, matchId);
-        return;
+        this.setState({
+            matches : matches
+        });
     }
 
     updateOneMatch(match){
@@ -91,15 +89,32 @@ export class Matching extends Component {
         this.setState({sorted:sorted});
     }
 
-    updateMatches(data){
-        let matches = utils.indexCollection(data);
-
+    handleSorting = sorted => {
         this.setState({
-            matches : matches
+            sorted  : sorted,
+            index   : 0
         });
     }
 
+    handleFiltering = options => {
+        this.setState({
+            matches : null,
+            options : options
+        });
+
+        if (this.request){
+            return;
+        }
+
+        this.request = true;
+        this.socket.emit('GET_MATCHES', {options:options});
+    }
+
     buildSort() {
+
+        if (!this.state.matches){
+            return null;
+        }
 
         let sorts = [{
                 inverse : true,
@@ -133,75 +148,42 @@ export class Matching extends Component {
         );
     }
 
-    buildFilters(){
+    getClasses() {
+        let classes = 'search-matching';
 
-        if (this.state.showFilters){
-            return (<div />);
+        if (this.state.matches){
+            classes += ' active';
         }
 
-        return (
-            <Button
-                onClick={ (e) => this.toggleFilters(e, true) }
-            >
-                <i className="fas fa-filter"></i>
-            </Button>
-        );
-    }
-
-    toggleFilters = (e, force) => {
-        let showFilters = (force === false || force === true)? force : (!this.state.showFilters);
-
-        this.setState({showFilters:showFilters});
-    }
-
-    handleSorting = sorted => {
-        this.setState({
-            sorted  : sorted,
-            index   : 0
-        });
-    }
-
-    handleFiltering = options => {
-        this.setState({
-            matches : null,
-            options : options
-        });
-
-        this.socket.emit('GET_MATCHES', {options:options});
+        return classes;
     }
 
     render() {
 
-        if (!this.state.matches){
-            return (
-                <div className="flex-center">
-                    < Loader />
-                </div>
-            );
-        }
-        
         return (
-            <div id="matching" className="container">
+            <div id="search" className="container">
+
                 <Filters
-                    show={ this.state.showFilters }
-                    onClose={ (e) => this.toggleFilters(e, false) }
                     onFilter={ this.handleFiltering }
                     filters={ this.state.options }
                     _g={ this.props._g }
+                    show
                 />
 
-                <div className="matching-sorting">
-                    { this.buildFilters() }
+                <div className={ this.getClasses() }>
                     { this.buildSort() }
+
+                    <div className="clear-float" />
+
+                    <div className="matching-profiles">
+                        <List
+                            matches={ this.state.matches }
+                            sorted={ this.state.sorted }
+                            _g={ this.props._g }
+                        />
+                    </div>
                 </div>
 
-                <div className="matching-profiles">
-                    <List
-                        matches={ this.state.matches }
-                        sorted={ this.state.sorted }
-                        _g={ this.props._g }
-                    />
-                </div>
             </div>
         );
     }
@@ -213,6 +195,7 @@ class Filters extends Component {
         super(props);
 
         this.state = {
+            active      : true,
             rate        : null,
             distance    : null,
             age         : null,
@@ -296,43 +279,37 @@ class Filters extends Component {
         this.close();
     }
 
-    upTo(element, oneClass) {
-        while (element && element.parentNode) {
-            if (element.className && element.className.split(' ').indexOf(oneClass) !== -1) {
-                return element;
-            }
-
-            element = element.parentNode;
-        }
-        return null;
-    }
-
-    handleMouseDown = event => {
-        if (!this.upTo(event.toElement, 'matching-filters')){
-            this.close();
-        }
+    open = e => {
+        this.setState({active : true});
     }
 
     close() {
-        document.removeEventListener('mousedown', this.handleMouseDown);
-        this.props.onClose();
+        this.setState({active : false});
+    }
+
+    getClasses() {
+
+        let classes = 'search-filters well';
+
+        if (this.state.active){
+            classes += ' active';
+        }
+
+        return classes;
     }
 
     render() {
 
-        document.removeEventListener('mousedown', this.handleMouseDown);
-        if (!this.props.show){
-            return null;
+        if (!this.state.distance){
+            return (
+                <div className="flex-center">
+                    < Loader />
+                </div>
+            );
         }
 
-        document.addEventListener('mousedown', this.handleMouseDown);
-
         return (
-            <div className="matching-filters">
-
-                <span className="close-matching-filters" onClick={ () => this.close() }>
-                    <i className="fa fa-times"></i>
-                </span>
+            <div className={ this.getClasses() } >
 
                 <Distance
                     value={ this.state.distance }
@@ -355,12 +332,17 @@ class Filters extends Component {
                 />
 
                 <Button
-                    onClick={this.save}
+                    onClick={ this.save }
                     block
                     bsSize="large"
                 >
                     { trans.get('BUTTON.APPLY') }
                 </Button>
+
+                <i
+                    className="fas fa-chevron-down fa-2x c-pointer"
+                    onClick={ this.open }
+                />
 
             </div>
         );

@@ -169,7 +169,11 @@
 
 
 
-.matching-profiles {
+#matching .matching-profiles {
+    height: calc(100% - 50px);
+}
+
+#matching .matching-profiles > .matching-list {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -178,7 +182,7 @@
     width: 100%;
 }
 
-#matching .matching-profiles > .fas {
+#matching .matching-profiles > .matching-list > .fas {
     font-size: 40px;
     padding: 10px;
     cursor: pointer;

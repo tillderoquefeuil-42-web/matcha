@@ -107,6 +107,7 @@ TABS:
     MATCHES: Matches
     SIGN_OUT: Sign out
     USER: User
+    SEARCH: Search
 PAGE_TITLE:
     ACCOUNT: Account
     ACCOUNT_LOCKED: Account Locked
@@ -119,6 +120,7 @@ PAGE_TITLE:
     RESET_PASSWORD: Reset Password
     SIGN_IN: Sign in
     SIGN_UP: Sign up
+    SEARCH: Search
 USER:
     ACCOUNT_ALREADY_VALID: Your account has already been validate!
     ACCOUNT_VALIDATE: Your account has been validate!

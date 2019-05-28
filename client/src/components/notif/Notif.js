@@ -82,9 +82,7 @@ export class Notif extends Component {
             return;
         }
 
-        this.socket.emit('GET_EXTENDED_PROFILE', {
-            partner_id  : item.partner_id
-        });
+        utils.getExtendedProfile(this.socket, item.partner_id);
     }
 
     buildList() {

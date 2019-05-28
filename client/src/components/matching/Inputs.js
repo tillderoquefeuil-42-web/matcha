@@ -25,7 +25,7 @@ const defaultParams = {
         },
     },
     age         : {
-        min     : 16,
+        min     : 18,
         max     : 100,
         marks   : {
             18  : <strong>18</strong>,

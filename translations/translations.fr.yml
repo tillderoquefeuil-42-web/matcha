@@ -103,8 +103,9 @@ TABS:
     HOME: Home
     SIGN_OUT: Se déconnecter
     USER: Utilisateur
-    HISTORY: 'Historique'
-    MATCHES: 'Matches'
+    HISTORY: Historique
+    MATCHES: Matches
+    SEARCH: Recherche
 PAGE_TITLE:
     ACCOUNT: Compte
     ACCOUNT_LOCKED: Compte verrouillé
@@ -112,11 +113,12 @@ PAGE_TITLE:
     RESET_PASSWORD: Nouveau mot de passe
     SIGN_IN: Connexion
     SIGN_UP: Inscription
-    CHAT: 'Chat'
-    NOTIF: 'Notifications'
-    HISTORY: 'Hostorique'
-    MATCH: 'Match'
-    MATCHED: 'Vos matches'
+    CHAT: Chat
+    NOTIF: Notifications
+    HISTORY: Hostorique
+    MATCH: Match
+    MATCHED: Vos matches
+    SEARCH: Recherche
 USER:
     ACCOUNT_ALREADY_VALID: Votre compte a déjà été validé!
     ACCOUNT_VALIDATE: Votre compte a déjà été validé!

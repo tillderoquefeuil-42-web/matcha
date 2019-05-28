@@ -312,6 +312,26 @@ export default {
         let e = new Event('pictures-display');
         e.data = {resetUrls : true};
         document.dispatchEvent(e);
+    },
+
+    getExtendedProfile      : function(socket, data){
+        const types = ['number', 'string'];
+        if (types.indexOf(typeof data) !== -1){
+            data = {partner_id:data};
+        }
+
+        sessionStorage.setItem('extended_profile_request', data.partner_id);
+        socket.emit('GET_EXTENDED_PROFILE', data);
+    },
+
+    extendedProfileLoaded   : function(match){
+        let userId = sessionStorage.getItem('extended_profile_request');
+        if (match._id !== parseInt(userId)){
+            return false;
+        }
+
+        sessionStorage.setItem('extended_profile_request', null);
+        return true;
     }
 
 }

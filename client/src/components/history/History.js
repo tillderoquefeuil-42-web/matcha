@@ -144,9 +144,7 @@ export class History extends Component {
             return;
         }
 
-        this.socket.emit('GET_EXTENDED_PROFILE', {
-            partner_id  : item.host_id
-        });
+        utils.getExtendedProfile(this.socket, item.host_id);
     }
 
     buildList() {
