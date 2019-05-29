@@ -18,8 +18,7 @@ export class PrivateRoute extends Component {
         let params = utils.getQueryParameters(props);
         let token = params.get('token');
 
-        // let file = trans.getFile();
-        let file = null;
+        let file = trans.getFile();
         let user = utils.getLocalUser();
 
         this.state = {

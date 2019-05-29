@@ -99,7 +99,9 @@ const API = {
     },
 
     signOut             : function() {
+        let darkmode = localStorage.getItem('darkmode');
         localStorage.clear();
+        localStorage.setItem('darkmode', darkmode);
     },
 
     isAuth              : function() {
