@@ -1,4 +1,4 @@
-body {
+body.darkmode {
     background: #111;
     color: #eee;
 }
@@ -6,134 +6,231 @@ body {
 
 /* HEADER ELEMENTS */
 
-.navbar-default {
+body.darkmode .navbar-default {
     color: #ccc;
     background-color: #333;
     border-color: #222;
 }
 
-.navbar-default .navbar-nav>li>a:focus,
-.navbar-default .navbar-nav>li>a:hover {
+body.darkmode .navbar-default .navbar-nav>li>a:focus,
+body.darkmode .navbar-default .navbar-nav>li>a:hover {
     color: #888;
 }
 
-.navbar-default .navbar-nav>li>a {
+body.darkmode .navbar-default .navbar-nav>li>a {
     color: #ccc;
 }
 
-.navbar-default .navbar-toggle:focus,
-.navbar-default .navbar-toggle:hover {
+body.darkmode .navbar-default .navbar-toggle:focus,
+body.darkmode .navbar-default .navbar-toggle:hover {
     background-color: #555;
 }
 
 
 /* GLOBAL ELEMENTS */
 
-.btn-default {
+body.darkmode .btn-default {
     color: #ccc;
     background-color: #333;
     border-color: #222;
 }
 
-.btn-default.active.focus,
-.btn-default.active:focus,
-.btn-default.active:hover,
-.btn-default:active.focus,
-.btn-default:active:focus,
-.btn-default:active:hover,
-.open>.dropdown-toggle.btn-default.focus,
-.open>.dropdown-toggle.btn-default:focus,
-.open>.dropdown-toggle.btn-default:hover {
+body.darkmode .btn-default.focus,
+body.darkmode .btn-default:focus,
+body.darkmode .btn-default.active.focus,
+body.darkmode .btn-default.active:focus,
+body.darkmode .btn-default.active:hover,
+body.darkmode .btn-default:active.focus,
+body.darkmode .btn-default:active:focus,
+body.darkmode .btn-default:active:hover,
+body.darkmode .open>.dropdown-toggle.btn-default.focus,
+body.darkmode .open>.dropdown-toggle.btn-default:focus,
+body.darkmode .open>.dropdown-toggle.btn-default:hover {
     color: #ccc !important;
     background-color: #555 !important;
     border-color: #222 !important;
 }
 
-.btn-default.active, .btn-default:active,
-.open>.dropdown-toggle.btn-default {
+body.darkmode .btn-default.active, .btn-default:active,
+body.darkmode .open>.dropdown-toggle.btn-default {
     color: #ccc !important;
     background-color: #555 !important;
     border-color: #222 !important;
 }
 
-.btn-default:hover {
+body.darkmode .btn-default:hover {
     color: #ccc !important;
     background-color: #555 !important;
     border-color: #222 !important;
 }
 
-.modal-content {
+body.darkmode .modal-content {
     background-color: #333;
     border-color: #222;
 }
 
-.dropdown-menu {
+body.darkmode .dropdown-menu {
     background-color: #333;
 }
+
+body.darkmode .well {
+    background: #222;
+    border-color: #555;
+}
+
+body.darkmode hr {
+    border-color: #555;
+}
+
+body.darkmode .dropdown-menu>li>a {
+    color: #eee;
+}
+
+body.darkmode input {
+    background-color: #777;
+    color: #fff;
+}
+
+body.darkmode ::placeholder {
+    color: #cecece;
+    opacity: 1;
+}
+
+body.darkmode .input-group-addon {
+    background: #555;
+    color: #eee;
+    border-color: #777;
+}
+
+body.darkmode .form-control {
+    background-color: #777;
+    color: #fff;
+    border-color: #777;
+}
+
+body.darkmode .form-control[disabled],
+body.darkmode .form-control[readonly] {
+    background-color: #111;
+    cursor: not-allowed;
+}
+
 
 
 /* SEARCHBAR ELEMENTS */
 
-#footer-chat-container .searchbar-container .searchbar-list.active {
+body.darkmode .searchbar-list.active {
     background-color: #333 !important;
+    border-color: #777;
 }
 
-.searchbar-list button.list-item {
+body.darkmode .searchbar-list button.list-item {
     color: #ccc !important;
     background-color: #555 !important;
     border-color: #222 !important;
 }
 
-.searchbar-list button.list-item:hover {
+body.darkmode .searchbar-list button.list-item:hover {
     color: #000 !important;
 }
 
+body.darkmode .searchbar-list button.list-item.active {
+    background-color: #777 !important;
+}
 
-/* FOOTER CHAT ELEMENTS */
 
-#footer-chat-container .searchbar-container {
+/* CHAT ELEMENTS */
+
+body.darkmode #footer-chat-container .searchbar-container {
     color: #ccc;
     background-color: #333 !important;
     border-color: #222 !important;
 }
 
-#footer-chat-container .one-chat-container {
+body.darkmode #footer-chat-container .one-chat-container {
     color: #ccc !important;
     background-color: #333 !important;
     border-color: #222 !important;
 }
 
-#footer-chat-container .one-chat-container > .one-chat-window {
+body.darkmode #footer-chat-container .one-chat-container > .one-chat-window {
     color: #ccc !important;
     background-color: #333 !important;
     border-color: #222 !important;
 }
 
-.contact {
-    border-bottom: 1px solid #777 !important;
+body.darkmode .contact {
+    border-bottom: 1px solid #222 !important;
 }
 
-.message-input-container {
-    border-top: 1px solid #777 !important;
+body.darkmode .message-input-container {
+    border-top: 1px solid #222 !important;
 }
+
+body.darkmode .one-message.from-partner > .one-message-container {
+    background: #555 !important;
+}
+
+body.darkmode .message-input > input.message {
+    background-color: #111;
+}
+
+body.darkmode #footer-chat-container .message-input > input.message {
+    background-color: #333;
+}
+
+body.darkmode #contacts-container {
+    border-color: #555 !important;
+}
+
+body.darkmode .searchbar-container {
+    background-color: #111 !important;
+}
+
+body.darkmode .one-contact.selected {
+    background-color: #555 !important;
+}
+
+body.darkmode .emoji-mart,
+body.darkmode .emoji-mart-category-label span {
+    background: #333 !important;
+    color: #eee !important;
+}
+
 
 
 /* SPECIFIC ELEMENTS */
 
-.matching-profiles .one-profile {
+body.darkmode .matching-profiles .one-profile {
     border: 1px solid #333 !important;
 }
 
-.dots-icon > .dots-menu {
+body.darkmode .dots-icon > .dots-menu {
     color: #ccc !important;
     background-color: #333 !important;
     border-color: #222 !important;
 }
 
-#matching .matching-filters {
+body.darkmode #matching .matching-filters {
     background-color: #333 !important;
 }
 
-#matching .matching-filters > button {
+body.darkmode #matching .matching-filters > button {
     background-color: #444 !important;
+}
+
+body.darkmode #history .history-item,
+body.darkmode #notifications-center .notif-item {
+    background-color: #333 !important;
+}
+
+body.darkmode .account-block {
+    border-color: #777 !important;
+}
+
+body.darkmode .form-section {
+    border-color: #777 !important;
+}
+
+body.darkmode .progress-circle.small > .progress-circle-bar {
+    border-color: #4b94bf;
 }

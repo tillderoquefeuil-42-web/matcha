@@ -425,20 +425,9 @@ class DotsIcon extends Component {
         return list;
     }
 
-    upTo(element, oneClass) {
-        while (element && element.parentNode) {
-            if (element.className && element.className.split(' ').indexOf(oneClass) !== -1) {
-                return element;
-            }
-
-            element = element.parentNode;
-        }
-        return null;
-    }
-
     handleMouseDown = event => {
         let element = event.toElement? event.toElement : event.srcElement;
-        if (this.state.show && !this.upTo(element, 'dots-menu')){
+        if (this.state.show && !utils.upTo(element, 'dots-menu')){
             this.toggleShow();
         }
     }

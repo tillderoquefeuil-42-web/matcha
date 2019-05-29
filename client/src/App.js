@@ -15,7 +15,15 @@ import { ResetPassword } from './components/sign/ResetPassword.js';
 import { ValidateAccount } from './components/sign/ValidateAccount.js';
 import { LockedAccount } from './components/sign/LockedAccount.js';
 
+import utils from './utils/utils';
+
 class App extends Component {
+
+  componentDidMount() {
+    this._isMounted = true;
+
+    utils.darkMode();
+  }
 
   render() {
     return (

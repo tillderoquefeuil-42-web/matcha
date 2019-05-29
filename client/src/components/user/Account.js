@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { Component } from '../Component';
+import { Button } from "react-bootstrap";
+
 
 import { Loader } from '../loader/Loader';
 import { Profile } from './Profile.js';
@@ -68,6 +70,7 @@ export class Account extends Component {
                 <div className="col-md-6">
                     <UserLocation />
                     <Picture _g={ this.props._g } />
+                    <Darkmode />
                     <Delete />
                 </div>
 
@@ -81,7 +84,6 @@ export class Account extends Component {
 class Overview extends Component {
 
     handleClick = e => {
-
         utils.getExtendedProfile(this.props._g.socket, {
             partner_id  : this.props._g.user._id,
             disabled    : true
@@ -89,7 +91,6 @@ class Overview extends Component {
     }
 
     render() {
-
         let user = utils.getLocalUser();
 
         if (!user || !user.profile_pic || !user.birthday){
@@ -101,8 +102,47 @@ class Overview extends Component {
                 <i className="far fa-eye fa-2x" title={ trans.get('MATCHING.OVERVIEW') } ></i>
             </div>
         );
+    }
+}
 
+class Darkmode extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            darkmode    : utils.getDarkMode()
+        }
     }
 
+    handleClick = e => {
 
+        let darkmode = this.state.darkmode? 0 : 1;
+
+        utils.setDarkMode(darkmode);
+        this.setState({darkmode:darkmode});
+    }
+
+    getBtnTitle() {
+        let txt = this.state.darkmode? 'DISABLE' : 'ENABLE';
+        return trans.get('BUTTON.' + txt);
+    }
+
+    render() {
+        return (
+
+            <div id="darkmode" className="account-block">
+
+                <h2 className="form-section">{ trans.get('USER.DARKMODE') }</h2>
+
+                <Button
+                    block
+                    bsSize="large"
+                    onClick={ () => this.handleClick() }
+                >
+                    { this.getBtnTitle() }
+                </Button>
+            </div>
+        );
+    }
 }

@@ -296,19 +296,8 @@ class Filters extends Component {
         this.close();
     }
 
-    upTo(element, oneClass) {
-        while (element && element.parentNode) {
-            if (element.className && element.className.split(' ').indexOf(oneClass) !== -1) {
-                return element;
-            }
-
-            element = element.parentNode;
-        }
-        return null;
-    }
-
     handleMouseDown = event => {
-        if (!this.upTo(event.toElement, 'matching-filters')){
+        if (!utils.upTo(event.toElement, 'matching-filters')){
             this.close();
         }
     }

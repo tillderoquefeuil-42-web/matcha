@@ -238,7 +238,7 @@ export default {
 
     addClass            : function(element, className){
 
-        if (!element || !element.className){
+        if (!element || typeof !element.className === 'undefined'){
             return;
         }
 
@@ -283,6 +283,16 @@ export default {
 
         element.className = classList.join(' ');
         return element;
+    },
+
+    upTo                : function(element, oneClass) {
+        while (element && element.parentNode) {
+            element = element.parentNode;
+            if (typeof element.className === 'string' && element.className.split(' ').indexOf(oneClass) !== -1) {
+                return element;
+            }
+        }
+        return null;
     },
 
     objectLength        : function(object){
@@ -332,6 +342,29 @@ export default {
 
         sessionStorage.setItem('extended_profile_request', null);
         return true;
+    },
+
+    setDarkMode             : function(enable) {
+        localStorage.setItem('darkmode', enable);
+        this.darkMode();
+    },
+
+    getDarkMode             : function(enable) {
+        return parseInt(localStorage.getItem('darkmode'));
+    },
+
+    darkMode                : function() {
+        let darkmode = this.getDarkMode();
+        let body = document.getElementsByTagName('body')[0];
+        let classname = "darkmode";
+
+        if (darkmode){
+            this.addClass(body, classname)
+        } else {
+            this.removeClass(body, classname)
+        }
+
+        return;
     }
 
 }

@@ -402,7 +402,7 @@ span.emoji-picker {
 }
 
 #footer-chat-container .searchbar-container .searchbar.form-group {
-    margin-top: 5px;
+    margin: 5px 18px 0px 5px;
 }
 
 #footer-chat-container .searchbar-container .searchbar.form-group .input-group {
@@ -534,4 +534,19 @@ span.emoji-picker {
     font-size: 18px;
 }
 
+
+#footer-chat-container .emoji-mart {
+    width: 201px;
+    height: 250px;
+    overflow: auto;
+}
+
+.emoji-mart-bar,
+#footer-chat-container .emoji-mart-category[aria-label="Frequently Used"] {
+    display: none;
+}
+
+#footer-chat-container .emoji-mart-scroll {
+    height: 200px;
+}
 

@@ -16,6 +16,8 @@ COMMON:
     THE: 'Le'
     AT: 'À'
 BUTTON:
+    ENABLE: Activer
+    DISABLE: Désactiver
     CONFIRM: Confirmer
     SIGN_IN: Se connecter
     SIGN_UP: S'inscrire
@@ -139,6 +141,7 @@ USER:
     EDIT_PASSWORD: Modifier votre mot de passe
     SUGGESTIONS: Suggestions
     BIO_PLACEHOLDER: Décrivez vous en quelques mots (max. 250 caractères)
+    DARKMODE: Mode nuit
     FIELDS:
         LOGIN: Email ou Pseudo
         PASSWORD: Mot de passe

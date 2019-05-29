@@ -19,6 +19,8 @@ UNITS:
     KM: km
     AGE: yo
 BUTTON:
+    ENABLE: Enable
+    DISABLE: Disable
     APPLY: Apply
     CONFIRM: Confirm
     SIGN_IN: Sign In
@@ -140,6 +142,7 @@ USER:
     CONNECTION: Connection
     LOCATION: Location
     DELETE_ACCOUNT: Delete account
+    DARKMODE: Darkmode
     DISCLAIMER:
         PRIVATE_LOCATION: You address will never be visible to other users.
         ADDRESS_ESTIMATION: Your exact address is not provided. This is an estimation.

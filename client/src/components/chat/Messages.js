@@ -601,20 +601,10 @@ export class MessageInput extends Component {
         this.message_input.focus();
     }
 
-    upTo(element, oneClass) {
-        while (element && element.parentNode) {
-            element = element.parentNode;
-            if (element.className && element.className.split(' ').indexOf(oneClass) !== -1) {
-                return element;
-            }
-        }
-        return null;
-    }
-
     handleMouseDown = event => {
 
         let element = event.toElement? event.toElement : event.srcElement;
-        if (!this.upTo(element, 'emoji-picker')){
+        if (!utils.upTo(element, 'emoji-picker')){
             this.collapse();
         }
     }

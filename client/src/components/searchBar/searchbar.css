@@ -35,20 +35,20 @@
     background-color: #fff;
 }
 
-.searchbar-list button.list-item.active {
-    border-color: #adadad;
-    background-color: #e6e6e6 !important;
-
-    box-shadow: none;
-}
-
 .searchbar-list button.list-item:hover {
-    background-color: #d4d4d4 !important;
+    background-color: #d4d4d4;
 }
 
 .searchbar-list button.list-item:focus {
     outline: none;
     background-color: #fff;
+}
+
+.searchbar-list button.list-item.active {
+    border-color: #adadad;
+    background-color: #e6e6e6;
+
+    box-shadow: none;
 }
 
 ::-webkit-scrollbar {
