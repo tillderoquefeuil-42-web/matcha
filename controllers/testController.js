@@ -58,8 +58,7 @@ module.exports = function (app) {
     app.get('/createUsers', function(req, res){
 
         let max = parseInt(req.query.max);
-        max = (!max)? 100 : max;
-        // max = (!max || max < 500)? 500 : max;
+        max = (!max)? 500 : max;
 
         let lastNames = account.getLastNames();
         let firstNames = account.getFirstNames();
