@@ -63,7 +63,7 @@ function errorRedirect(res, method, params) {
         params.status = params.status || 400;
         params.redirect = params.link || link;
 
-        manageResError(res, params);
+        return manageResError(res, params);
     } else {
         res.redirect(link);
     }
@@ -112,7 +112,7 @@ function connectionTry(user, valid, callback) {
 
 exports.getUserByToken = function(req, res, callback, errorCallback) {
     if (!req.body._token) {
-        manageResError(res, 'NO_TOKEN', 401);
+        return manageResError(res, 'NO_TOKEN', 401);
     }
     
     if (req.user){
@@ -125,20 +125,20 @@ exports.getUserByToken = function(req, res, callback, errorCallback) {
             if (errorCallback) {
                 errorCallback(err, user);
             } else {
-                manageResError(res, 'USER_NOT_FOUND', 404);
+                return manageResError(res, 'USER_NOT_FOUND', 404);
             }
             
         } else if (callback) {
             callback(user);
             
         } else {
-            manageResSuccess(res, {user : user});
+            return manageResSuccess(res, {user : user});
         }
     }).catch(err => {
         if (errorCallback) {
             errorCallback(err, user);
         } else {
-            manageResError(res, 'DATABASE_CRASHED', 400);
+            return manageResError(res, 'DATABASE_CRASHED', 400);
         }
     });
 }
@@ -287,8 +287,7 @@ exports.signUp = function(req, res) {
 
     for (var i in required) {
         if (!req.body[required[i]]) {
-            manageResError(res, 'INVALID_PARAMETERS', 400);
-            return;
+            return manageResError(res, 'INVALID_PARAMETERS', 400);
         }
     }
     
@@ -327,30 +326,26 @@ exports.signUp = function(req, res) {
         .then(_user => {
 
             Com.signUp.send(_user);
-            manageResSuccess(res, {token : _user.getToken()});
+            return manageResSuccess(res, {token : _user.getToken()});
         }).catch(err => {
-            manageResError(res);
+            return manageResError(res);
         });
 
     }, function (error) {
         switch (error) {
             default:
             case 500:
-                manageResError(res);
-                break;
+                return manageResError(res);
             case 403:
-                manageResError(res, 'USER_ALREADY_EXIST', 403);
-                break;
+                return manageResError(res, 'USER_ALREADY_EXIST', 403);
         }
-        return;
     }); 
 };
 
 exports.checkUsernames = function(req, res) {
 
     if (typeof req.body.usernames !== 'object' || !req.body.usernames.length) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
-        return;
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
     }
 
     let length = req.body.usernames.length;
@@ -360,21 +355,21 @@ exports.checkUsernames = function(req, res) {
 
         if (err) {
             console.log(err);
-            manageResError(res);
+            return manageResError(res);
         } else if (!users || !users.length) {
-            manageResSuccess(res);
+            return manageResSuccess(res);
         } else if (users.length === 1 && String(users[0]['_id']) === String(userId)) {
-            manageResSuccess(res);
+            return manageResSuccess(res);
         } else if (users && users.length > 0 && length > users.length) {
-            manageResSuccess(res);
+            return manageResSuccess(res);
         } else if (users && users.length > 0) {
-            manageResError(res, {
+            return manageResError(res, {
                 status: 403,
                 text  : "USER_NAME_EXIST",
                 users : users
             });
         } else {
-            manageResSuccess(res);
+            return manageResSuccess(res);
         }
     });
 
@@ -384,15 +379,13 @@ exports.checkUsernames = function(req, res) {
 exports.signIn = function(req, res) {
 
     if (!req.body.username || !req.body.password) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
-        return res;
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
     }
 
     UserRepo.findLocalByUsernameOrEmail(req.body.username)
     .then(user => {
         if(!user) {
-            manageResError(res, 'USER_NOT_EXIST', 401);
-            return;
+            return manageResError(res, 'USER_NOT_EXIST', 401);
         }
 
         let lockedLink = `http://${config.client.hostname}:${config.client.port}/user/lockedAccount?email=${user.email}`;
@@ -404,8 +397,7 @@ exports.signIn = function(req, res) {
         if (user.authenticate(req.body.password)) {
             connectionTry(user, true);
 
-            manageResSuccess(res, {token : user.getToken()});
-            return;
+            return manageResSuccess(res, {token : user.getToken()});
         } else {
             connectionTry(user, false, function (err, user) {
                 
@@ -419,13 +411,12 @@ exports.signIn = function(req, res) {
                     return errorRedirect(res, 'POST', {status:401, link:lockedLink});
                 }
 
-                manageResError(res, 'INVALID_PASSWORD', 401);
-                return;
+                return manageResError(res, 'INVALID_PASSWORD', 401);
             });
         }
     }).catch(err => {
         console.log(err);
-        manageResError(res);
+        return manageResError(res);
     });
 
 };
@@ -433,28 +424,27 @@ exports.signIn = function(req, res) {
 exports.auth = function(req, res) {
 
     return exports.getUserByToken(req, res, function(user) {
-        manageResSuccess(res, {user : user});
+        return manageResSuccess(res, {user : user});
     });
 
 };
 
 exports.resetPassword = function(req, res) {
     if (!req.body.email) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
-        return;
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
     }
 
     UserRepo.findOne({
         email: req.body.email
     }).then(user => {
         if (!user) {
-            manageResError(res, 'USER_NOT_EXIST', 401);
+            return manageResError(res, 'USER_NOT_EXIST', 401);
         } else {
             Com.resetPassword.send(user);
-            manageResSuccess(res);
+            return manageResSuccess(res);
         }
     }).catch(err => {
-        manageResError(res);
+        return manageResError(res);
     });
     
 };
@@ -462,8 +452,7 @@ exports.resetPassword = function(req, res) {
 exports.savePswdByToken = function(req, res) {
     
     if (!req.body.token || !req.body.password) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
-        return;
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
     }
     
     req.body._token = req.body.token;
@@ -479,9 +468,9 @@ exports.savePswdByToken = function(req, res) {
         
         UserRepo.updateOne(user)
         .then(_user => {
-            manageResSuccess(res, {user : _user});
+            return manageResSuccess(res, {user : _user});
         }).catch(err => {
-            manageResError(res);
+            return manageResError(res);
         });
     });
 
@@ -489,27 +478,26 @@ exports.savePswdByToken = function(req, res) {
 
 exports.sendLockedAccount = function(req, res) {
     if (!req.body.email) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
-        return res;
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
     }
 
     UserRepo.findOne({email : req.body.email})
     .then(user => {
         if (!user) {
-            manageResError(res, 'USER_NOT_EXIST', 401);
+            return manageResError(res, 'USER_NOT_EXIST', 401);
         } else if (user.locked === true) {
             Com.lockedAccount.send(user);
-            manageResSuccess(res);
+            return manageResSuccess(res);
         }
     }).catch(err => {
-        manageResError(res);
+        return manageResError(res);
     });
 };
 
 exports.saveUser = function(req, res) {
 
     if (!req.body.user) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
         return;
     }
 
@@ -543,15 +531,13 @@ exports.saveUser = function(req, res) {
     }
 
     if (error) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
-        return;
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
     }
 
     // CHECK BIRTHDAY
     let maxDate = moment().subtract(config.params.MIN_AGED_USERS, 'years');
     if (moment(_user.birthday) > maxDate) {
-        manageResError(res, 'USER_TOO_YOUNG', 401);
-        return;
+        return manageResError(res, 'USER_TOO_YOUNG', 401);
     }
     
     return exports.getUserByToken(req, res, function(user) {
@@ -560,8 +546,7 @@ exports.saveUser = function(req, res) {
         findUserByUsernames([_user.username], function(err, users) {
             
             if (err) {
-                manageResError(res);
-                return;
+                return manageResError(res);
             }
 
             let error = 0;
@@ -570,12 +555,11 @@ exports.saveUser = function(req, res) {
             } else if (users && users.length > 1) {
                 error++;
             } if (error > 0) {
-                manageResError(res, {
+                return manageResError(res, {
                     text    : "USERNAME_EXIST",
                     users   : users,
                     user    : user
                 }, 401);
-                return;
             }
             
             // TO UPDATE
@@ -594,10 +578,10 @@ exports.saveUser = function(req, res) {
             .then(r => {
                 UserRepo.updateOne(user)
                 .then(_u => {
-                    manageResSuccess(res, {user : _u});
+                    return manageResSuccess(res, {user : _u});
                 }).catch(err => {
                     console.log(err);
-                    manageResError(res);
+                    return manageResError(res);
                 });
             });
             return;
@@ -607,8 +591,7 @@ exports.saveUser = function(req, res) {
 
 exports.saveNewPassword = function(req, res) {
     if (!req.body.password) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
-        return;
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
     }
     
     return exports.getUserByToken(req, res, function(user) {
@@ -629,25 +612,23 @@ exports.saveNewPassword = function(req, res) {
             
             UserRepo.updateOne(user)
             .then(_user => {
-                manageResSuccess(res, {
+                return manageResSuccess(res, {
                     user    : _user,
                     token   : _user.getToken()
                 });
             }).catch(err => {
-                manageResError(res);
+                return manageResError(res);
             });
             
         } else {
-            manageResError(res, 'INVALID_PASSWORD', 401);
-            return;
+            return manageResError(res, 'INVALID_PASSWORD', 401);
         }
     });
 };
 
 exports.saveNewEmail = function(req, res) {
     if (!req.body.email || !req.body.password) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
-        return;
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
     }
 
     return exports.getUserByToken(req, res, function(user) {
@@ -657,11 +638,11 @@ exports.saveNewEmail = function(req, res) {
             findUserByEmails([req.body.email], function(err, users) {
                 if (err) {
                     console.log(err);
-                    manageResError(res);
+                    return manageResError(res);
                 } else if (users && users.length === 1 && String(users[0]['_id']) === String(user._id)) {
-                    manageResSuccess(res)
+                    return manageResSuccess(res)
                 } else if (users && users && users.length > 0) {
-                    manageResError(res, {
+                    return manageResError(res, {
                         text  : "USER_ALREADY_EXIST",
                         users : users
                     }, 403);
@@ -672,20 +653,19 @@ exports.saveNewEmail = function(req, res) {
                     UserRepo.updateOne(user)
                     .then(result => {
                         Com.validateEmailAddress.send(user);
-                        manageResSuccess(res, {
+                        return manageResSuccess(res, {
                             user    : user,
                             token   : user.getToken()
                         });
                     }).catch(err => {
-                        manageResError(res);
+                        return manageResError(res);
                     });
                     return;
                 }
             });
             
         } else {
-            manageResError(res, 'INVALID_PASSWORD', 401);
-            return;
+            return manageResError(res, 'INVALID_PASSWORD', 401);
         }
     });
 };
@@ -693,8 +673,7 @@ exports.saveNewEmail = function(req, res) {
 exports.saveLocation = function(req, res) {
     
     if (!req.body.location) {
-        manageResError(res, 'INVALID_PARAMETERS', 400);
-        return;
+        return manageResError(res, 'INVALID_PARAMETERS', 400);
     }
     
     return exports.getUserByToken(req, res, function(user) {
@@ -703,11 +682,11 @@ exports.saveLocation = function(req, res) {
             LocationRepo.userLink(result, user)
             .then(location => {
                 user.location = location;
-                manageResSuccess(res, {user : user});
+                return manageResSuccess(res, {user : user});
             });
         }).catch(err => {
             console.log(err);
-            manageResError(res);
+            return manageResError(res);
         });
     });
 };
@@ -719,26 +698,25 @@ exports.deleteAccount = function(req, res){
         if (!user.isLocal() || user.authenticate(req.body.password)) {
             UserRepo.deleteOne(user)
             .then(results => {
-                manageResSuccess(res);
+                return manageResSuccess(res);
             }).catch(err => {
                 console.log(err);
-                manageResError(res);
+                return manageResError(res);
             });
             return;
         }
         
-        manageResError(res, 'INVALID_PASSWORD', 401);
-        return;
+        return manageResError(res, 'INVALID_PASSWORD', 401);
     });
 };
 
 exports.getTags = function(req, res){
     TagRepo.getAll()
     .then(results => {
-        manageResSuccess(res, {tags : results});
+        return manageResSuccess(res, {tags : results});
     }).catch(err => {
         console.log(err);
-        manageResError(res);
+        return manageResError(res);
     });
 };
 
