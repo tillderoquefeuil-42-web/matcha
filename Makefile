@@ -1,7 +1,6 @@
 NAME = matcha
 
 NEO4J = neo4j
-#NEO4J = ~/Applications/neo4j/bin/neo4j
 
 all: $(NAME)
 

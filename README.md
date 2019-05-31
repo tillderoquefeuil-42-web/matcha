@@ -1,6 +1,5 @@
 # launch
 
-- Check NEO4J path in Makefile*
 - Make init*
 - Make
 - On server side (http://localhost:3000/) click on /test/createUsers*
