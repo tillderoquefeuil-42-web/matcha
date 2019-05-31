@@ -237,7 +237,8 @@ exports.randomMatching = function(fake) {
 
     return new Promise((resolve, reject) => {
 
-        UserRepo.matching(fake)
+        let r = (random() % 9) + 1;
+        UserRepo.matching(fake, {limit:r})
         .then(matches => {
 
             let length = matches.length;
@@ -245,9 +246,13 @@ exports.randomMatching = function(fake) {
                 return resolve(fake);
             }
 
-            let r = (random() % 19) + 1;
             let count = 0;
+
             for (var i=0; i<r; i++){
+                if (!matches[i]){
+                    return resolve(fake);
+                }
+
                 let partnerId = matches[i]._id;
 
                 MatchRepo.mergeMatch(fake, partnerId)
@@ -281,8 +286,13 @@ exports.randomMatching = function(fake) {
 exports.createRecursive = function(data, i) {
 
     return new Promise((resolve, reject) => {
+
         if (i >= data.max){
             return resolve(true);
+        }
+
+        if (i % 25 === 0){
+            console.log((i+1) + '/' + data.max);
         }
 
         let r = random();
@@ -308,3 +318,28 @@ exports.createRecursive = function(data, i) {
         });
     });
 }
+
+exports.matchingRecursive = function(fakes, i) {
+
+    return new Promise((resolve, reject) => {
+        if (i >= fakes.length){
+            return resolve(true);
+        }
+
+        if (i % 100 === 0){
+            console.log((i+1) + '/' + fakes.length);
+        }
+
+        this.randomMatching(fakes[i])
+        .then(results => {
+            exports.matchingRecursive(fakes, ++i)
+            .then(result => {
+                return resolve(result);
+            });
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+}
+

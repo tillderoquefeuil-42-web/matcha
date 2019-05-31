@@ -17,8 +17,6 @@ const userFields = [
 ];
 
 
-
-
 defaultParams.AGE._min = function(){
     let n = new Date()
     n.setFullYear(n.getUTCFullYear() - defaultParams.AGE.MIN);
@@ -394,14 +392,18 @@ let UserRepository = {
 
             let query = `
                 MATCH (u:User)-[ru:RELATION {like:TRUE}]->(r:Match {blocked:FALSE})<-[rp:RELATION {like:TRUE}]-(m:User)
-                WHERE ID(u) <> ${user._id} AND ID(m) = ${user._id}
+                WHERE ID(u)<>$userId AND ID(m)=$userId
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
 
                 RETURN DISTINCT u, f
             `;
 
-            queryEx.exec(query)
+            let parameters = {
+                userId  : user._id
+            };
+
+            queryEx.exec(query, parameters)
             .then(results => {
                 return resolve(parser.records(results, type));
             }).catch(err => {
@@ -414,6 +416,7 @@ let UserRepository = {
 
         options = options || {};
 
+        options.limit = options.limit || 250;
         options.distance = options.distance || 0;
         options.age_min = options.age_min || 0;
         options.age_max = options.age_max || 0;
@@ -425,7 +428,7 @@ let UserRepository = {
 
             let query = `
                 MATCH (m:User)-[mlr:LIVES {current:true}]->(ml:Location), (u:User)-[ulr:LIVES {current:true}]->(ul:Location)
-                WHERE ID(m)=${user._id} AND ID(u)<>${user._id}
+                WHERE ID(m)=$userId AND ID(u)<>$userId
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
@@ -547,14 +550,19 @@ let UserRepository = {
                     p_tags:p_tags, p_location:p_location, p_rate:p_rate
                 },
                 f, t, l, of, r, ru, rp
+                LIMIT ${options.limit}
             `;
+
+            let parameters = {
+                userId  : user._id
+            };
 
             // console.log(query);
 
-            queryEx.exec(query)
+            queryEx.exec(query, parameters)
             .then(results => {
                 let data = parser.records(results, type);
-
+                
                 if (options.tags){
                     data = filterByTags(data, options.tags);
                 }
@@ -573,7 +581,8 @@ let UserRepository = {
 
             let query = `
                 MATCH (m:User)-[mlr:LIVES {current:true}]->(ml:Location), (u:User)-[ulr:LIVES {current:true}]->(ul:Location)
-                WHERE ID(m)=${user._id} AND ID(u)<>${user._id}
+                WHERE ID(m)=$userId AND ID(u)<>$userId
+
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
@@ -637,9 +646,11 @@ let UserRepository = {
                 f, t, l, of, r, ru, rp
             `;
 
-            // console.log(query);
+            let parameters = {
+                userId  : user._id
+            };
 
-            queryEx.exec(query)
+            queryEx.exec(query, parameters)
             .then(results => {
                 let data = parser.records(results, type);
                 return resolve(data);
@@ -683,7 +694,7 @@ let UserRepository = {
 
             let query = `
                 MATCH (m:User)-[mlr:LIVES {current:true}]->(ml:Location), (u:User)-[ulr:LIVES {current:true}]->(ul:Location)
-                WHERE ID(m)=${user._id} AND ID(u)=${partner_id}
+                WHERE ID(m)=$userId AND ID(u)=$partnerId
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
@@ -750,9 +761,12 @@ let UserRepository = {
                 f, t, l, of, r, ru, rp
             `;
 
-            // console.log(query);
+            let parameters = {
+                userId      : user._id,
+                partnerId   : partner_id
+            }
 
-            queryEx.exec(query)
+            queryEx.exec(query, parameters)
             .then(results => {
                 let data = parser.records(results, type, true);
                 return resolve(data);

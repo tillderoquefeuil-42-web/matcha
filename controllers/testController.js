@@ -39,22 +39,6 @@ module.exports = function (app) {
 
     });
 
-    app.get('/createConv', function(req, res){
-
-        if (!(parseInt(req.query.userA) >= 0 && parseInt(req.query.userB) >= 0)){
-            return res.status(500).json({result:'Reload with usersId (?userA=X&userB=Y)'});
-        }
-
-        chat.fillConvMessage([parseInt(req.query.userA), parseInt(req.query.userB)])
-        .then(message => {
-            return res.redirect('/');
-        }).catch(err => {
-            console.log(err);
-            return res.status(500).json({result:'ERROR'});
-        });
-
-    });
-
     app.get('/createUsers', function(req, res){
 
         let max = parseInt(req.query.max);
@@ -76,35 +60,14 @@ module.exports = function (app) {
     });
 
     app.get('/randomMatching', function(req, res){
-        let error = null;
-        let count = 0;
 
         account.getFakeProfiles()
         .then(fakes => {
-            let length = fakes.length;
-
-            for (let i in fakes){
-                let fake = fakes[i];
-
-                account.randomMatching(fake)
-                .then(fakes => {
-                    if (error){
-                        return;
-                    }
-
-                    count++;
-                    if (count === length){
-                        return res.redirect('/');
-                    }
-                });
-            }
-
+            account.matchingRecursive(fakes, 0)
+            .then(result => {
+                return res.redirect('/');
+            });
         }).catch(err => {
-            if (error){
-                return;
-            }
-
-            error = true;
             console.log(err);
             return res.status(500).json({result:'ERROR', err:err});
         });

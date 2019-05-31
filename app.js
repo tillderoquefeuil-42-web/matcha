@@ -62,7 +62,6 @@ app.get('/', function(req, res){
 
         Run <a href="/test/createUsers">/test/createUsers</a> (500 by default)<br />
         Run <a href="/test/randomMatching">/test/randomMatching</a><br />
-        Run <a href="/test/createConv?userA=X&userB=Y">/test/createConv</a><br />
         Run <a href="/test/reset">/test/reset</a><br />
     `);
 });
