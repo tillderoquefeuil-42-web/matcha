@@ -26,7 +26,13 @@ let LocationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+                ON MATCH SET id.count = id.count + 1
+
+                WITH id.count AS uid
                 CREATE (l:Location $location)
+                SET l.uid = uid
                 RETURN l
             `;
 
@@ -48,8 +54,7 @@ let LocationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User), (l:Location)
-                WHERE ID(u) = ${user._id} AND ID(l) = ${location._id}
+                MATCH (u:User {uid:${user._id}}), (l:Location {uid:${location._id}})
 
                 OPTIONAL MATCH (u)-[oldli:LIVES {current:true}]->(oldl:Location)
                 SET oldli.current = false

@@ -122,7 +122,9 @@ module.exports = function (app, server) {
         socket.on("disconnect", function(){
             let user = getUserBySocket(socket);
 
-            account.setOfflineUser(user);
+            if (user && user._id){
+                account.setOfflineUser(user);
+            }
         });
 
         // CHAT

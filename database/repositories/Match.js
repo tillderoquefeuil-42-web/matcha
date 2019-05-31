@@ -28,10 +28,16 @@ let MatchRepository = {
     mergeMatch  : function(user, partner_id){
         return new Promise((resolve, reject) => {
             let query = `
-                MATCH (u:User), (p:User)
-                WHERE ID(u)=${user._id} AND ID(p)=${partner_id}
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+
+                WITH id
+                MATCH (u:User {uid:${user._id}}), (p:User {uid:${partner_id}})
+
                 MERGE (u)-[ru:RELATION]->(m:Match)<-[rp:RELATION]-(p)
-                ON CREATE SET m.blocked = FALSE,
+                ON CREATE SET id.count = id.count + 1,
+                m.uid = id.count,
+                m.blocked = FALSE,
                 ru = {see:TRUE, like:FALSE, report:FALSE},
                 rp = {see:FALSE, like:FALSE, report:FALSE}
                 ON MATCH SET ru.see = TRUE
@@ -51,8 +57,7 @@ let MatchRepository = {
     likeMatch   : function(user, partner_id, like){
         return new Promise((resolve, reject) => {
             let query = `
-                MATCH (u:User)-[ru:RELATION]->(m:Match)<-[rp:RELATION]-(p:User)
-                WHERE ID(u)=${user._id} AND ID(p)=${partner_id}
+                MATCH (u:User {uid:${user._id}})-[ru:RELATION]->(m:Match)<-[rp:RELATION]-(p:User {uid:${partner_id}})
                 SET ru.like = ${like}
 
                 RETURN m, ru, rp
@@ -70,8 +75,7 @@ let MatchRepository = {
     blockMatch  : function(user, partner_id){
         return new Promise((resolve, reject) => {
             let query = `
-                MATCH (u:User)-[ru:RELATION]->(m:Match)<-[rp:RELATION]-(p:User)
-                WHERE ID(u)=${user._id} AND ID(p)=${partner_id}
+                MATCH (u:User {uid:${user._id}})-[ru:RELATION]->(m:Match)<-[rp:RELATION]-(p:User {uid:${partner_id}})
                 SET m.blocked = TRUE
 
                 RETURN m, ru, rp
@@ -89,8 +93,7 @@ let MatchRepository = {
     reportMatch : function(user, partner_id){
         return new Promise((resolve, reject) => {
             let query = `
-                MATCH (u:User)-[ru:RELATION]->(m:Match)<-[rp:RELATION]-(p:User)
-                WHERE ID(u)=${user._id} AND ID(p)=${partner_id}
+                MATCH (u:User {uid:${user._id}})-[ru:RELATION]->(m:Match)<-[rp:RELATION]-(p:User {uid:${partner_id}})
                 SET ru.block = TRUE
 
                 RETURN m, ru, rp

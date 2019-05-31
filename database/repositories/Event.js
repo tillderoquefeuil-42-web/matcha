@@ -38,15 +38,19 @@ let EventRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User), (p:User)
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+                ON MATCH SET id.count = id.count + 1
 
-                WHERE ID(u)=${userId} AND ID(p)=${partnerId}
+                WITH id.count AS uid
+                MATCH (u:User {uid:${userId}}), (p:User {uid:${partnerId}})
                 CREATE (u)-[e:EVENT $event]->(p)
+                SET e.uid = uid
 
                 WITH u, e, p
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 RETURN u, f, e{
-                    .*, _id:ID(e), partner_id:ID(u), partner_label:u.firstname
+                    .*, partner_id:u.uid, partner_label:u.firstname
                 }
             `;
             
@@ -71,12 +75,11 @@ let EventRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)<-[e:EVENT]-(p:User)
+                MATCH (u:User {uid:${userId}})<-[e:EVENT]-(p:User)
 
-                WHERE ID(u)=${userId}
                 OPTIONAL MATCH (p)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 RETURN u, f, e{
-                    .*, _id:ID(e), partner_id:ID(p), partner_label:p.firstname
+                    .*, partner_id:p.uid, partner_label:p.firstname
                 }
 
                 ORDER BY e.date DESC
@@ -96,8 +99,7 @@ let EventRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)<-[e:EVENT]-(p:User)
-                WHERE ID(u)=${userId}
+                MATCH (u:User {uid:${userId}})<-[e:EVENT]-(p:User)
 
                 SET e.read = TRUE
 
@@ -105,7 +107,7 @@ let EventRepository = {
                 OPTIONAL MATCH (p)-[pp:PROFILE_PIC {current:true}]->(f:File)
 
                 RETURN u, f, e{
-                    .*, _id:ID(e), partner_id:ID(p), partner_label:p.firstname
+                    .*, partner_id:p.uid, partner_label:p.firstname
                 }
 
                 ORDER BY e.date DESC

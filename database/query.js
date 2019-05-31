@@ -57,13 +57,10 @@ query.buildCondition = function(params, keyword, object){
         let equality = (typeof params[i] === 'object'? 'IN' : '=');
 
         if (i === '_id' || i === 'id'){
-            condition += `ID(${object}) > 0 `;
-
-            //  DON'T KNOW WHAT TO DO FOR NOW
-            // condition += `ID(${object}) ${equality} {${i}} `;
-        } else {
-            condition += `${object}.${i} ${equality} {${i}} `;
+            i = 'uid';
         }
+        
+        condition += `${object}.${i} ${equality} {${i}} `;
         j++;
     }
 

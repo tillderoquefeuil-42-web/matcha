@@ -7,12 +7,12 @@ const fields = [
 class Tag {
 
     constructor (node){
-        this._id = node.identity.low;
-        let data = node.properties;
+        let data = node.properties || node;
 
         for (var i in fields){
             this[fields[i]] = data[fields[i]];
         }
+        this._id = parseInt(data.uid);
 
     }
 

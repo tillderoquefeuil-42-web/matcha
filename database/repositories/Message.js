@@ -43,9 +43,14 @@ let MessageRepository = {
             .then(result => {
 
                 let query = `
-                    MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)
-                    WHERE ID(c)=${convId} AND ID(u)=${senderId}
+                    MERGE (id:UniqueId {name:'${type}'})
+                    ON CREATE SET id.count = 1
+                    ON MATCH SET id.count = id.count + 1
+
+                    WITH id.count AS uid
+                    MATCH (u:User {uid:${senderId}})-[ma:MEMBERS]->(c:Conversation {uid:${convId}})
                     CREATE (c)-[o:OWN $own]->(m:Message $message)-[f:FROM]->(u)
+                    SET m.uid = uid
                     RETURN m, u, c, o
                 `;
 
@@ -65,8 +70,7 @@ let MessageRepository = {
                         results.files = filesId;
                         
                         let filesQuery = `
-                            MATCH (m:Message)
-                            WHERE ID(m)=${results._id}
+                            MATCH (m:Message {uid:${results._id}})
                             CREATE 
                         `;
 
@@ -97,8 +101,7 @@ let MessageRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (c)-[o:OWN]->(om:Message)
-                WHERE ID(c)=${convId}
+                MATCH (c:Conversation {uid:${convId}})-[o:OWN]->(om:Message)
                 SET o.last = NULL AND o.readBy = NULL
             `;
 
@@ -118,8 +121,7 @@ let MessageRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (c:Conversation)-[o:OWN]->(m:Message)-[f:FROM]->(u:User)
-                WHERE ID(c)=${convId}
+                MATCH (c:Conversation {uid:${convId}})-[o:OWN]->(m:Message)-[f:FROM]->(u:User)
                 OPTIONAL MATCH (_f:File)-[b:BELONG_TO]->(m)<-[o]-(c)
                 RETURN c, m, o, u, _f
                 ORDER BY m.date DESC
@@ -149,7 +151,7 @@ let MessageRepository = {
 
             let query = `
                 MATCH (c)-[o:OWN]->(m:Message)-[f:FROM]->(u:User)
-                WHERE ID(c) IN [${ids.join(', ')}] AND o.last = TRUE
+                WHERE c.uid IN [${ids.join(', ')}] AND o.last = TRUE
                 OPTIONAL MATCH (_f:File)-[b:BELONG_TO]->(m)<-[o]-(c)
                 RETURN m, c, o, u, _f
             `;
@@ -167,8 +169,8 @@ let MessageRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (c)-[o:OWN]->(m:Message)-->(f:TmpFile), (m)-->(u:User), (_f:File)
-                WHERE ID(_f)=${file._id} AND ID(c)=${convId} AND f.id="${file.id}"
+                MATCH (c:Conversation {uid:${convId}})-[o:OWN]->(m:Message)-->(f:TmpFile), (m)-->(u:User), (_f:File {uid:${file._id}})
+                WHERE f.id="${file.id}"
                 CREATE (_f)-[b:BELONG_TO]->(m)
                 DETACH DELETE f
                 RETURN m, c, o, u, _f;

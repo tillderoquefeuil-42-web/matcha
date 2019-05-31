@@ -33,20 +33,14 @@ function transform(object) {
 class Event {
 
     constructor (node, params){
-        let data = node.properties;
-
-        if (data){
-            this._id = node.identity.low;
-        } else {
-            data = node;
-            this._id = node._id.low;
-        }
+        let data = node.properties || node;
 
         transform(data);
 
         for (var i in fields){
             this[fields[i]] = data[fields[i]];
         }
+        this._id = parseInt(data.uid);
 
         if (events[this.type]){
             this.label = events[this.type].label;

@@ -11,6 +11,7 @@ const File = require('./File');
 const Match = require('./Match');
 
 const fields = [
+    'uid',
     'email', 'username', 'firstname', 'lastname',
     'valid', 'locked', 'connection_try',
     'providers', 'googleId', 'birthday',
@@ -34,13 +35,7 @@ function transform(object) {
 class User {
 
     constructor (node, params){
-        let data = node.properties;
-        if (data){
-            this._id = node.identity.low;
-        } else {
-            data = node;
-            this._id = node._id.low;
-        }
+        let data = node.properties || node;
 
         params = params || {};
         transform(data);
@@ -48,6 +43,8 @@ class User {
         for (var i in fields){
             this[fields[i]] = data[fields[i]];
         }
+
+        this._id = parseInt(data.uid);
 
         if (passwordHash.isHashed(data.password)){
             this.password = data.password;

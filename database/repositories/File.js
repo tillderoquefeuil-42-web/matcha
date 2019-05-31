@@ -25,7 +25,13 @@ let FileRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+                ON MATCH SET id.count = id.count + 1
+
+                WITH id.count AS uid
                 CREATE (f:File $file)
+                SET f.uid = uid
                 RETURN f
             `;
 
@@ -47,8 +53,7 @@ let FileRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (f:File), (u:User), (au:User)
-                WHERE f.filename='${filename}' AND ID(u)=${userId}
+                MATCH (f:File {filename='${filename}'}), (u:User {uid:${userId}}), (au:User)
 
                 OPTIONAL MATCH (f)<-[pp:PROFILE_PIC]-(au)
                 OPTIONAL MATCH (f)<-[op:OTHER_PIC]-(au)
@@ -73,8 +78,8 @@ let FileRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (f:File)<--(u:User)
-                WHERE ID(f) IN [${filesId.join(', ')}] AND ID(u)=${user._id}
+                MATCH (f:File)<--(u:User {uid:${userId}})
+                WHERE f.uid IN [${filesId.join(', ')}]
 
                 DETACH DELETE f
             `;

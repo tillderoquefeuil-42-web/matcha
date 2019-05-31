@@ -139,7 +139,17 @@ let UserRepository = {
 
         return new Promise((resolve, reject) => {
 
-            let query = "CREATE (u:User $user) RETURN u";
+            let query = `
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+                ON MATCH SET id.count = id.count + 1
+
+                WITH id.count AS uid
+                CREATE (u:User $user)
+                SET u.uid = uid
+                RETURN u
+            `;
+
             let params = {
                 user    : data
             };
@@ -157,8 +167,7 @@ let UserRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)
-                WHERE ID(u)=${user._id}
+                MATCH (u:User {uid:${user._id}})
                 OPTIONAL MATCH (u)-[me:MEMBERS]->(c:Conversation)-[o:OWN]->(m:Message)<-[b:BELONG_TO]-(_f:File)
                 DETACH DELETE _f, m, c, u
             `;
@@ -182,8 +191,7 @@ let UserRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)
-                WHERE ID(u) = ${id}
+                MATCH (u:User {uid:${id}})
                 SET u = $user
                 WITH u
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
@@ -281,8 +289,7 @@ let UserRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User), (f:File)
-                WHERE ID(u) = ${user._id} AND ID(f) = ${file._id}
+                MATCH (u:User {uid:${user._id}}), (f:File {uid:${file._id}})
                 OPTIONAL MATCH (u)-[oldpp:PROFILE_PIC {current:true}]->(oldf:File)
                 SET oldpp.current = false
                 CREATE (u)-[pp:PROFILE_PIC {current:true}]->(f)
@@ -304,8 +311,8 @@ let UserRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User), (f:File)
-                WHERE ID(u) = ${user._id} AND f.id IN ["${filesId.join('", "')}"]
+                MATCH (u:User {uid:${user._id}}), (f:File)
+                WHERE f.id IN ["${filesId.join('", "')}"]
                 OPTIONAL MATCH (u)-[oldop:OTHER_PIC {current:true}]->(oldf:File)
                 SET oldop.current = false
                 MERGE (u)-[op:OTHER_PIC {current:true}]->(f)
@@ -349,8 +356,7 @@ let UserRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)
-                WHERE ID(u) = ${user._id}
+                MATCH (u:User {uid:${user._id}})
                 SET u.online = TRUE
                 RETURN u
             `;
@@ -370,8 +376,7 @@ let UserRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)
-                WHERE ID(u) = ${user._id}
+                MATCH (u:User {uid:${user._id}})
                 SET u.online = '${datetime}'
                 RETURN u
             `;
@@ -392,7 +397,7 @@ let UserRepository = {
 
             let query = `
                 MATCH (u:User)-[ru:RELATION {like:TRUE}]->(r:Match {blocked:FALSE})<-[rp:RELATION {like:TRUE}]-(m:User)
-                WHERE ID(u)<>$userId AND ID(m)=$userId
+                WHERE m.uid = $userId AND u.uid <> $userId
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
 
@@ -428,7 +433,7 @@ let UserRepository = {
 
             let query = `
                 MATCH (m:User)-[mlr:LIVES {current:true}]->(ml:Location), (u:User)-[ulr:LIVES {current:true}]->(ul:Location)
-                WHERE ID(m)=$userId AND ID(u)<>$userId
+                WHERE m.uid = $userId AND u.uid <> $userId
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
@@ -546,7 +551,7 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
-                RETURN DISTINCT u{.*, _id:ID(u), common_tags:common_tags, distance:distance, 
+                RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, 
                     p_tags:p_tags, p_location:p_location, p_rate:p_rate
                 },
                 f, t, l, of, r, ru, rp
@@ -556,8 +561,6 @@ let UserRepository = {
             let parameters = {
                 userId  : user._id
             };
-
-            // console.log(query);
 
             queryEx.exec(query, parameters)
             .then(results => {
@@ -581,8 +584,7 @@ let UserRepository = {
 
             let query = `
                 MATCH (m:User)-[mlr:LIVES {current:true}]->(ml:Location), (u:User)-[ulr:LIVES {current:true}]->(ul:Location)
-                WHERE ID(m)=$userId AND ID(u)<>$userId
-
+                WHERE m.uid = $userId AND u.uid <> $userId
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
@@ -640,7 +642,7 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
-                RETURN DISTINCT u{.*, _id:ID(u), common_tags:common_tags, distance:distance, 
+                RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, 
                     p_tags:p_tags, p_location:p_location, p_rate:(p_like_rate * 3 + p_see_rate * 2 + p_per_rate * 75)
                 },
                 f, t, l, of, r, ru, rp
@@ -667,7 +669,7 @@ let UserRepository = {
 
             let query = `
                 MATCH (u:User)
-                WHERE ID(u) IN [${ids.join(', ')}]
+                WHERE u.uid IN [${ids.join(', ')}]
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
 
                 RETURN DISTINCT u, f
@@ -694,7 +696,7 @@ let UserRepository = {
 
             let query = `
                 MATCH (m:User)-[mlr:LIVES {current:true}]->(ml:Location), (u:User)-[ulr:LIVES {current:true}]->(ul:Location)
-                WHERE ID(m)=$userId AND ID(u)=$partnerId
+                WHERE m.uid = $userId AND u.uid = $partnerId
 
                 OPTIONAL MATCH (m)-[c:CRITERIA]->(sp:SearchParams)
                 OPTIONAL MATCH (u)-[ci:INTEREST_IN]->(ct:Tag)<-[ci2:INTEREST_IN]-(m)
@@ -755,7 +757,7 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
-                RETURN DISTINCT u{.*, _id:ID(u), common_tags:common_tags, distance:distance, 
+                RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, 
                     p_tags:p_tags, p_location:p_location, p_rate:(p_like_rate * 3 + p_see_rate * 2 + p_per_rate * 75)
                 },
                 f, t, l, of, r, ru, rp
@@ -782,15 +784,14 @@ let UserRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)
-                WHERE ID(u)=${user._id}
+                MATCH (u:User {uid:${user._id}})
 
                 OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
                 OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
-                RETURN DISTINCT u{.*, _id:ID(u), distance:0, rate:75},
+                RETURN DISTINCT u{.*, distance:0, rate:75},
                 f, of, l, t
             `;
 

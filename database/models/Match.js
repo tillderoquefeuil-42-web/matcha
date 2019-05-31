@@ -7,14 +7,15 @@ const fields = [
 class Match {
 
     constructor (node, params){
-        this._id = node.identity.low;
-        let data = node.properties;
+        let data = node.properties || node;
 
         params = params || {};
 
         for (var i in fields){
             this[fields[i]] = data[fields[i]];
         }
+
+        this._id = parseInt(data.uid);
 
         if (params.rel_user){
             let rel_user = params.rel_user.properties;

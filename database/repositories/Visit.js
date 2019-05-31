@@ -38,9 +38,14 @@ let VisitRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User), (h:User)
-                WHERE ID(u)=${userId} AND ID(h)=${hostId}
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+                ON MATCH SET id.count = id.count + 1
+
+                WITH id.count AS uid
+                MATCH (u:User {uid:${userId}}), (h:User {uid:${hostId}})
                 CREATE (u)-[v:VISIT $visit]->(h)
+                SET v.uid = uid
                 RETURN v, u, h
             `;
 
@@ -63,8 +68,7 @@ let VisitRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[v:VISIT]->(h:User)
-                WHERE ID(u)=${userId}
+                MATCH (u:User {uid:${user._id}})-[v:VISIT]->(h:User)
                 RETURN v, u, h
             `;
 
