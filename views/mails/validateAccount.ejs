@@ -1,0 +1,15 @@
+
+<% include ./layout_header %>
+
+    <h2><%= trans.get('MAIL.HELLO', {name: user.getName()}) %></h2>
+
+    <p>
+        <%= trans.get('MAIL.CONTENT.VALIDATE.DESCRIPTION_NEW') + ' ' + trans.get('GLOBAL.NAME') %>
+        <%= trans.get('MAIL.CONTENT.VALIDATE.LINK') %>
+    </p>
+
+    <a href="http://<%=config.server.hostname%>:<%=config.server.port%>/user/validateAccount?token=<%=user.getToken()%>">
+        <%= trans.get('MAIL.CONTENT.VALIDATE.BUTTON') %>
+    </a>
+
+<% include ./layout_footer %>

@@ -1,0 +1,29 @@
+.tags-input > .tags > span {
+    margin: 2px;
+}
+
+.tags-input > .input {
+    min-width: 100px;
+    height: 35px;
+}
+
+.tags-input > .input > .center {
+    font-size: 2px;
+}
+
+.badge {
+    border-radius: .25rem;
+}
+
+.badge.deletable {
+    cursor: pointer;
+}
+
+.badge.badge-info {
+    color: #fff;
+    background-color: #17a2b8;
+}
+
+.badge > .badge-remove {
+    margin-left: 8px;
+}
