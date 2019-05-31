@@ -1,0 +1,341 @@
+#matching {
+    height: 100%;
+}
+
+#matching .matching-sorting {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#matching .sorting-dropdown .caret {
+    display: none;
+}
+
+#matching .sorting-dropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+#matching .matching-filters {
+    background: #fff;
+    position: absolute;
+    left: 0px;
+    top: 60px;
+    width: 300px;
+    z-index: 5;
+    border-radius: 0px 10px 10px 0px;
+    border: 1px solid #cecece;
+    padding: 20px 30px 20px 25px;
+    margin-bottom: 50px;
+}
+
+#matching .matching-filters > * {
+    margin-bottom: 40px;
+}
+
+#matching .matching-filters > button {
+    margin-bottom: 0px !important;
+    margin-top: 60px;
+}
+
+.matching-filters > .close-matching-filters {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.icons-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.like-icon {
+    height: 50px;
+    width: 85px;
+    font-size: 50px;
+    color: #cecece;
+    position: relative;
+}
+
+.like-icon .vertical-split {
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    width: 50px;
+}
+
+.like-icon .vertical-split .horizontal-split {
+    position: absolute;
+    overflow: hidden;
+    width: 50px;
+}
+
+.top-half.horizontal-split {
+    top: 0px;
+    height: 40%;
+}
+.bottom-half.horizontal-split {
+    bottom: 1px;
+    height: 60%;
+ }
+
+.horizontal-split > i.fa-heart {
+    position: absolute;
+}
+
+.top-half.horizontal-split > i.fa-heart {
+    top: 0px;
+}
+
+.bottom-half.horizontal-split > i.fa-heart {
+    bottom: 0px;
+}
+
+
+.like-icon > .left-half {
+    left: 0px;
+}
+
+.like-icon > .right-half {
+    right: 0px;
+}
+
+.right-half .top-half.horizontal-split {
+    z-index: 5;
+}
+
+.right-half .bottom-half.horizontal-split {
+    z-index: 6;
+}
+
+.left-half .top-half.horizontal-split {
+    z-index: 6;
+}
+
+.left-half .bottom-half.horizontal-split {
+    z-index: 5;
+}
+
+.like-icon > .left-half.active {
+    color: red;
+}
+.like-icon > .right-half.active {
+    color: dodgerblue;
+}
+
+.dots-icon {
+    color: #cecece;
+    font-size: 20px;
+    cursor: pointer;
+    position: relative;
+    padding: 0px 10px;
+}
+
+.dots-icon > .dots-menu {
+    position: absolute;
+    color: #333;
+    background: #fff;
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    border: 1px solid #cecece;
+    border-radius: 5px;
+    padding: 5px 0px;
+    font-size: 14px;
+    top: auto;
+    right: 0px;
+    z-index: 5;
+}
+
+.dots-icon > .dots-menu > ul {
+    padding: 0px;
+    margin: 0px;
+}
+
+.dots-icon > .dots-menu > ul > li {
+    white-space: nowrap;
+    list-style-type: none;
+    cursor: pointer;
+    padding: 4px 12px;
+}
+
+.dots-icon > .dots-menu > ul > li:hover {
+    background: #ddd;
+}
+
+
+
+
+
+#matching .matching-profiles {
+    height: calc(100% - 50px);
+}
+
+#matching .matching-profiles > .matching-list {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 75%;
+    position: relative;
+    width: 100%;
+}
+
+#matching .matching-profiles > .matching-list > .fas {
+    font-size: 40px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.matching-profiles .one-profile {
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.one-profile > h1 {
+    float: left;
+    margin: 10px;
+}
+
+.one-profile > span {
+    float: right;
+    margin: 20px 10px 5px 5px;
+    font-size: 20px;
+}
+
+.matching-profiles .one-profile > .profile-pic {
+    height: 250px;
+    width: 250px;
+}
+
+.matching-profiles .one-profile > .profile-pic > img {
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+#extended-profile .close-extended-profile {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+#extended-profile > .profile-info {
+    padding-top: 20px;
+}
+
+#extended-profile > .profile-info .profile-infos-display {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#extended-profile > .profile-info  .profile-identity {
+    font-size: 30px;
+}
+
+#extended-profile > .profile-info  .profile-identity > span {
+    font-size: 25px;
+    color: #bfbfbf;
+    display: block;
+}
+
+@media (min-width: 768px) {
+
+    #extended-profile > .profile-info  .profile-identity > span {
+        margin-left: 10px;
+        display: initial;
+    }
+}
+
+
+#extended-profile > .profile-info  .profile-identity > span > span {
+    margin-right: 5px;
+}
+
+#extended-profile > .profile-info  .profile-identity > span i {
+    font-size: 20px;
+    margin-right: 3px;
+}
+
+#extended-profile > .profile-info  .profile-bio {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+#extended-profile > .profile-info  .profile-pictures {
+    display: flex;
+}
+
+#extended-profile > .profile-info  .profile-pictures .one-file-view.view-img {
+    margin-bottom: 0px;
+}
+
+#extended-profile > .profile-pic {
+    height: 100%;
+    display: flex;
+}
+
+#extended-profile > .profile-pic > img {
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    overflow: hidden;
+    margin: auto;
+}
+
+#extended-profile > .profile-info .profile-identity .progress-circle {
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    margin-bottom: -3px;
+}
+
+.matched-searchbar-container {
+    padding: 30px 0px;
+}
+
+.matched-searchbar-container .searchbar-list.active {
+    top: 50px;
+    max-height: calc(100vh - 200px);
+    background: none;
+    border: none;
+}
+
+.matched-searchbar-container .searchbar-items-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.matched-searchbar-container .searchbar-items-list > .list-item {
+    width: 250px;
+    padding: 0px;
+    overflow: hidden;
+}
+
+.matched-searchbar-container .one-profile > .profile-pic {
+    height: 250px;
+}
+
+.matched-searchbar-container .one-profile > .profile-pic > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.c-green {
+    color: green;
+}
+
+.online-info {
+    font-size: 12px;
+}
