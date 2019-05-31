@@ -26,9 +26,9 @@ stop_node:
 	@killall node
 
 $(NAME):
-	@ttab -a iTerm2 -t DATABASE "make run_database"
-	@ttab -a iTerm2 -t SERVER "make run_server"
-	@ttab -a iTerm2 -t CLIENT "make run_client"
+	@ttab -a iTerm2 "make run_database"
+	@ttab -a iTerm2 "make run_server"
+	@ttab -a iTerm2 "make run_client"
 
 clean: stop_database stop_node
 
