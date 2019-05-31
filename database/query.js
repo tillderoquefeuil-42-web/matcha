@@ -4,9 +4,10 @@ let query = {};
 
 query.exec = function(query, params){
     return new Promise((resolve, reject) => {
-        database.session.run(query, params)
+        let session = database.session();
+        session.run(query, params)
         .then(result => {
-            database.session.close();
+            session.close();
 
             let data = {
                 length  : result.records.length,
@@ -15,11 +16,9 @@ query.exec = function(query, params){
 
             return resolve(data);
         }, function (err) {
-            console.log(err);
             return reject(err);
         });
     });
-
 };
 
 query.buildRequest = function(request, params){

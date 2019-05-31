@@ -25,6 +25,18 @@ function random() {
     return Math.round((Math.random())*100);
 }
 
+function reindexArray(array){
+    let a = [];
+
+    for (let i in array){
+        if (array[i]){
+            a.push(array[i]);
+        }
+    }
+
+    return a;
+}
+
 function getUsername(firstname, lastname){
     return (firstname + '.' + lastname).toLowerCase();
 }
@@ -206,11 +218,11 @@ exports.createTestAccount = function(data) {
                         } else {
                             return resolve(_user);
                         }
-
                     });
                 });
             });
         }).catch(error => {
+            console.log(error);
             return reject(error);
         });
 
@@ -265,3 +277,34 @@ exports.randomMatching = function(fake) {
     });
 
 };
+
+exports.createRecursive = function(data, i) {
+
+    return new Promise((resolve, reject) => {
+        if (i >= data.max){
+            return resolve(true);
+        }
+
+        let r = random();
+        let lastname = data.lastNames[i];
+
+        let j = i%2;
+
+        let index = r % data.firstNames[j].length;
+        let firstname = data.firstNames[j][index];
+        delete data.firstNames[j][index];
+        data.firstNames[j] = reindexArray(data.firstNames[j]);
+
+        let user = this.generateUser(firstname, lastname, j);
+        this.createTestAccount(user)
+        .then(user => {
+            exports.createRecursive(data, ++i)
+            .then(result => {
+                return resolve(result);
+            });
+        }).catch(err => {
+            console.log(err);
+            return reject(err);
+        });
+    });
+}

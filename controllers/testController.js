@@ -60,48 +60,19 @@ module.exports = function (app) {
         let max = parseInt(req.query.max);
         max = (!max)? 500 : max;
 
-        let lastNames = account.getLastNames();
-        let firstNames = account.getFirstNames();
-        let error = null;
-        let count = 0;
-
-        for (let i in lastNames){
-            if (i >= max){
-                break;
-            }
-
-            let r = random();
-            let lastname = lastNames[i];
-
-            let j = i%2;
-
-            let index = r % firstNames[j].length;
-            let firstname = firstNames[j][index];
-            delete firstNames[j][index];
-            firstNames[j] = reindexArray(firstNames[j]);
-
-            let user = account.generateUser(firstname, lastname, j);
-
-            account.createTestAccount(user)
-            .then(user => {
-                if (error){
-                    return;
-                }
-
-                count++;
-                if (count === (max - 1)){
-                    return res.redirect('/');
-                }
-            }).catch(err => {
-                if (error){
-                    return;
-                }
-
-                error = true;
-                console.log(err);
-                return res.status(500).json({result:'ERROR', err:err});
-            });
+        let data = {
+            max         : max,
+            lastNames   : account.getLastNames(),
+            firstNames  : account.getFirstNames()
         }
+
+        account.createRecursive(data, 0)
+        .then(result => {
+            return res.redirect('/');
+        }).catch(err => {
+            console.log(err);
+            return res.status(500).json({result:'ERROR', err:err});
+        });
     });
 
     app.get('/randomMatching', function(req, res){

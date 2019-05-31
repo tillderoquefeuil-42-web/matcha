@@ -6,6 +6,8 @@ let uri = `bolt://${hostname}:${port}`;
 let db = {};
 
 db.driver = neo4j.driver(uri, neo4j.auth.basic(username, password));
-db.session = db.driver.session();
+db.session = function(){
+    return db.driver.session();
+}
 
 module.exports = db;
