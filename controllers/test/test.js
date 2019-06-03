@@ -287,12 +287,12 @@ exports.createRecursive = function(data, i) {
 
     return new Promise((resolve, reject) => {
 
-        if (i >= data.max){
-            return resolve(true);
-        }
+        process.stdout.write('-> ' + i + '/' + data.max + "\r");
 
-        if (i % 25 === 0){
-            console.log((i+1) + '/' + data.max);
+        if (i >= data.max){
+            process.stdout.write("Done.             \r");
+            console.log('');
+            return resolve(true);
         }
 
         let r = random();
@@ -322,12 +322,12 @@ exports.createRecursive = function(data, i) {
 exports.matchingRecursive = function(fakes, i) {
 
     return new Promise((resolve, reject) => {
+        process.stdout.write('-> ' + i + '/' + fakes.length + "\r");
+        
         if (i >= fakes.length){
+            process.stdout.write("Done.             \r");
+            console.log('');
             return resolve(true);
-        }
-
-        if (i % 100 === 0){
-            console.log((i+1) + '/' + fakes.length);
         }
 
         this.randomMatching(fakes[i])

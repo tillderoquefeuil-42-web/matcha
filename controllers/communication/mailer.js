@@ -17,15 +17,20 @@ mailer.transporter = nodemailer.createTransport({
     }
 });
 
+mailer.setLanguage = function(user) {
+    if (user){
+        translate.setLanguage(user.language);
+    }
+}
+
 mailer.send = function(params){
     let _this = this;
 
     if (params.template){
         return new Promise((resolve, reject) => {
-            if (params.data.user){
-                translate.setLanguage(params.data.user.language);
-            }
+            mailer.setLanguage(params.data.user);
             params.data.trans = translate;
+            params.subject = translate.get(params.subject);
 
             _this.renderFile(params, function(err, html){
                 if (err){

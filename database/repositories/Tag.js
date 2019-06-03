@@ -43,11 +43,16 @@ let TagRepository = {
                 return resolve();
             }
 
-            let query = '';
+            let query = `
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+            `;
 
             for (let i in tags){
                 query += `
+                    WITH id
                     MERGE (t${i}:Tag { label:'${tags[i]}' })
+                    ON CREATE SET id.count = id.count + 1, t${i}.uid = id.count
                 `;
             }
 
@@ -64,8 +69,7 @@ let TagRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[i:INTEREST_IN]->(t:Tag)
-                WHERE ID(u) = ${user._id}
+                MATCH (u:User {uid:${user._id}})-[i:INTEREST_IN]->(t:Tag)
                 DETACH DELETE i
             `;
 
@@ -82,8 +86,8 @@ let TagRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User), (t:Tag)
-                WHERE ID(u) = ${user._id} AND t.label IN ['${tags.join("', '")}']
+                MATCH (u:User {uid:${user._id}}), (t:Tag)
+                WHERE t.label IN ['${tags.join("', '")}']
                 CREATE (u)-[i:INTEREST_IN]->(t)
 
                 RETURN t

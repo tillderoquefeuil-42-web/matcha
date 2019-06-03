@@ -48,7 +48,6 @@ ERROR:
         Your password must have at least <ul><li>8 characters</li><li>One upper case
         letters</li><li>One lower case letter</li><li>One number</li><li>One special
         character</li></ul>
-    USER_ACCOUNT_EXIST: Account already exists
     USER_ALREADY_EXIST: Email already exists
     USER_LOCKED: >-
         You tried to connect too many times. We sent you an email to verify your
@@ -67,6 +66,7 @@ SUCCESS:
     MAIL_SENT: Email sent
     PASSWORD_SAVED: Your new password has been saved!
     PICTURE_SAVED: Your new profile picture has been saved!
+    PICTURES_DELETED: Some pictures have been removed
     USER_UNLOCKED: Your account is now unlocked!
 INFO:
     TITLE: Info
@@ -75,6 +75,12 @@ WARNING:
     TITLE: Warning!
     UNFILLED_PROFILE: You must fill your profile before continue (Informations and main profile picture min.)
 MAIL:
+    SUBJECT:
+        WELCOME: Welcome in!
+        RESET: Please verify that it’s you
+        EMAIL: New email address
+        BLOCK: Someone tried to sign in on your account
+
     RESENT: Resend mail
     VALIDATE_ACCOUNT: You'll soon get an email from us to validate your account!
     VALIDATE_EMAIL: >-

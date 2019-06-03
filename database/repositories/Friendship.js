@@ -25,7 +25,7 @@ function parseOneRecord(record){
 
     for (let i in users){
         if (users[i]){
-            params.partners.push(users[i].identity.low);
+            params.partners.push(parseInt(users[i].properties.uid));
         }
     }
 
@@ -52,9 +52,15 @@ let FriendshipRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u1:User), (u2:User)
-                WHERE ID(u1)=${user1Id} AND ID(u2)=${user2Id}
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+                ON MATCH SET id.count = id.count + 1
+
+                WITH id.count AS uid
+                MATCH (u1:User {uid:${user1Id}}), (u2:User {uid:${user2Id}})
                 CREATE (u1)-[f1:FRIEND {accepted:TRUE, locked:FALSE}]->(f:Friendship)<-[f2:FRIEND {accepted:TRUE, locked:FALSE}]-(u2)
+                SET f.uid = uid
+
                 RETURN f, u1, u2, f1, f2
             `;
 
@@ -71,8 +77,7 @@ let FriendshipRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u1:User)-[f1:FRIEND]->(f:Friendship)<-[f2:FRIEND]-(u2:User)
-                WHERE ID(u1)=${user1Id} AND ID(u2)=${user2Id}
+                MATCH (u1:User {uid:${user1Id}})-[f1:FRIEND]->(f:Friendship)<-[f2:FRIEND]-(u2:User {uid:${user2Id}})
                 RETURN f, u1, u2, f1, f2
             `;
 
@@ -89,9 +94,8 @@ let FriendshipRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u1:User)-->(c:Conversation)<--(u2:User),
+                MATCH (u1:User)-->(c:Conversation {uid:${convId}})<--(u2:User),
                 (u1)-[f1:FRIEND]->(f:Friendship)<-[f2:FRIEND]-(u2)
-                WHERE ID(c)=${ convId }
                 RETURN f, u1, u2, f1, f2
                 LIMIT 1
             `;
@@ -130,8 +134,7 @@ let FriendshipRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u1:User)-[f1:FRIEND]->(f:Friendship)<-[f2:FRIEND]-(u2:User)
-                WHERE ID(u1)=${user1Id} AND ID(u2)=${user2Id}
+                MATCH (u1:User {uid:${user1Id}})-[f1:FRIEND]->(f:Friendship)<-[f2:FRIEND]-(u2:User {uid:${user2Id}})
                 SET f1.locked = TRUE
                 RETURN f, u1, u2, f1, f2
             `;
@@ -149,8 +152,7 @@ let FriendshipRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u1:User)-[f1:FRIEND]->(f:Friendship)<-[f2:FRIEND]-(u2:User)
-                WHERE ID(u1)=${user1Id} AND ID(u2)=${user2Id}
+                MATCH (u1:User {uid:${user1Id}})-[f1:FRIEND]->(f:Friendship)<-[f2:FRIEND]-(u2:User {uid:${user2Id}})
                 SET f1.locked = FALSE
                 RETURN f, u1, u2, f1, f2
             `;

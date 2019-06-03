@@ -57,8 +57,8 @@ export class Username extends React.Component {
         let suggests = this.generateSuggests();
 
         API.checkUsernames(suggests).then(function(data){
-            if (data.data.users && data.data.users.length > 0){
-                suggests = _this.filterSuggests(suggests, data.data.users);
+            if (data.data.already_used && data.data.already_used.length > 0){
+                suggests = _this.filterSuggests(suggests, data.data.already_used);
             }
 
             _this.setState({
@@ -72,14 +72,14 @@ export class Username extends React.Component {
 
     }
 
-    filterSuggests(suggests, users){
+    filterSuggests(suggests, alreadyUsed){
         let data = [];
 
         for (var i in suggests){
             let suggest = suggests[i];
             let used = false;
-            for (var j in users){
-                if (users[j].username === suggest){
+            for (var j in alreadyUsed){
+                if (alreadyUsed[j] === suggest){
                     used = true;
                     break;
                 }

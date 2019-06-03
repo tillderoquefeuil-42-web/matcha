@@ -122,13 +122,18 @@ module.exports = function (app, server) {
         socket.on("disconnect", function(){
             let user = getUserBySocket(socket);
 
-            account.setOfflineUser(user);
+            if (user && user._id){
+                account.setOfflineUser(user);
+            }
         });
 
         // CHAT
 
         socket.on('UNREAD_CHATS', function(data){
             let user = getUserBySocket(socket);
+            if (!user){
+                return;
+            }
             rooms.joinUnreadsRoom(socket, user._id);
 
             chatHelpers.sendUnreads(io, user._id);
@@ -299,16 +304,21 @@ module.exports = function (app, server) {
             let user = getUserBySocket(socket);
 
             let onlineRoom = rooms.getOnlineRoom(user._id);
-
+            
             account.updateOtherPictures(user, data.files_id)
             .then(_user => {
                 io.sockets.in(onlineRoom).emit('USER_OP_CONFIRM', {user : _user});
             });
         });
-
+        
         socket.on('DELETE_FILES', function(data){
             let user = getUserBySocket(socket);
-            account.deleteFiles(user, data.files_ids);
+            let onlineRoom = rooms.getOnlineRoom(user._id);
+
+            account.deleteFiles(user, data.files_ids)
+            .then(results => {
+                io.sockets.in(onlineRoom).emit('USER_DELETE_FILES');
+            });
         });
 
         //SEARCH PARAMS

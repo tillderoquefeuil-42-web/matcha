@@ -1,8 +1,0 @@
-#modules
-/node_modules
-
-#db data
-/data
-
-#user files
-/client/private/uploads

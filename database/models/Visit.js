@@ -21,8 +21,7 @@ function transform(object) {
 class Visit {
 
     constructor (node, params){
-        this._id = node.identity.low;
-        let data = node.properties;
+        let data = node.properties || node;
 
         transform(data);
 
@@ -30,12 +29,15 @@ class Visit {
             this[fields[i]] = data[fields[i]];
         }
 
+        this._id = parseInt(data.uid);
+		this.uid = this._id;
+
         if (params.user){
-            this.user_id = params.user.identity.low
+            this.user_id = parseInt(params.user.properties.uid);
         }
 
         if (params.host){
-            this.host_id = params.host.identity.low
+            this.host_id = parseInt(params.host.properties.uid);
         }
     }
 

@@ -166,6 +166,9 @@ export class History extends Component {
     }
 
     buildOneItem(item){
+        if (!item || !item.host){
+            return null;
+        }
 
         let date = this.visitDate(item.date);
 

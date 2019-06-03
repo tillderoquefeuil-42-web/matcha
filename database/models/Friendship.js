@@ -3,12 +3,14 @@ const fields = [];
 class Friendship {
 
     constructor (node, params){
-        this._id = node.identity.low;
-        let data = node.properties;
+        let data = node.properties || node;
 
         for (var i in fields){
             this[fields[i]] = data[fields[i]];
         }
+
+        this._id = parseInt(data.uid);
+		this.uid = this._id;
 
         if (params.partners.length){
             this.partners = params.partners

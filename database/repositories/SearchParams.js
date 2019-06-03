@@ -26,8 +26,7 @@ let SearchParamsRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[c:CRITERIA]->(sp:SearchParams)
-                WHERE ID(u) = ${user._id}
+                MATCH (u:User {uid:${user._id}})-[c:CRITERIA]->(sp:SearchParams)
 
                 RETURN sp
             `;
@@ -47,10 +46,14 @@ let SearchParamsRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)
-                WHERE ID(u) = ${user._id}
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+
+                WITH id
+                MATCH (u:User {uid:${user._id}})
 
                 MERGE (u)-[c:CRITERIA]->(sp:SearchParams)
+                ON CREATE SET id.count = id.count + 1, sp.uid = id.count
                 SET sp = $props
 
                 RETURN sp

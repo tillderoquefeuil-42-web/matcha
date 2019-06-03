@@ -196,6 +196,11 @@ body.darkmode .emoji-mart-category-label span {
     color: #eee !important;
 }
 
+body.darkmode .dropdown-menu>li>a:focus,
+body.darkmode .dropdown-menu>li>a:hover {
+    background-color: #777 !important;
+}
+
 
 
 /* SPECIFIC ELEMENTS */
@@ -233,4 +238,8 @@ body.darkmode .form-section {
 
 body.darkmode .progress-circle.small > .progress-circle-bar {
     border-color: #4b94bf;
+}
+
+body.darkmode .sign-suggests > * {
+    background: #333 !important;
 }

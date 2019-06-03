@@ -21,8 +21,7 @@ function transform(object) {
 class Message {
 
     constructor (node, params){
-        this._id = node.identity.low;
-        let data = node.properties;
+        let data = node.properties || node;
 
         params = params || {};
 
@@ -32,12 +31,15 @@ class Message {
             this[fields[i]] = data[fields[i]];
         }
 
+        this._id = parseInt(data.uid);
+		this.uid = this._id;
+
         if (params.conv){
-            this.conv_id = params.conv.identity.low;
+            this.conv_id = parseInt(params.conv.properties.uid);
         }
 
         if (params.sender){
-            this.sender_id = params.sender.identity.low;
+            this.sender_id = parseInt(params.sender.properties.uid);
         }
 
         if (params.own){

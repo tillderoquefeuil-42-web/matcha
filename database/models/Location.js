@@ -20,14 +20,16 @@ function transform(object) {
 class Location {
 
     constructor (node, params){
-        this._id = node.identity.low;
-        let data = node.properties;
+        let data = node.properties || node;
 
         transform(data);
 
         for (var i in fields){
             this[fields[i]] = data[fields[i]];
         }
+
+        this._id = parseInt(data.uid);
+		this.uid = this._id;
 
         this.label = this.getLabel();
     }

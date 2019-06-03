@@ -5,8 +5,9 @@ NEO4J = neo4j
 all: $(NAME)
 
 init:
-	@npm install --silent
-	@npm install --silent --prefix ./client
+	@npm install --silent > ./logs/init_server.txt
+	@npm install --silent --prefix ./client > ./logs/init_client.txt
+	@echo Initialisation done! Run make to start!
 
 run_database:
 	$(NEO4J) start

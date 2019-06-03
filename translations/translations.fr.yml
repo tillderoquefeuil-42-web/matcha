@@ -45,7 +45,6 @@ ERROR:
         Votre mot de passe doit au moins contenir <ul><li>8 caractères</li><li>Une
         majuscule</li><li>Une minuscule</li><li>Un chiffre</li><li>Un caractère
         spécial</li></ul>
-    USER_ACCOUNT_EXIST: Le compte exite déjà
     USER_ALREADY_EXIST: L'adresse email existe déjà
     USER_LOCKED: >-
         Vous avez essayé de vous connecter trop de fois. Vous allez recevoir un
@@ -64,11 +63,18 @@ SUCCESS:
     MAIL_SENT: Email envoyé
     PASSWORD_SAVED: Votre nouveau mot de passe a bien été enregistré!
     PICTURE_SAVED: Votre nouvelle photo de profile a bien été enregistrée!
+    PICTURES_DELETED: Certaines photos ont bien été suprrimées
     USER_UNLOCKED: Your account is now unlocked!
 INFO:
     TITLE: Info
     MAIL_SENDING: Envoi en cours
 MAIL:
+    SUBJECT:
+        WELCOME: Bienvenue!
+        RESET: Vérifiez qu'il s'agit bien de vous
+        EMAIL: Nouvelle adresse email
+        BLOCK: Quelqu'un a tenté de se connecter à votre compte
+
     VALIDATE_ACCOUNT: Vous allez recevoir un email de notre part pour valider votre adresse!
     VALIDATE_EMAIL: >-
         Votre nouvelle adresse email a bien été enregistrée. Vous allez recevoir un

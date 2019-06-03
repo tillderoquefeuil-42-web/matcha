@@ -25,12 +25,12 @@ function parseOneRecord(record){
     let memberP = record.get('mb');
 
     if (user && partner){
-        params.partners.push(user.identity.low);
-        params.partners.push(partner.identity.low);
+        params.partners.push(parseInt(user.properties.uid));
+        params.partners.push(parseInt(partner.properties.uid));
 
         if (memberU && memberP){
-            params.members[user.identity.low] = memberU.properties.unread;
-            params.members[partner.identity.low] = memberP.properties.unread;
+            params.members[parseInt(user.properties.uid)] = memberU.properties.unread;
+            params.members[parseInt(partner.properties.uid)] = memberP.properties.unread;
         }
     }
 
@@ -47,9 +47,15 @@ let ConversationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User), (p:User)
-                WHERE ID(u)=${userAId} AND ID(p)=${userBId}
+                MERGE (id:UniqueId {name:'${type}'})
+                ON CREATE SET id.count = 1
+                ON MATCH SET id.count = id.count + 1
+
+                WITH id.count AS uid
+
+                MATCH (u:User {uid:${userAId}}), (p:User {uid:${userBId}})
                 CREATE (u)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p)
+                SET c.uid = uid
                 RETURN c, p, u, ma, mb
             `;
 
@@ -68,8 +74,7 @@ let ConversationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User)
-                WHERE ID(u)=${userAId} AND ID(p)=${userBId}
+                MATCH (u:User {uid:${userAId}})-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User {uid:${userBId}})
                 RETURN c, p, u, ma, mb
             `;
 
@@ -112,8 +117,7 @@ let ConversationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User)
-                WHERE ID(c)=${ convId } AND ID(u)=${ userId }
+                MATCH (u:User {uid:${userId}})-[ma:MEMBERS]->(c:Conversation {uid:${convId}})<-[mb:MEMBERS]-(p:User)
                 RETURN c, p, u, ma, mb
             `;
 
@@ -131,8 +135,8 @@ let ConversationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User), (u)-[ru:RELATION]->(r:Match)<-[rp:RELATION]-(p)
-                WHERE ID(u)=${userId} AND ru.like = TRUE AND rp.like = TRUE AND r.blocked = FALSE
+                MATCH (u:User {uid:${userId}})-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User), (u)-[ru:RELATION]->(r:Match)<-[rp:RELATION]-(p)
+                WHERE ru.like = TRUE AND rp.like = TRUE AND r.blocked = FALSE
 
                 RETURN c, p, u, ma, mb
             `;
@@ -151,8 +155,7 @@ let ConversationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User)
-                WHERE ID(c)=${ convId } AND ID(u)=${ userId }
+                MATCH (u:User {uid:${userId}})-[ma:MEMBERS]->(c:Conversation {uid:${convId}})<-[mb:MEMBERS]-(p:User)
                 SET mb.unread = TRUE
                 RETURN c, p, u, ma, mb
             `;
@@ -172,8 +175,7 @@ let ConversationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User)
-                WHERE ID(c)=${ convId } AND ID(u)=${ userId }
+                MATCH (u:User {uid:${userId}})-[ma:MEMBERS]->(c:Conversation {uid:${convId}})<-[mb:MEMBERS]-(p:User)
                 SET ma.unread = NULL
                 RETURN c, p, u, ma, mb
             `;
@@ -192,8 +194,8 @@ let ConversationRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User)-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User)
-                WHERE ID(u)=${ userId } AND ma.unread = TRUE
+                MATCH (u:User {uid:${userId}})-[ma:MEMBERS]->(c:Conversation)<-[mb:MEMBERS]-(p:User)
+                WHERE ma.unread = TRUE
                 RETURN c, p, u, ma, mb
             `;
 
