@@ -54,7 +54,7 @@ class Event {
 
 
         if (params.user){
-            this.user_id = params.user.identity.low
+            this.user_id = parseInt(params.user.properties.uid)
         }
     }
 

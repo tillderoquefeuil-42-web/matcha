@@ -25,7 +25,7 @@ function parseOneRecord(record){
 
     for (let i in users){
         if (users[i]){
-            params.partners.push(users[i].identity.low);
+            params.partners.push(parseInt(users[i].properties.uid));
         }
     }
 

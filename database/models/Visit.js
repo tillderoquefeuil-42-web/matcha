@@ -33,11 +33,11 @@ class Visit {
 		this.uid = this._id;
 
         if (params.user){
-            this.user_id = params.user.identity.low
+            this.user_id = parseInt(params.user.properties.uid);
         }
 
         if (params.host){
-            this.host_id = params.host.identity.low
+            this.host_id = parseInt(params.host.properties.uid);
         }
     }
 

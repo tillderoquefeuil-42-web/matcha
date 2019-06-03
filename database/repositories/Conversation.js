@@ -25,12 +25,12 @@ function parseOneRecord(record){
     let memberP = record.get('mb');
 
     if (user && partner){
-        params.partners.push(user.identity.low);
-        params.partners.push(partner.identity.low);
+        params.partners.push(parseInt(user.properties.uid));
+        params.partners.push(parseInt(partner.properties.uid));
 
         if (memberU && memberP){
-            params.members[user.identity.low] = memberU.properties.unread;
-            params.members[partner.identity.low] = memberP.properties.unread;
+            params.members[parseInt(user.properties.uid)] = memberU.properties.unread;
+            params.members[parseInt(partner.properties.uid)] = memberP.properties.unread;
         }
     }
 

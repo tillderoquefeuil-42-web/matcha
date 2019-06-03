@@ -35,11 +35,11 @@ class Message {
 		this.uid = this._id;
 
         if (params.conv){
-            this.conv_id = params.conv.identity.low;
+            this.conv_id = parseInt(params.conv.properties.uid);
         }
 
         if (params.sender){
-            this.sender_id = params.sender.identity.low;
+            this.sender_id = parseInt(params.sender.properties.uid);
         }
 
         if (params.own){
