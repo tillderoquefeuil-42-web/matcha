@@ -136,7 +136,7 @@ exports.getUserByToken = function(req, res, callback, errorCallback) {
         }
     }).catch(err => {
         if (errorCallback) {
-            errorCallback(err, user);
+            errorCallback(err, null);
         } else {
             return manageResError(res, 'DATABASE_CRASHED', 400);
         }
@@ -311,12 +311,15 @@ exports.signUp = function(req, res) {
             username    : req.body.username
         }).then(result => {
             if (result && result.length > 0) {
-                reject(403);
+                reject({
+                    status  : 403,
+                    label   : (result[0].email === req.body.email)? 'USER_ALREADY_EXIST' : 'USER_NAME_EXIST'
+                });
             } else {
                 resolve(true);
             }
         }).catch(err => {
-            reject(500);
+            reject({status : 500});
         });
     });
 
@@ -332,13 +335,7 @@ exports.signUp = function(req, res) {
         });
 
     }, function (error) {
-        switch (error) {
-            default:
-            case 500:
-                return manageResError(res);
-            case 403:
-                return manageResError(res, 'USER_ALREADY_EXIST', 403);
-        }
+        return manageResError(res, error.label, error.status);
     }); 
 };
 
@@ -350,7 +347,7 @@ exports.checkUsernames = function(req, res) {
 
     let length = req.body.usernames.length;
     let userId = req.body.user_id;
-    
+
     findUserByUsernames(req.body.usernames, function(err, users) {
 
         if (err) {
@@ -361,7 +358,11 @@ exports.checkUsernames = function(req, res) {
         } else if (users.length === 1 && String(users[0]['_id']) === String(userId)) {
             return manageResSuccess(res);
         } else if (users && users.length > 0 && length > users.length) {
-            return manageResSuccess(res);
+            let alreadyUsed = [];
+            for (let i in users){
+                alreadyUsed.push(users[i].username);
+            }
+            return manageResSuccess(res, {already_used : alreadyUsed});
         } else if (users && users.length > 0) {
             return manageResError(res, {
                 status: 403,
@@ -498,7 +499,6 @@ exports.saveUser = function(req, res) {
 
     if (!req.body.user) {
         return manageResError(res, 'INVALID_PARAMETERS', 400);
-        return;
     }
 
     let _user = req.body.user;
@@ -563,7 +563,7 @@ exports.saveUser = function(req, res) {
             }
             
             // TO UPDATE
-            const fields = ['bio', 'firstname', 'lastname', 'username', 'gender', 'birthday', 'language', 'see_f', 'see_m', 'see_nb'];
+            const fields = ['bio', 'firstname', 'lastname', 'username', 'gender', 'birthday', 'language', 'see_f', 'see_m', 'see_nb', 'uid'];
             const unwanted = ['profile_pic', 'profile_picture', 'tags', 'pictures', 'location'];
             for (var i in fields) {
                 user[fields[i]] = _user[fields[i]];

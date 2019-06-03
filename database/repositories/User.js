@@ -8,7 +8,7 @@ const time = require('../../controllers/utils/time');
 const type = 'user';
 
 const userFields = [
-    '_id', 'password',
+    '_id', 'uid', 'password',
     'email', 'username', 'firstname', 'lastname',
     'valid', 'locked', 'connection_try',
     'providers', 'googleId', 'birthday',
@@ -285,7 +285,6 @@ let UserRepository = {
     },
 
     updateProfilePicture        : function(file, user){
-
         return new Promise((resolve, reject) => {
 
             let query = `

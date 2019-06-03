@@ -47,6 +47,10 @@ export class Picture extends Component {
         this.socket.off('USER_OP_CONFIRM').on('USER_OP_CONFIRM', function(data){
             _this.confirmUpdate();
         });
+
+        this.socket.off('USER_DELETE_FILES').on('USER_DELETE_FILES', function(data){
+            _this.confirmDelete();
+        });
     }
 
     getDefaultFiles(user) {
@@ -130,6 +134,12 @@ export class Picture extends Component {
         alert.show({title: title, message: msg, type: 'success'});
     }
 
+    confirmDelete(){
+        let title = trans.get('SUCCESS.TITLE');
+        let msg = trans.get('SUCCESS.PICTURES_DELETED');
+        alert.show({title: title, message: msg, type: 'success'});
+    }
+
     updateProfilePicture(user) {
         let uploading = this.state.uploading - 1;
 
@@ -160,7 +170,9 @@ export class Picture extends Component {
         let files = this.state.files;
 
         for (let i in files){
-            ids.push(files[i].id);
+            if (files[i]){
+                ids.push(files[i].id);
+            }
         }
 
         return ids;

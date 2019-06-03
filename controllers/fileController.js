@@ -29,12 +29,13 @@ module.exports = function (app) {
         if (!req.query.filename || !user){
             return next();
         }
-
+        
         Files.userHasRightToSee(req.query.filename, user)
         .then(_file => {
             file = _file;
             return next();
         }).catch(err => {
+            console.log(err)
             return next();
         });
     })

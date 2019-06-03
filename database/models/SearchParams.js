@@ -35,6 +35,7 @@ class SearchParams {
             }
 
             this._id = parseInt(data.uid);
+		this.uid = this._id;
         }
 
         if (!this.distance){

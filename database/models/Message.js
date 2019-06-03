@@ -32,6 +32,7 @@ class Message {
         }
 
         this._id = parseInt(data.uid);
+		this.uid = this._id;
 
         if (params.conv){
             this.conv_id = params.conv.identity.low;

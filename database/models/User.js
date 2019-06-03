@@ -45,6 +45,7 @@ class User {
         }
 
         this._id = parseInt(data.uid);
+		this.uid = this._id;
 
         if (passwordHash.isHashed(data.password)){
             this.password = data.password;

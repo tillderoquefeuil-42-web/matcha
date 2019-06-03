@@ -8,12 +8,11 @@ function sendMail(params){
 
 exports.resetPassword = {
 
-    
     send        : function(user){
 
         let params = {
             to      : user.email,
-            subject : 'Please verify that it’s you',
+            subject : 'MAIL.SUBJECT.RESET',
             template: 'resetPassword.ejs',
             data    : {
                 user    : user,
@@ -23,10 +22,7 @@ exports.resetPassword = {
 
         return sendMail(params)
         .then(function(){
-            console.log('MAIL_SENT');
-        })
-        .catch(function(err){
-            console.log('MAIL_ERROR');
+        }).catch(function(err){
             console.log(err);
         });
     }
@@ -39,7 +35,7 @@ exports.signUp = {
 
         let params = {
             to      : user.email,
-            subject : 'Welcome in!',
+            subject : 'MAIL.SUBJECT.WELCOME',
             template: 'validateAccount.ejs',
             data    : {
                 user    : user,
@@ -48,11 +44,7 @@ exports.signUp = {
         };
     
         return sendMail(params)
-        .then(function(){
-            console.log('MAIL_SENT');
-        })
         .catch(function(err){
-            console.log('MAIL_ERROR');
             console.log(err);
         });
     }
@@ -65,7 +57,7 @@ exports.validateEmailAddress = {
 
         let params = {
             to      : user.email,
-            subject : 'New email address',
+            subject : 'MAIL.SUBJECT.EMAIL',
             template: 'validateEmailAddress.ejs',
             data    : {
                 user    : user,
@@ -74,11 +66,7 @@ exports.validateEmailAddress = {
         };
     
         return sendMail(params)
-        .then(function(){
-            console.log('MAIL_SENT');
-        })
         .catch(function(err){
-            console.log('MAIL_ERROR');
             console.log(err);
         });
     }
@@ -91,7 +79,7 @@ exports.lockedAccount = {
 
         let params = {
             to      : user.email,
-            subject : 'Someone tried to sign in on your account',
+            subject : 'MAIL.SUBJECT.BLOCK',
             template: 'lockedAccount.ejs',
             data    : {
                 user    : user,
@@ -100,11 +88,7 @@ exports.lockedAccount = {
         };
     
         return sendMail(params)
-        .then(function(){
-            console.log('MAIL_SENT');
-        })
         .catch(function(err){
-            console.log('MAIL_ERROR');
             console.log(err);
         });
     }

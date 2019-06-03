@@ -10,6 +10,7 @@ class Friendship {
         }
 
         this._id = parseInt(data.uid);
+		this.uid = this._id;
 
         if (params.partners.length){
             this.partners = params.partners

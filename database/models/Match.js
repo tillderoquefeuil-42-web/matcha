@@ -16,6 +16,7 @@ class Match {
         }
 
         this._id = parseInt(data.uid);
+		this.uid = this._id;
 
         if (params.rel_user){
             let rel_user = params.rel_user.properties;

@@ -29,6 +29,7 @@ class Location {
         }
 
         this._id = parseInt(data.uid);
+		this.uid = this._id;
 
         this.label = this.getLabel();
     }

@@ -30,6 +30,7 @@ class Visit {
         }
 
         this._id = parseInt(data.uid);
+		this.uid = this._id;
 
         if (params.user){
             this.user_id = params.user.identity.low

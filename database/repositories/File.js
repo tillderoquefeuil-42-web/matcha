@@ -53,7 +53,7 @@ let FileRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (f:File {filename='${filename}'}), (u:User {uid:${userId}}), (au:User)
+                MATCH (f:File {filename:'${filename}'}), (u:User {uid:${userId}}), (au:User)
 
                 OPTIONAL MATCH (f)<-[pp:PROFILE_PIC]-(au)
                 OPTIONAL MATCH (f)<-[op:OTHER_PIC]-(au)
@@ -78,7 +78,7 @@ let FileRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (f:File)<--(u:User {uid:${userId}})
+                MATCH (f:File)<--(u:User {uid:${user._id}})
                 WHERE f.uid IN [${filesId.join(', ')}]
 
                 DETACH DELETE f

@@ -324,12 +324,11 @@ exports.matchingRecursive = function(fakes, i) {
 
     return new Promise((resolve, reject) => {
         if (i >= fakes.length){
-        // if (i >= 2){
             console.log(i + '/' + fakes.length);
             return resolve(true);
         }
 
-        if (i % 100 === 0){
+        if (i % 25 === 0){
             console.log(i + '/' + fakes.length);
         }
 

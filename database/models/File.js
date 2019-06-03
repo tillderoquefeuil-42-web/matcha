@@ -28,6 +28,7 @@ class File {
             this[fields[i]] = data[fields[i]];
         }
         this._id = parseInt(data.uid);
+		this.uid = this._id;
 
     }
 

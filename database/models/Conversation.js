@@ -10,6 +10,7 @@ class Conversation {
         }
 
         this._id = parseInt(data.uid);
+		this.uid = this._id;
 
         params = params || {};
 
