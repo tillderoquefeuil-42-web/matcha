@@ -33,7 +33,7 @@ function parseOneRecord(record){
 
 let VisitRepository = {
 
-    add         : function(userId, hostId, unusedVar){
+    add         : function(userId, hostId){
 
         return new Promise((resolve, reject) => {
 
