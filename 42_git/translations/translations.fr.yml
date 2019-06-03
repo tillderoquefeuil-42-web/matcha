@@ -1,0 +1,219 @@
+GLOBAL:
+    NAME: Matcha
+LANGUAGE:
+    CURRENT: famfamfam-flag-fr
+    EN: English
+    FR: Français
+COMMON:
+    GO_BACK: Retourner au menu principal
+    REDIRECTION: Vous serez redirigé dans quelques secondes!
+    INFO: Informations
+    HELLO: Bonjour
+    LOADING: 'Chargement'
+    PERTINENCE: 'Pertinence'
+    SEARCH: 'Recherche'
+    YOU: 'Vous'
+    THE: 'Le'
+    AT: 'À'
+BUTTON:
+    ENABLE: Activer
+    DISABLE: Désactiver
+    CONFIRM: Confirmer
+    SIGN_IN: Se connecter
+    SIGN_UP: S'inscrire
+    GOOGLE: Se connecter avec Google
+    CONNECTION: Connexion
+    REGISTRATION: Enregistrer
+    EDIT: Editer
+    SAVE: Sauver
+    APPLY: 'Appliquer'
+    DELETE: 'Supprimer'
+    VALIDATE: 'Valider'
+ERROR:
+    TITLE: Oups
+    AUTH_ERROR: Impossible de vous connecter
+    BAD_TOKEN: Mauvais lien
+    INTERNAL_ERROR: Erreur interne
+    INVALID_PARAMETERS: Veuillez remplir tous les champs
+    INVALID_PASSWORD: Mot de passe incorrect
+    INVALID_TOKEN: Mauvais lien
+    MAIL_NOT_SENT: Email non envoyé
+    NO_EMAIL_MATCH: Les adresses email ne correspondent pas
+    NO_PASSWORD_MATCH: Les mots de passe ne sont pas identiques
+    OLD_EMAIL_MATCH: L'ancienne adresse et la nouvelle sont les mêmes
+    PASSWORD_STRENGTH: >-
+        Votre mot de passe doit au moins contenir <ul><li>8 caractères</li><li>Une
+        majuscule</li><li>Une minuscule</li><li>Un chiffre</li><li>Un caractère
+        spécial</li></ul>
+    USER_ALREADY_EXIST: L'adresse email existe déjà
+    USER_LOCKED: >-
+        Vous avez essayé de vous connecter trop de fois. Vous allez recevoir un
+        email pour confirmer votre identité.
+    USER_NAME_EXIST: Le pseudo existe déjà, veuillez le changer s'il vous plait
+    USER_NOT_EXIST: Cette adresse email n'existe pas chez nous
+    USER_NOT_FOUND: Utilisateur non trouvé
+    USER_TOO_YOUNG: Désolé, il semblerait que vous soyez trop jeune pour utiliser ce service.
+    NOT_A_FILE: Vous devez selectionner un fichier
+    FILE_TOO_BIG: Le fichier est trop lourd (> 25Mo)
+    TYPE_NOT_SUPPORTED: Le type de ficher n'est pas supporté
+    TOO_MANY_FILES: Il y a trop de fichiers
+SUCCESS:
+    TITLE: Super!
+    DATA_SAVED: Vos informations ont été sauvées!
+    MAIL_SENT: Email envoyé
+    PASSWORD_SAVED: Votre nouveau mot de passe a bien été enregistré!
+    PICTURE_SAVED: Votre nouvelle photo de profile a bien été enregistrée!
+    PICTURES_DELETED: Certaines photos ont bien été suprrimées
+    USER_UNLOCKED: Your account is now unlocked!
+INFO:
+    TITLE: Info
+    MAIL_SENDING: Envoi en cours
+MAIL:
+    SUBJECT:
+        WELCOME: Bienvenue!
+        RESET: Vérifiez qu'il s'agit bien de vous
+        EMAIL: Nouvelle adresse email
+        BLOCK: Quelqu'un a tenté de se connecter à votre compte
+
+    VALIDATE_ACCOUNT: Vous allez recevoir un email de notre part pour valider votre adresse!
+    VALIDATE_EMAIL: >-
+        Votre nouvelle adresse email a bien été enregistrée. Vous allez recevoir un
+        email pour valider cette adresse
+    RESENT: Renvoyer l'email
+    HELLO: 'Bonjour {{name}}!'
+    CONTENT:
+        LOCKED:
+            DESCRIPTION: >-
+                Quelqu'un a essayé de se connecter trop de fois sur votre compte, nous
+                l'avons donc bloqué.
+            LINK: >-
+                Votre compte restera bloqué tant que vou ne cliquerez pas sur le lien
+                ci-dessous
+            BUTTON: Débloquer votre compte
+        FORGET:
+            DESCRIPTION: Nous avons reçu un demande de réinitialisation de mot de passe
+            LINK: 'Si vous avez oublié votre mot de passe, vous pouvez le changer ici'
+            BUTTON: Réinitialiser votre mot de passe
+        VALIDATE:
+            DESCRIPTION_NEW: Vous venez de vous inscrire sur
+            DESCRIPTION_CHANGE: Vous avez changé d'adresse mail
+            LINK: Cliquez ci-dessous pour valider cette adresse
+            BUTTON: Valider cette adresse
+DROPZONE:
+    PLACEHOLDER: >-
+        Essayez de déposer des fichiers ici ou cliquez pour selectionner des
+        fichiers
+    PREVIEW: Selectionnez une image pour la prévisualisée
+MODAL:
+    CLOSE: Fermer
+TABS:
+    ACCOUNT: Compte
+    HOME: Home
+    SIGN_OUT: Se déconnecter
+    USER: Utilisateur
+    HISTORY: Historique
+    MATCHES: Matches
+    SEARCH: Recherche
+PAGE_TITLE:
+    ACCOUNT: Compte
+    ACCOUNT_LOCKED: Compte verrouillé
+    ACCOUNT_VALIDATION: Validation du compte
+    RESET_PASSWORD: Nouveau mot de passe
+    SIGN_IN: Connexion
+    SIGN_UP: Inscription
+    CHAT: Chat
+    NOTIF: Notifications
+    HISTORY: Hostorique
+    MATCH: Match
+    MATCHED: Vos matches
+    SEARCH: Recherche
+USER:
+    ACCOUNT_ALREADY_VALID: Votre compte a déjà été validé!
+    ACCOUNT_VALIDATE: Votre compte a déjà été validé!
+    RESET_PASSWORD_FIELD: >-
+        Entrez votre adresse email. Nous vous enverrons un lien pour réinitialiser
+        votre mot de passe
+    RESET_PASSWORD_INFO: >-
+        Vérifiez votre boite de réception. Si vous n'avez toujours rien reçu dans
+        quelques minutes, vérifiez vos spam
+    SET_NEW_PASSWORD: Entrez votre nouveau mot de passe pour continuer
+    NEW_PASSWORD: Nouveau mot de passe
+    EDIT_EMAIL: >-
+        Vous serez en mesure de changer votre adresse email dès que vous aurez créé
+        votre mot de passe
+    EMAIL_EDIT: Modifier votre adresse email
+    NEW_EMAIL_ADDRESS: Votre nouvelle adresse email
+    NEW_EMAIL_CONFIRM: Confirmation de votre nouvelle adresse
+    EDIT_PASSWORD: Modifier votre mot de passe
+    SUGGESTIONS: Suggestions
+    BIO_PLACEHOLDER: Décrivez vous en quelques mots (max. 250 caractères)
+    DARKMODE: Mode nuit
+    FIELDS:
+        LOGIN: Email ou Pseudo
+        PASSWORD: Mot de passe
+        OLD_PASSWORD: Mot de passe actuelle
+        NEW_PASSWORD: Nouveau mot de passe
+        CONFIRM_PASSWORD: Confirmez votre mot de passe
+        FIRSTNAME: Prénom
+        LASTNAME: Nom
+        PASSWORD_FORGOTTEN: Mot de passe oublié?
+        EMAIL: Adresse email
+        USERNAME: Pseudo
+        PROFILE_PIC: Photo de profile
+        BIO: Bio
+        BIRTHDAY: Date d'anniversaire
+        LANGUAGE: Langue
+        GENDER: Genre
+        ORIENTATION: Orientation
+        MALE: Homme
+        FEMALE: Femme
+        BOTH: Les deux
+        OTHER: Autres
+        DELETE_ACCOUNT: En cliquant ici, vous allez supprimer votre compte et toutes les données liées à ce dernier.
+        DELETE_ACCOUNT_CONFIRM: >-
+            Êtes-vous sûr? Vous allez supprimer toutes vos données.
+            C'est une action définitive.
+        OTHER_PIC: Vous pouvez ajouter d'autres photos ici! (max. 4)
+        INTERESTS: Intérêts
+        ADD_TAG: Ajouter un tag
+        NB: Non-binaire
+        AGE: Age
+        DISTANCE: Distance
+        COMMON_INTERESTS: Intérêts communs
+        POPULARITY: Score de popularité
+        REPORT: Reporter
+        BLOCK: Bloquer
+        LIKE: Liker ce profile
+        BEEN_LIKE: Votre profile a été liké
+        ONLINE: En ligne
+    CONNECTION: Connexion
+    LOCATION: Localisation
+    DELETE_ACCOUNT: Suppression du compte
+    DISCLAIMER:
+        PRIVATE_LOCATION: Votre adresse ne sera jamais visible pour les autres utilisateurs
+        ADDRESS_ESTIMATION: Nous n'avons pu obtenir votre adresse exacte. Ceci est une estimation.
+        REPORT: >-
+            Si vous reportez ce profile, vous ne pourrez plus le voir et 
+            notre équipe analysera le compte.
+UNITS:
+    KM: km
+    AGE: ans
+WARNING:
+    TITLE: Attention!
+    UNFILLED_PROFILE: Vous devez compléter votre profile avant de continuer (Informations et principale photo de profile min.)
+CHAT:
+    NO_CONVERSATION: Aucune conversation sélectionnée
+    SEND_MESSAGE: Envoyer un message
+    WRITE: Écrire un message ...
+    FILE:
+        SENT: Un fichier a été envoyé
+MATCHING:
+    PARAMS: Paramètres de recherche
+    OVERVIEW: Aperçu
+NOTIFICATIONS:
+    ALL: Voir toutes les notifications
+    LABELS:
+        '1': a liké votre profile
+        '2': a visité votre profile
+        '3': et vous avez un match!
+        '4': ne vous like plus
