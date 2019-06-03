@@ -33,7 +33,7 @@ function parseOneRecord(record){
 
 let VisitRepository = {
 
-    add         : function(userId, hostId){
+    add         : function(userId, hostId, unusedVar){
 
         return new Promise((resolve, reject) => {
 
@@ -68,7 +68,7 @@ let VisitRepository = {
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User {uid:${user._id}})-[v:VISIT]->(h:User)
+                MATCH (u:User {uid:${userId}})-[v:VISIT]->(h:User)
                 RETURN v, u, h
             `;
 
