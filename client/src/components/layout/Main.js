@@ -47,6 +47,7 @@ export class Main extends React.Component {
             <div id="main">
                 <ExtendedProfile
                     _g={ this.props._g }
+                    pageChange={ (name)=> {this.props.pageChange(name)} }
                     keyboard={ false }
                 />
 

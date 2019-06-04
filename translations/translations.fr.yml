@@ -129,7 +129,7 @@ PAGE_TITLE:
     SEARCH: Recherche
 USER:
     ACCOUNT_ALREADY_VALID: Votre compte a déjà été validé!
-    ACCOUNT_VALIDATE: Votre compte a déjà été validé!
+    ACCOUNT_VALIDATE: Votre compte a été validé!
     RESET_PASSWORD_FIELD: >-
         Entrez votre adresse email. Nous vous enverrons un lien pour réinitialiser
         votre mot de passe

@@ -122,11 +122,22 @@ export class ExtendedProfile extends SuperModal {
             return;
         }
 
-        this.socket.emit('SELECT_ONE_CHAT', {
+        let data = {
             partner_id  : this.state.match._id,
-            status      : 'footer_chat',
             force       : true
-        });
+        };
+
+        if (window.innerWidth > 768){
+            data.status = 'footer_chat';
+            this.socket.emit('SELECT_ONE_CHAT', data);
+        } else {
+            this.props.pageChange('chat');
+            let _this = this;
+            setTimeout(function(){
+                _this.socket.emit('SELECT_ONE_CHAT', data);
+            }, 500);
+        }
+
         this.handleClose();
     }
 

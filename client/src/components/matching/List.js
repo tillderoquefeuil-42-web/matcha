@@ -20,6 +20,10 @@ export class List extends Component {
         this.socket = props._g.socket;
     }
 
+    resetIndex() {
+        this.setState({index : 0});
+    }
+
     maxProfilesPage() {
         let nb = window.innerWidth / 500;
         nb = Math.ceil(nb);

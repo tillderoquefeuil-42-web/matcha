@@ -1,6 +1,9 @@
 #modules
 /node_modules
 
+#logs
+/logs
+
 #db data
 /data
 

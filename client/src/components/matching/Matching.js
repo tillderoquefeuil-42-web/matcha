@@ -21,7 +21,6 @@ export class Matching extends Component {
         super(props);
 
         this.state = {
-            index       : 0,
             matches     : null,
             match_id    : null,
             sorted      : null,
@@ -155,10 +154,11 @@ export class Matching extends Component {
     }
 
     handleSorting = sorted => {
-        this.setState({
-            sorted  : sorted,
-            index   : 0
-        });
+        this.setState({sorted : sorted});
+
+        if (this.$list){
+            this.$list.resetIndex();
+        }
     }
 
     handleFiltering = options => {
@@ -197,6 +197,7 @@ export class Matching extends Component {
 
                 <div className="matching-profiles">
                     <List
+                        ref={ el => this.$list = el }
                         matches={ this.state.matches }
                         sorted={ this.state.sorted }
                         _g={ this.props._g }

@@ -6,6 +6,7 @@ const chat = require('./chat/lib.js');
 const Files = require('./utils/files');
 
 const TagRepo = require('../database/repositories/tag.js');
+let requests = {};
 
 function reindexArray(array){
     let a = [];
@@ -40,7 +41,12 @@ module.exports = function (app) {
     });
 
     app.get('/createUsers', function(req, res){
+        if (requests[req.url]){
+            return res.redirect('/');
+        }
+        requests[req.url] = true;
 
+        console.log('Create fake users');
         let max = parseInt(req.query.max);
         max = (!max)? 500 : max;
 
@@ -52,22 +58,31 @@ module.exports = function (app) {
 
         account.createRecursive(data, 0)
         .then(result => {
+            requests[req.url] = false;
             return res.redirect('/');
         }).catch(err => {
+            requests[req.url] = false;
             console.log(err);
             return res.status(500).json({result:'ERROR', err:err});
         });
     });
 
     app.get('/randomMatching', function(req, res){
+        if (requests[req.url]){
+            return res.redirect('/');
+        }
+        requests[req.url] = true;
 
+        console.log('Matching');
         account.getFakeProfiles()
         .then(fakes => {
             account.matchingRecursive(fakes, 0)
             .then(result => {
+                requests[req.url] = false;
                 return res.redirect('/');
             });
         }).catch(err => {
+            requests[req.url] = false;
             console.log(err);
             return res.status(500).json({result:'ERROR', err:err});
         });

@@ -75,6 +75,7 @@ export class Layout extends React.Component {
 
                 <Main
                     _g={ this.state }
+                    pageChange={ (name)=> {this.pageChange(name)} }
                 />
 
                 { this.footerChat() }

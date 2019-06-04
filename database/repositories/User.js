@@ -498,8 +498,9 @@ let UserRepository = {
                 END AS p_tags,
 
                 CASE
+                    WHEN ${options.distance} > 0 THEN (1 - (toFloat(distance) / (${options.distance}*1000)))
                     WHEN sp.distance > 0 THEN (1 - (toFloat(distance) / (sp.distance*1000)))
-                    ELSE 0
+                    ELSE (1 - (toFloat(distance) / (${defaultParams.DISTANCE}*1000)))
                 END AS p_location,
 
                 CASE
@@ -551,7 +552,7 @@ let UserRepository = {
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
                 RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, 
-                    p_tags:p_tags, p_location:p_location, p_rate:p_rate
+                    p_tags:p_tags, p_location:p_location, p_rate:p_rate, sp_distance:sp.distance
                 },
                 f, t, l, of, r, ru, rp
                 LIMIT ${options.limit}
@@ -606,7 +607,7 @@ let UserRepository = {
 
                 CASE
                     WHEN sp.distance > 0 THEN (1 - (toFloat(distance) / (sp.distance*1000)))
-                    ELSE 0
+                    ELSE (1 - (toFloat(distance) / (${defaultParams.DISTANCE}*1000)))
                 END AS p_location,
 
                 CASE
@@ -718,7 +719,7 @@ let UserRepository = {
 
                 CASE
                     WHEN sp.distance > 0 THEN (1 - (toFloat(distance) / (sp.distance*1000)))
-                    ELSE 0
+                    ELSE (1 - (toFloat(distance) / (${defaultParams.DISTANCE}*1000)))
                 END AS p_location,
 
                 CASE
