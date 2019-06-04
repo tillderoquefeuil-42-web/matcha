@@ -183,8 +183,10 @@ export default {
 
         for (let i in c){
             let item = c[i];
-            let id = item[index];
-            collection[id] = item;
+            if (item){
+                let id = item[index];
+                collection[id] = item;
+            }
         }
 
         return collection;

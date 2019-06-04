@@ -281,33 +281,24 @@ module.exports = function (app, server) {
                             io.sockets.in(convRoom).emit('MESSAGE_FILE_UPDATE', {message : results.message});
                         });
                         break;
-                    case 'profile_picture':
-
-                        if (data.status === 'profile_picture'){
-                            account.updateProfilePicture(user, upload)
-                            .then(_user => {
-                                io.sockets.in(onlineRoom).emit('PROFILE_PICTURE_UPDATE', {user : _user});
-                                io.sockets.in(onlineRoom).emit('PP_UPDATE_CONFIRM', {user : _user});
-                            });
-                        } else {
-                            account.updateOtherPicture(user, upload)
-                            .then(file => {
-                                io.sockets.in(onlineRoom).emit('OP_UPLOAD_CONFIRM', {file : file});
-                            });
-                        }
+                    case 'user_pictures':
+                        account.updateUserPicture(user, upload, data)
+                        .then(_user => {
+                            io.sockets.in(onlineRoom).emit('USER_PICTURE_UPDATE', {user : _user});
+                        });
                         break;
                 }
             }
         });
 
-        socket.on('USER_OTHER_PICTURES', function(data){
+        socket.on('UPDATE_MAIN_PICTURE', function(data){
             let user = getUserBySocket(socket);
-
             let onlineRoom = rooms.getOnlineRoom(user._id);
-            
-            account.updateOtherPictures(user, data.files_id)
+
+            account.updateMainPicture(user, data.main_id)
             .then(_user => {
-                io.sockets.in(onlineRoom).emit('USER_OP_CONFIRM', {user : _user});
+                io.sockets.in(onlineRoom).emit('END_USER_PICTURE_UPDATE', {user : _user});
+                io.sockets.in(onlineRoom).emit('PROFILE_PICTURE_UPDATE', {user : _user});
             });
         });
         

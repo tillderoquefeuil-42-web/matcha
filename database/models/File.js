@@ -21,6 +21,7 @@ class File {
 
     constructor (node, params){
         let data = node.properties || node;
+        params = params || {};
 
         transform(data);
 
@@ -28,7 +29,15 @@ class File {
             this[fields[i]] = data[fields[i]];
         }
         this._id = parseInt(data.uid);
-		this.uid = this._id;
+        this.uid = this._id;
+
+        if (node.main){
+            this.main = node.main;
+        }
+
+        if (node.place){
+            this.place = node.place;
+        }
 
     }
 

@@ -62,7 +62,7 @@ SUCCESS:
     DATA_SAVED: Vos informations ont été sauvées!
     MAIL_SENT: Email envoyé
     PASSWORD_SAVED: Votre nouveau mot de passe a bien été enregistré!
-    PICTURE_SAVED: Votre nouvelle photo de profile a bien été enregistrée!
+    PICTURE_SAVED: Vos photos ont bien été enregistrées!
     PICTURES_DELETED: Certaines photos ont bien été suprrimées
     USER_UNLOCKED: Your account is now unlocked!
 INFO:
@@ -159,6 +159,7 @@ USER:
         PASSWORD_FORGOTTEN: Mot de passe oublié?
         EMAIL: Adresse email
         USERNAME: Pseudo
+        DEFINE_PROFILE_PICTURE: Définir comme photo de profile
         PROFILE_PIC: Photo de profile
         BIO: Bio
         BIRTHDAY: Date d'anniversaire

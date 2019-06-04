@@ -209,7 +209,7 @@ exports.createTestAccount = function(data) {
                             .then(file => {
                                 FileRepo.createOne(file.light())
                                 .then(_file => {
-                                    UserRepo.updateProfilePicture(_file, _user)
+                                    UserRepo.updateUserPicture(_file, _user, {place:'picture_0', main:true})
                                     .then(u => {
                                         return resolve(_user);
                                     });

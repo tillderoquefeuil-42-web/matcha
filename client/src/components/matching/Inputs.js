@@ -136,7 +136,7 @@ export class OneProfile extends Component {
             >
 
                 <div className="profile-pic">
-                    <img src={ utils.getFileUrl(match.profile_pic) } alt="" />
+                    <img src={ utils.getFileUrl(match.main_picture) } alt="" />
                 </div>
 
                 <h1>{ match.firstname }</h1>

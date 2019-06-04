@@ -237,6 +237,23 @@ export class FileContainer extends React.Component {
         this.props.removeFile(fileId);
     }
 
+    customAction(file) {
+
+        if (!this.props.customAction){
+            return;
+        }
+
+        return (
+            <span
+                className="custom-action icon-actions"
+                onClick={ () => this.props.customAction.onClick(file.id) }
+                title={ this.props.customAction.title }
+            >
+                <i className={ this.props.customAction.icon } />
+            </span>
+        );
+    }
+
     getFiles() {
         let previews = [];
 
@@ -245,7 +262,10 @@ export class FileContainer extends React.Component {
 
             previews.push(
                 <div className="file-preview-container" key={ file.id } title={ file.name } >
-                    <span className="delete-file" onClick={ () => this.handleDelete(file.id) }>
+
+                    { this.customAction(file) }
+
+                    <span className="delete-file icon-actions" onClick={ () => this.handleDelete(file.id) }>
                         <i className="far fa-times-circle"></i>
                     </span>
                     <div className="file-preview">

@@ -65,7 +65,7 @@ SUCCESS:
     DATA_SAVED: Your informations have been saved!
     MAIL_SENT: Email sent
     PASSWORD_SAVED: Your new password has been saved!
-    PICTURE_SAVED: Your new profile picture has been saved!
+    PICTURE_SAVED: Your pictures have been saved!
     PICTURES_DELETED: Some pictures have been removed
     USER_UNLOCKED: Your account is now unlocked!
 INFO:
@@ -170,6 +170,7 @@ USER:
         PASSWORD_FORGOTTEN: Forgot password?
         EMAIL: Email
         USERNAME: Username
+        DEFINE_PROFILE_PICTURE: Set as main picture
         PROFILE_PIC: Profile picture
         OTHER_PIC: You can drop additional pictures here! (max. 4)
         INTERESTS: Interest

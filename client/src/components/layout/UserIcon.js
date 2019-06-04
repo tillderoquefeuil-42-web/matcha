@@ -49,13 +49,13 @@ export class UserIcon extends React.Component {
     render(){
         let user = this.state.user;
 
-        if (user && user.profile_pic){
+        if (user && user.main_picture){
 
             return (
                 <div className="user-profile-picture">
                     <img
                         alt=""
-                        src={ utils.getFileUrl(user.profile_pic) }
+                        src={ utils.getFileUrl(user.main_picture) }
                         className={ this.getClasses() }
                         onClick={ this.handleClick }
                     />

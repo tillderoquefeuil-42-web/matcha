@@ -40,7 +40,7 @@ export class Header extends React.Component {
 
         let user = utils.getLocalUser();
         let authorized = ['signout', 'account', 'notif'];
-        if ((!user.gender || !user.profile_pic) && authorized.indexOf(eventName) === -1 ){
+        if ((!user.gender || !user.main_picture) && authorized.indexOf(eventName) === -1 ){
             let title = trans.get('WARNING.TITLE');
             let msg = trans.get('WARNING.UNFILLED_PROFILE');
             alert.show({title: title, message: msg, type: 'warning'});

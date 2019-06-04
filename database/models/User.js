@@ -74,13 +74,14 @@ class User {
             this.pertinence = pertinence.reduce(function(a, b){return a + b});
         }
 
-        if (params.profile_pic){
-            this.profile_pic = new File(params.profile_pic);
-        }
-
         this.pictures = [];
-        for (let i in params.others){
-            this.pictures.push(new File(params.others[i]));
+        for (let i in params.pictures){
+            let file = new File(params.pictures[i]);
+            this.pictures.push(file);
+
+            if (file.main){
+                this.main_picture = file;
+            }
         }
 
         if (params.tags){
@@ -101,8 +102,6 @@ class User {
         if (params.match_relation && params.match_relation.match){
             this.match_relation = new Match(params.match_relation.match, params.match_relation.params);
         }
-
-        // this.birthday = null;
     }
 
     getPassword() {

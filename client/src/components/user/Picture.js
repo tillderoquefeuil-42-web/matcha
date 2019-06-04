@@ -22,6 +22,7 @@ export class Picture extends Component {
         this.state = {
             user        : user,
             files       : this.getDefaultFiles(user),
+            mainId      : this.getDefaultMainId(user),
             uploading   : 0
         };
 
@@ -36,16 +37,12 @@ export class Picture extends Component {
 
         let _this = this;
 
-        this.socket.off('PP_UPDATE_CONFIRM').on('PP_UPDATE_CONFIRM', function(data){
-            _this.updateProfilePicture(data.user);
+        this.socket.off('USER_PICTURE_UPDATE').on('USER_PICTURE_UPDATE', function(data){
+            _this.updateUserPicture(data.user);
         });
 
-        this.socket.off('OP_UPLOAD_CONFIRM').on('OP_UPLOAD_CONFIRM', function(data){
-            _this.otherPicturesUpload();
-        });
-
-        this.socket.off('USER_OP_CONFIRM').on('USER_OP_CONFIRM', function(data){
-            _this.confirmUpdate();
+        this.socket.off('END_USER_PICTURE_UPDATE').on('END_USER_PICTURE_UPDATE', function(data){
+            _this.updateUserPicture(data.user, true);
         });
 
         this.socket.off('USER_DELETE_FILES').on('USER_DELETE_FILES', function(data){
@@ -54,84 +51,32 @@ export class Picture extends Component {
     }
 
     getDefaultFiles(user) {
-        let max = maxPics - 1;
+        let max = maxPics;
         let pictures = user.pictures;
         let files = {};
 
+        let tmp = utils.indexCollection(pictures, 'place');
+
         for (let i=0; i < max; i++){
-            let id = 'other' + i;
-            if (pictures[i]){
-                files[id] = pictures[i];
+            let id = 'picture_' + i;
+            if (tmp[id]){
+                files[id] = tmp[id];
             }
         }
 
         return files;
     }
 
-    handleSubmit = event => {
+    getDefaultMainId(user) {
+        let pictures = user.pictures;
 
-        let length = 0;
-        let files = this.state.files;
-        let data = {};
-        let oldFiles = this.getDefaultFiles(this.state.user);
-        let toDelete = [];
-
-        let params = {
-            file_case   : 'profile_picture'
-        }
-
-        if (files['main-picture'] && !files['main-picture']._id){
-            let file = files['main-picture'];
-            file.status = 'profile_picture';
-            data[file.id] = file;
-            length++;
-        }
-
-        let max = maxPics - 1;
-        for (let i=0; i < max; i++){
-            let id = 'other' + i;
-            if (files[id] && !files[id]._id){
-                let file = files[id];
-                file.status = 'other_picture';
-                data[file.id] = file;
-                length++;
-            } else if (files[id] === null && oldFiles[id]){
-                toDelete.push(oldFiles[id]._id);
+        for (let i in pictures){
+            if (pictures[i] && pictures[i].main){
+                return pictures[i].id;
             }
         }
 
-        if (!length && !toDelete.length){
-            let title = trans.get('ERROR.TITLE');
-            let msg = trans.get('ERROR.INVALID_PARAMETERS');
-            alert.show({title: title, message: msg, type: 'error'});
-            return;
-        }
-
-        this.setState({
-            uploading   : length
-        });
-
-        filesManager.setSocket(this.socket);
-
-        if (length){
-            filesManager.sendFiles(data, params);
-        } if (toDelete.length){
-            filesManager.deleteFiles(toDelete);
-        }
-    }
-
-    confirmUpdate(user) {
-        if (user){
-            utils.setLocalUser(user);
-        }
-
-        if (this.state.uploading){
-            return;
-        }
-
-        let title = trans.get('SUCCESS.TITLE');
-        let msg = trans.get('SUCCESS.PICTURE_SAVED');
-        alert.show({title: title, message: msg, type: 'success'});
+        return null;
     }
 
     confirmDelete(){
@@ -140,42 +85,103 @@ export class Picture extends Component {
         alert.show({title: title, message: msg, type: 'success'});
     }
 
-    updateProfilePicture(user) {
-        let uploading = this.state.uploading - 1;
+    updateUserPicture(user, end) {
+        if (this.state.uploading > 0){
+            this.setState({uploading : this.state.uploading - 1});
+        }
 
-        this.setState({uploading : uploading});
+        if (user){
+            utils.setLocalUser(user);
+            this.setState({
+                user    : user,
+                files   : this.getDefaultFiles(user)
+            });
+        }
 
-        this.confirmUpdate(user);
-    }
-
-    otherPicturesUpload() {
-        let ids = this.getFilesId();
-        let uploading = this.state.uploading - 1;
-
-        this.setState({uploading : uploading});
-
-        if (uploading){
+        if (this.state.uploading){
             return;
         }
 
-        let data = {
-            files_id: ids
-        }
-
-        this.socket.emit('USER_OTHER_PICTURES', data);
+        this.confirmUpdate(end);
     }
 
-    getFilesId() {
-        let ids = [];
+    confirmUpdate(end) {
+
+        if (!end){
+            this.socket.emit('UPDATE_MAIN_PICTURE', {main_id:this.state.mainId});
+        } else {
+            let title = trans.get('SUCCESS.TITLE');
+            let msg = trans.get('SUCCESS.PICTURE_SAVED');
+            alert.show({title: title, message: msg, type: 'success'});
+        }
+    }
+
+    handleSubmit = event => {
+
         let files = this.state.files;
 
-        for (let i in files){
-            if (files[i]){
-                ids.push(files[i].id);
+        let data = {
+            to_update   : this.getUpdateFiles(files),
+            to_delete   : this.getDeleteFiles(files),
+            main_id     : this.mainIdChanged()
+        };
+
+        let params = {file_case : 'user_pictures'};
+
+        if (!data.to_update.length && !data.to_delete.length){
+            if (data.main_id){
+                this.confirmUpdate();
+            }
+            return;
+        }
+
+        this.setState({uploading : data.to_update.length});
+
+        filesManager.setSocket(this.socket);
+
+        if (data.to_update.length){
+            filesManager.sendFiles(data.to_update, params);
+        } if (data.to_delete.length){
+            filesManager.deleteFiles(data.to_delete);
+        }
+    }
+
+    getUpdateFiles(files){
+        let toUpdate = [];
+
+        for (let i=0; i<maxPics; i++){
+            let id = 'picture_' + i;
+            let file = files[id];
+
+            if (file && !file._id){
+                toUpdate.push(file);
             }
         }
 
-        return ids;
+        return toUpdate;
+    }
+
+    getDeleteFiles(files){
+        let oldFiles = this.getDefaultFiles(this.state.user);
+        let toDelete = [];
+
+        for (let i=0; i<maxPics; i++){
+            let id = 'picture_' + i;
+
+            if (files[id] === null && oldFiles[id]){
+                toDelete.push(oldFiles[id]._id);
+            }
+        }
+
+        return toDelete;
+    }
+
+    mainIdChanged() {
+        let user = this.state.user;
+
+        let oldId = this.getDefaultMainId(user);
+
+        return (oldId === this.state.mainId? false : true);
     }
 
     updateOneFile(file, id) {
@@ -187,28 +193,54 @@ export class Picture extends Component {
             files[id] = null;
         }
 
+        this.parseMainPicture(files);
+
         this.setState({files : files});
     }
 
-    buildOtherPictures() {
-        let max = maxPics - 1;
-        let pictures = this.state.user.pictures;
-        let others = [];
+    setMainPicture(fileId) {
+        this.setState({mainId:fileId});
+    }
 
-        for (let i=0; i < max; i++){
-            let id = 'other' + i;
-            let file = pictures[i]? pictures[i] : null;
-            others.push(
+    parseMainPicture(files){
+
+        let mainId = this.state.mainId;
+
+        let tmp = utils.indexCollection(files, 'id');
+
+        if (!tmp[mainId]){
+            for (let i in files){
+                if (files[i] && files[i].id){
+                    this.setMainPicture(files[i].id);
+                    break;
+                }
+            }
+        }
+
+        return;
+    }
+
+    buildPictures() {
+        let pictures = this.state.files;
+        let pics = [];
+
+        for (let i=0; i<maxPics; i++){
+            let id = 'picture_' + i;
+            let file = pictures[id]? pictures[id] : null;
+
+            pics.push(
                 <ProfilePicture
                     id={ id }
-                    key={ i }
+                    key={ id }
                     file={ file }
+                    main={ file && file.id === this.state.mainId? true : false }
                     updateFile={ (file) => this.updateOneFile(file, id) }
+                    setMainPicture={ (fileId) => this.setMainPicture(fileId) }
                 />
             );
         }
 
-        return others;
+        return pics;
     }
 
     loading(){
@@ -225,23 +257,13 @@ export class Picture extends Component {
     }
 
     render() {
-
-        let id = "main-picture";
-
         return(
-
             <div id="picture" className="account-block" >
                 { this.loading() }
                 <h2 className="form-section">{ trans.get('USER.FIELDS.PROFILE_PIC') }</h2>
 
-                <ProfilePicture
-                    id={ id }
-                    file={ this.state.user.profile_pic }
-                    updateFile={ (file) => this.updateOneFile(file, id) }
-                />
-
-                <div className="other-pictures">
-                    { this.buildOtherPictures() }
+                <div className="user-pictures">
+                    { this.buildPictures() }
                 </div>
 
                 <Button
@@ -267,16 +289,29 @@ class ProfilePicture extends Component {
         };
 
         this.handleAttach.bind(this);
+        this.mainPicture.bind(this);
     }
 
     handleAttach = event => {
         this.attach_input.triggerClick();
     }
 
+    mainPicture = event => {
+        if (this.state.files.length !== 1){
+            return;
+        }
+
+        let file = this.state.files[0];
+        this.props.setMainPicture(file.id);
+
+        this.addFile(file);
+    }
+
     addFile(file) {
         if (!file.id){
             file.id = (new Date()).getTime();
         }
+        file.place = this.props.id;
 
         if (this.props.updateFile){
             this.props.updateFile(file);
@@ -301,6 +336,11 @@ class ProfilePicture extends Component {
                 <FileContainer
                     files={ this.state.files }
                     removeFile={ (fileId) => this.removeFile() }
+                    customAction={ this.props.main? null : {
+                        icon    : "far fa-user-circle",
+                        title   : trans.get('USER.FIELDS.DEFINE_PROFILE_PICTURE'),
+                        onClick : () => this.mainPicture()
+                    }}
                 />
             );
         }
@@ -321,11 +361,22 @@ class ProfilePicture extends Component {
         );
     }
 
+    getClasses() {
+
+        let classes = 'one-profile-picture';
+
+        if (this.props.main){
+            classes += ' main-picture';
+        }
+
+        return classes;
+    }
+
     render() {
         return (
             <Dropzone
                 id={ this.props.id }
-                className="one-profile-picture"
+                className={ this.getClasses() }
                 files={ this.state.files }
                 addFile={ (file) => this.addFile(file) }
                 maxFiles={ 1 }
@@ -336,6 +387,4 @@ class ProfilePicture extends Component {
             </Dropzone>
         );
     }
-
-
 }

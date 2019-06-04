@@ -953,41 +953,25 @@ exports.loadUserEvents = function(user, all){
 
 // SET
 
-exports.updateProfilePicture = function(user, upload) {
+exports.updateUserPicture = function(user, upload, options) {
     return new Promise((resolve, reject) => {
         Files.save(upload.file);
 
         FileRepo.createOne(upload.file.light())
         .then(file => {
-            UserRepo.updateProfilePicture(file, user)
+            UserRepo.updateUserPicture(file, user, options)
             .then(_user => {
                 return resolve(_user);
             });
         });
-
     });
 };
 
-exports.updateOtherPicture = function(user, upload) {
+exports.updateMainPicture = function(user, mainId) {
     return new Promise((resolve, reject) => {
-        Files.save(upload.file);
-
-        FileRepo.createOne(upload.file.light())
-        .then(file => {
-            return resolve(file);
-        });
-    });
-};
-
-exports.updateOtherPictures = function(user, filesId) {
-    return new Promise((resolve, reject) => {
-
-        UserRepo.updateOtherPictures(filesId, user)
+        UserRepo.updateMainPicture(mainId, user)
         .then(_user => {
             return resolve(_user);
-        }).catch(err => {
-            console.log(err);
-            return reject(err);
         });
     });
 };

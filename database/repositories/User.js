@@ -36,21 +36,18 @@ parser.setSingle(type, function(record){
     return parseOneRecord(record);
 })
 
-parser.setMerges(type, ['tags', 'pictures', {label:'match_relation', single:true}]);
+parser.setMerges(type, ['tags', 'pictures', {label:'main_picture', single:true}, {label:'match_relation', single:true}]);
 
 function parseOneRecord(record){
 
     let params = {
         profile_pic : null,
+        pictures    : [],
         others      : [],
         tags        : []
     };
 
     let node = record.get('u');
-
-    if (record.has('f')){
-        params.profile_pic = record.get('f');
-    }
 
     if (record.has('r') && record.has('ru') && record.has('rp')){
         params.match_relation = {
@@ -62,18 +59,20 @@ function parseOneRecord(record){
         }
     }
 
-    if (record.has('of')){
-        let others = record.get('of');
-        others = others || [];
+    if (record.has('uf') && record.has('up')){
+        let pictures = record.get('uf');
+        pictures = pictures || [];
 
-        if (others && others.properties){
-            others = [others];
+        if (pictures && pictures.properties){
+            let up = record.get('up');
+            pictures.main = up.properties.main;
+            pictures.place = up.properties.place;
+            pictures = [pictures];
         }
 
-        for (let i in others){
-            params.others.push(others[i]);
+        for (let i in pictures){
+            params.pictures.push(pictures[i]);
         }
-        params.profile_pic = record.get('f');
     }
 
     if (record.has('t')){
@@ -92,7 +91,6 @@ function parseOneRecord(record){
     if (record.has('l')){
         params.location = record.get('l');
     }
-
 
     let entity = new User(node, params);
 
@@ -194,11 +192,11 @@ let UserRepository = {
                 MATCH (u:User {uid:${id}})
                 SET u = $user
                 WITH u
-                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
-                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
+
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
-                RETURN u, f, t, l, of
+                RETURN u, t, l, uf, up
             `;
 
             let params = {
@@ -222,11 +220,11 @@ let UserRepository = {
             let request = `
                 MATCH (u:User)
                 WHERE $AND
-                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
-                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
+
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
-                RETURN u, f, t, l, of
+                RETURN u, t, l, uf, up
             `;
 
             let query = queryEx.buildRequest(request, {
@@ -284,15 +282,24 @@ let UserRepository = {
         });
     },
 
-    updateProfilePicture        : function(file, user){
+    updateUserPicture           : function(file, user, options){
         return new Promise((resolve, reject) => {
 
+            options.main = options.main || false;
+
             let query = `
-                MATCH (u:User {uid:${user._id}}), (f:File {uid:${file._id}})
-                OPTIONAL MATCH (u)-[oldpp:PROFILE_PIC {current:true}]->(oldf:File)
-                SET oldpp.current = false
-                CREATE (u)-[pp:PROFILE_PIC {current:true}]->(f)
-                RETURN u, f
+                MATCH (u:User {uid:${user._id}}), (_f:File {uid:${file._id}})
+
+                OPTIONAL MATCH (u)-[old_up:USER_PICTURE {current:true, place:'${options.place}'}]->(old_uf:File)
+                SET old_up.current = false
+
+                CREATE (u)-[_up:USER_PICTURE {current:true, place:'${options.place}', main:${options.main}}]->(_f)
+
+                WITH u
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
+                OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
+                OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
+                RETURN u, t, l, uf, up
             `;
 
             queryEx.exec(query)
@@ -305,17 +312,20 @@ let UserRepository = {
         });
     },
 
-    updateOtherPictures         : function(filesId, user){
-
+    updateMainPicture           : function(fileId, user){
         return new Promise((resolve, reject) => {
 
             let query = `
-                MATCH (u:User {uid:${user._id}}), (f:File)
-                WHERE f.id IN ["${filesId.join('", "')}"]
-                OPTIONAL MATCH (u)-[oldop:OTHER_PIC {current:true}]->(oldf:File)
-                SET oldop.current = false
-                MERGE (u)-[op:OTHER_PIC {current:true}]->(f)
-                RETURN u
+                MATCH (u:User {uid:${user._id}})-[_up:USER_PICTURE]->(_f:File {id:'${fileId}'})
+
+                OPTIONAL MATCH (u)-[old_mp:USER_PICTURE {main:TRUE}]->(old_mf:File)
+                SET old_mp.main = FALSE, _up.main = TRUE
+
+                WITH u
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
+                OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
+                OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
+                RETURN u, t, l, uf, up
             `;
 
             queryEx.exec(query)
@@ -398,9 +408,8 @@ let UserRepository = {
                 MATCH (u:User)-[ru:RELATION {like:TRUE}]->(r:Match {blocked:FALSE})<-[rp:RELATION {like:TRUE}]-(m:User)
                 WHERE m.uid = $userId AND u.uid <> $userId
 
-                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
-
-                RETURN DISTINCT u, f
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
+                RETURN DISTINCT u, uf, up
             `;
 
             let parameters = {
@@ -546,15 +555,14 @@ let UserRepository = {
                 AND toInteger(c_rate_min) <= toInteger(p_rate) <= toInteger(c_rate_max)
                 AND r_blocked = FALSE
 
-                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
-                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
                 RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, 
                     p_tags:p_tags, p_location:p_location, p_rate:p_rate, sp_distance:sp.distance
                 },
-                f, t, l, of, r, ru, rp
+                t, l, uf, up, r, ru, rp
                 LIMIT ${options.limit}
             `;
 
@@ -565,7 +573,7 @@ let UserRepository = {
             queryEx.exec(query, parameters)
             .then(results => {
                 let data = parser.records(results, type);
-                
+
                 if (options.tags){
                     data = filterByTags(data, options.tags);
                 }
@@ -637,15 +645,14 @@ let UserRepository = {
                 AND ru.like = TRUE
                 AND rp.like = TRUE
 
-                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
-                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
                 RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, 
                     p_tags:p_tags, p_location:p_location, p_rate:(p_like_rate * 3 + p_see_rate * 2 + p_per_rate * 75)
                 },
-                f, t, l, of, r, ru, rp
+                t, l, uf, up, r, ru, rp
             `;
 
             let parameters = {
@@ -670,9 +677,9 @@ let UserRepository = {
             let query = `
                 MATCH (u:User)
                 WHERE u.uid IN [${ids.join(', ')}]
-                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
 
-                RETURN DISTINCT u, f
+                RETURN DISTINCT u, uf, up
             `;
 
             queryEx.exec(query)
@@ -752,15 +759,14 @@ let UserRepository = {
 
                 WHERE r_blocked = FALSE
 
-                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
-                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
                 RETURN DISTINCT u{.*, common_tags:common_tags, distance:distance, 
                     p_tags:p_tags, p_location:p_location, p_rate:(p_like_rate * 3 + p_see_rate * 2 + p_per_rate * 75)
                 },
-                f, t, l, of, r, ru, rp
+                t, l, uf, up, r, ru, rp
             `;
 
             let parameters = {
@@ -786,13 +792,12 @@ let UserRepository = {
             let query = `
                 MATCH (u:User {uid:${user._id}})
 
-                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
-                OPTIONAL MATCH (u)-[op:OTHER_PIC {current:true}]->(of:File)
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true}]->(uf:File)
                 OPTIONAL MATCH (u)-[li:LIVES {current:true}]->(l:Location)
                 OPTIONAL MATCH (u)-[i:INTEREST_IN]->(t:Tag)
 
                 RETURN DISTINCT u{.*, distance:0, rate:75},
-                f, of, l, t
+                uf, up, l, t
             `;
 
             queryEx.exec(query)

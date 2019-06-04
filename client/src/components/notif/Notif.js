@@ -178,7 +178,7 @@ export class OneNotif extends Component {
         return (
             <div className={ this.getNotifClasses(event) }>
                 <UserIcon
-                    user={ {profile_pic : event.partner_picture} }
+                    user={ {main_picture : event.partner_picture} }
                 />
 
                 <div className="one-notif-info">

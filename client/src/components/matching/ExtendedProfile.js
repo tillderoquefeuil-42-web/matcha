@@ -286,7 +286,7 @@ export class ExtendedProfile extends SuperModal {
 
         let match = this.state.match;
         if (match){
-            return <img src={ utils.getFileUrl(match.profile_pic) } alt="" />
+            return <img src={ utils.getFileUrl(match.main_picture) } alt="" />
         }
 
         return null;

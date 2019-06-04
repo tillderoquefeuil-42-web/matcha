@@ -93,7 +93,7 @@ class Overview extends Component {
     render() {
         let user = utils.getLocalUser();
 
-        if (!user || !user.profile_pic || !user.birthday){
+        if (!user || !user.main_picture || !user.birthday){
             return null;
         }
 

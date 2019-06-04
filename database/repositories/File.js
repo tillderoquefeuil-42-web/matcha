@@ -55,12 +55,11 @@ let FileRepository = {
             let query = `
                 MATCH (f:File {filename:'${filename}'}), (u:User {uid:${userId}}), (au:User)
 
-                OPTIONAL MATCH (f)<-[pp:PROFILE_PIC]-(au)
-                OPTIONAL MATCH (f)<-[op:OTHER_PIC]-(au)
+                OPTIONAL MATCH (f)<-[up:USER_PICTURE {current:true}]-(au)
                 OPTIONAL MATCH (f)-[b:BELONG_TO]->(m:Message)<-[o:OWN]-(c:Conversation)<-[me:MEMBERS]-(u)
 
                 WITH f, u
-                WHERE (pp IS NOT NULL) OR (b IS NOT NULL) OR (op IS NOT NULL)
+                WHERE (b IS NOT NULL) OR (up IS NOT NULL)
 
                 RETURN f
             `;

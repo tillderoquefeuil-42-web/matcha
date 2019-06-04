@@ -34,21 +34,28 @@
     opacity: 1;
 }
 
-.file-preview-container:hover .delete-file {
+.file-preview-container:hover .icon-actions {
     display: inline;
     transition: all 1s;
     -webkit-transition: all 1s;
 }
 
-.file-preview-container .delete-file {
+.file-preview-container .icon-actions {
     color: white;
     display: none;
     position: absolute;
     top: 1px;
-    right: 4px;
     font-size: 20px;
     z-index: 10;
     cursor: pointer;
+}
+
+.file-preview-container .delete-file {
+    right: 4px;
+}
+
+.file-preview-container .custom-action {
+    left: 4px;
 }
 
 .one-file-view {
