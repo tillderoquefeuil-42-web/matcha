@@ -302,6 +302,7 @@ export class ExtendedProfile extends SuperModal {
         for (let i in match.pictures){
             data.push(
                 <OneFileView
+                    hide={ match.pictures[i].main }
                     file={ match.pictures[i] }
                     key={ i }
                     multi

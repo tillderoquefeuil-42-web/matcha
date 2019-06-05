@@ -48,7 +48,7 @@ let EventRepository = {
                 SET e.uid = uid
 
                 WITH u, e, p
-                OPTIONAL MATCH (u)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (u)-[up:USER_PICTURE {current:true, main:true}]->(f:File)
                 RETURN u, f, e{
                     .*, partner_id:u.uid, partner_label:u.firstname
                 }
@@ -77,7 +77,7 @@ let EventRepository = {
             let query = `
                 MATCH (u:User {uid:${userId}})<-[e:EVENT]-(p:User)
 
-                OPTIONAL MATCH (p)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (p)-[up:USER_PICTURE {current:true, main:true}]->(f:File)
                 RETURN u, f, e{
                     .*, partner_id:p.uid, partner_label:p.firstname
                 }
@@ -104,7 +104,7 @@ let EventRepository = {
                 SET e.read = TRUE
 
                 WITH u, e, p
-                OPTIONAL MATCH (p)-[pp:PROFILE_PIC {current:true}]->(f:File)
+                OPTIONAL MATCH (p)-[up:USER_PICTURE {current:true, main:true}]->(f:File)
 
                 RETURN u, f, e{
                     .*, partner_id:p.uid, partner_label:p.firstname

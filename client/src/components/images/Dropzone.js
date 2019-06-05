@@ -376,6 +376,10 @@ export class OneFileView extends React.Component {
     getClasses() {
         let classes = "one-file-view ";
 
+        if (this.props.hide){
+            classes += ' no-display ';
+        }
+
         if (this.state.type){
             classes += this.state.type;
         }

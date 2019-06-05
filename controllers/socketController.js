@@ -212,6 +212,10 @@ module.exports = function (app, server) {
         socket.on('USER_READ_CHAT', function(data){
             let user = getUserBySocket(socket);
 
+            if (!data.conv_id){
+                return;
+            }
+
             chat.updateOneConversation(data.conv_id, user._id)
             .then(results => {
 

@@ -6,14 +6,17 @@ const type = 'conversation';
 
 parser.setSingle(type, function(record){
     return parseOneRecord(record);
-})
+});
+
+// parser.setMerges(type, ['members']);
+
 
 function parseOneRecord(record){
 
     let entity;
     let params = {
         partners    : [],
-        members     : []
+        members     : {}
     };
 
     let node = record.get('c');
@@ -113,7 +116,6 @@ let ConversationRepository = {
     },
 
     findOneById     : function(convId, userId){
-
         return new Promise((resolve, reject) => {
 
             let query = `
