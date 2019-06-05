@@ -9,3 +9,7 @@
 
 #user files
 /client/private/uploads
+
+#package-lock.json
+package-lock.json
+/client/package-lock.json

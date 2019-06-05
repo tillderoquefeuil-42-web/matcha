@@ -19,12 +19,11 @@ export class PrivateRoute extends Component {
         let token = params.get('token');
 
         let file = trans.getFile();
-        let user = utils.getLocalUser();
 
         this.state = {
             token   : token,
             trans   : file,
-            user    : user,
+            user    : null,
             params  : params
         };
     }
@@ -37,9 +36,7 @@ export class PrivateRoute extends Component {
             localStorage.setItem('token', this.state.token);
         }
 
-        if (!this.state.user){
-            this.updateUser();
-        }
+        this.updateUser();
 
         if (!this.state.trans){
             this.updateTranslations();
