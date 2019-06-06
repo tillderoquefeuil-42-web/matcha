@@ -89,6 +89,7 @@ export class PrivateRoute extends Component {
         if (this.state.user && this.state.trans){
             return(<Layout page={ this.props.page } user={ this.state.user } params={ this.state.params }/>);
         } else if (this.state.user === false || this.state.trans === false){
+            API.signOut();
             return( <Route><Redirect to='/user/sign' /></Route> );
         }
 
